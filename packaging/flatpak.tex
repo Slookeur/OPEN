@@ -1,0 +1,129 @@
+\section{Flatpak}
+
+Flatpak is an application deployment framework for desktop applications. 
+
+\subsection{Prerequesites}
+
+Give a look to the following tutorials:
+\begin{itemize}
+\item \href{https://flatpak.org/setup}{https://flatpak.org/setup}
+\item \href{https://docs.flatpak.org/en/latest/first-build.html}{https://docs.flatpak.org/en/latest/first-build.html}
+\end{itemize}
+To install Flatpak and the tools require to build your program use:
+\begin{itemize}
+\item Install Flatpak: 
+\begin{itemize}
+\item Fedora: 
+{\footnotesize{
+\begin{scriptii}
+\fprompt{~} \bftt{sudo} \rtt{dnf} \btt{install} flatpak
+\end{scriptii}
+}}
+\item Debian:
+{\footnotesize{
+\begin{scriptii}
+\uprompt{~} \bftt{sudo} \rtt{apt} \btt{install} flatpak
+\uprompt{~} \bftt{sudo} \rtt{apt} \btt{install} gnome-software-plugin-flatpak
+\end{scriptii}
+}}
+\end{itemize}
+\item Install the Flathub repository: 
+{\scriptsize{
+\begin{scripti}
+\bftt{flatpak remote-add} \rtt{-{-}if-not-exists} \btt{flathub} https://dl.flathub.org/repo/flathub.flatpakrepo
+\end{scripti}
+}}
+\item Install the suitable Flatpak runtime:
+{\footnotesize{
+\begin{scripti}
+\bftt{flatpak} \rtt{install} \rtt{flathub} \btt{org.freedesktop.Platform//22.08}
+\end{scripti}
+}}
+\item Install the corresponding Flatpak Software Development Kit 'SDK':
+{\footnotesize{
+\begin{scripti}
+\bftt{flatpak} \rtt{install} \rtt{flathub} \btt{org.freedesktop.Sdk//22.08}
+\end{scripti}
+}}
+\item Install the Flatpak builder:
+{\footnotesize{
+\begin{scripti}
+\bftt{flatpak} \rtt{install} \rtt{flathub} \btt{org.flatpak.Builder}
+\end{scripti}
+}}
+\end{itemize}
+
+\subsection{To build the Flatpak}
+
+\begin{enumerate}
+\item Prepare the YAML file that describe your project: "\texttt{org.flatpak.prog.yml}"
+\item Init a Git repository and install the shared modules repository (required to use glu)
+\item Build the Flatpak
+\end{enumerate}
+
+\subsubsection{The file "\texttt{org.flatpak.prog.yml}"}
+
+This file describes the contruction protocole to build the Flatpak for your project:
+{\footnotesize{
+\begin{script}
+\var{app-id}: org.flatpak.prog
+\var{runtime}: org.freedesktop.Platform
+\var{runtime-version}: \magenta{'22.08'}
+\var{sdk:} org.freedesktop.Sdk
+\var{command:} prog
+\var{modules:}
+  - shared-modules/glu/glu-9.json
+  - \var{name:} prog
+    \var{buildsystem:} autotools
+    \var{no-autogen:} \magenta{true}
+    \var{sources:}
+      - type: archive
+        url: https://github.com/AUTHOR/RESPOSITORY/archive/refs/tags/v1.2.12.tar.gz
+        sha256: "c9a540d0492f8c6b4d829b7cb8df5fc2fa5cf6374ee4e3c13f90865e9303d143"
+\end{script}
+}}
+\\[-0.5cm]
+\noindent This file points to a release in your \github\ or \gitlab\ repository. \\
+The value following "\texttt{sha256}" is the corresponding SHA256 check sum obtained using: 
+\begin{script}
+\bftt{sha256sum} v1.2.12.tar.gz
+\end{script} \\[-0.5cm]
+\noindent
+The builder will download the package from your repository, and control that it is a match. 
+
+\subsubsection{Init a Git repository and install the shared modules repository}
+
+{\footnotesize{
+\begin{script}
+\bftt{git} \rtt{init}
+\bftt{git} \rtt{submodule} \btt{add} https://github.com/flathub/shared-modules.git
+\end{script}
+}}
+\newpage
+
+\subsubsection{Building the Flatpak}
+
+{\footnotesize{
+\begin{script}
+\bftt{ls}
+org.flatpak.prog.yml
+\bftt{flatpak-builder} \rtt{prog} \btt{org.flatpak.prog.yml} \dgtt{-{-}force-clean}
+\end{script}
+}}
+
+\subsection{Running the Flatpak}
+
+If your Flatpak is not in the official repositories your need to install it manually:
+{\scriptsize{
+\begin{script}
+\bftt{flatpak-builder} \dgtt{-{-}user} \dgtt{-{-}install} \dgtt{-{-}force-clean} \rtt{prog} \btt{org.flatpak.prog.yml}
+\end{script}
+}}
+\\[-0.25cm]
+\noindent Then to run the Flatpak use:
+{\scriptsize{
+\begin{script}
+\bftt{flatpak-builder} \dgtt{-{-}socket=session-bus} \dgtt{-{-}nosocket=fallback-x11} \dgtt{-{-}socket=x11} \btt{org.flatpak.prog.yml}
+\end{script}
+}}
+

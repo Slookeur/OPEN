@@ -1,0 +1,951 @@
+\chapter{Building system and automation}
+
+In order to distribute your code it is almost mandatory to have a build system in mind, that is an automation tool that will help you to build your software using the sources, link it with used libraries, and even handle the installation process. \\
+Historically build automation was handled using basic Makefile(s), but now more advanced tools are available, the most well known likely being:
+\begin{itemize}
+\item \href{https://en.wikipedia.org/wiki/Make\_(software)}{Make} 
+\item \href{https://en.wikipedia.org/wiki/CMake}{CMake}
+\item \href{https://en.wikipedia.org/wiki/Meson\_(software)}{Meson}
+\end{itemize}
+But there are many others. \\
+In the following I will present examples using the \href{https://www.gnu.org/software/make/}{GNU Make} implementation of the Make building system. 
+The GNU Make is a standard distribution format, if your are familiar with open source software it is likely that your already stumbled upon a GNU tarball (or archive), 
+either in Gzip of Bzip2 format:
+\begin{itemize}
+\item {\bftt{program.tar.gz}}, to be opened using: \begin{script}\fprompt{~} -zxf program.tar.gz\end{script}
+\item {\bftt{program.tar.bz2}}, to be opened using: \begin{script}\fprompt{~} tar -jxf program.tar.bz2\end{script}
+\end{itemize}
+Very often the content of this archive is based on the GNU automation build system. 
+In the following I will provide an example of the preparation of basic GNU tarball, that represents the first step in distributing your software to the open source community.
+\newpage
+
+\section{The GNU Autotools}
+
+The GNU Autotools, also known as the GNU Build System, is a suite of programming tools designed to assist in making source code packages portable (see \href{https://en.wikipedia.org/wiki/GNU\_Autotools}{GNU Autotools on Wikipedia}).  \\[0.25cm]
+Autotools consists of the GNU utility programs: \href{https://www.gnu.org/software/autoconf/}{Autoconf}, 
+\href{https://www.gnu.org/software/automake/}{Automake}, and \href{https://www.gnu.org/software/libtool}{Libtool}. \\
+Other related tools are frequently used alongside it: 
+\begin{itemize}
+\item \href{https://www.gnu.org/software/make/}{GNU's make} program
+\item \href{https://www.gnu.org/software/gettext/}{GNU gettext}
+\item \href{https://en.wikipedia.org/wiki/Pkg-config}{pkg-config}
+\item \href{https://www.gnu.org/software/gcc/}{GNU Compiler Collection}, also called GCC. 
+\end{itemize}
+Before going further into this guide, and if you want to try to build your own GNU tarball, you will have to install some of these tools: 
+\begin{itemize}
+\item For Windows and OSX please refer to the corresponding websites.
+\item For Linux you can quite conveniently use the command line as follow:
+\begin{itemize}
+\item Red Hat based Linux (using the \bftt{dnf} command):
+\begin{scriptii}
+\fprompt{~} sudo \bftt{dnf} install autoconf automake libtool
+\fprompt{~} sudo \bftt{dnf} install pkg-config gcc gcc-gfortran
+\end{scriptii}
+\item Debian based Linux (using the \bftt{apt} command):
+\begin{scriptii}
+\fprompt{~} sudo \bftt{apt} install autoconf automake libtool
+\fprompt{~} sudo \bftt{apt} install pkg-config gcc gfortran
+\end{scriptii}
+\end{itemize}
+\end{itemize}
+To learn more about software installation on Linux check out my \href{https://www.ipcms.fr/wp-content/uploads/2021/11/linux.pdf}{Linux tutorial}. \\
+To learn more about scripting and the usage of the command line check out my \href{https://www.ipcms.fr/wp-content/uploads/2021/05/bash.pdf}{Bash tutorial}.
+\clearpage
+
+\section{The GNU tarball or GNU archive}
+
+A GNU tarball (archive) is a common way to distribute open source software built using the GNU Autotools, along with the sources of the program it should contain all the following files: \\[0.75cm]
+\begin{tabular}{lcp{13cm}}
+\bmpt{\rtt{configure.ac}}{A configuration file that defines the compilation options for the project, \\
+and the rules to generate the \bftt{configure} script to create the tarball.}
+\bmpt{\gtt{configure}}{A script generated using the \bftt{configure.ac} file. \\
+It is used to configure the compilation and installation options \\
+based on the operating system and development environment.}
+\bmpt{\rtt{Makefile.am}}{A file that contains the build rules for the project. \\
+It is used to generate the \bftt{Makefile.in} file.}
+\bmpt{\bftt{Makefile.in}}{A file used by the \bftt{configure} script to generate the \bftt{Makefile}.}
+\bmpt{\bftt{README(.md)}}{A file that contains important information about the project, \\ such as installation and usage instructions.}
+\bmpt{\bftt{INSTALL(.md)}}{A file that contains installation instructions for the project.}
+\bmpt{\bftt{AUTHORS(.md)}}{A file that contains information about the author(s) of the project.}
+\bmpt{\bftt{COPYING(.md)}}{A file that contains the terms of the license \\ under which the project is distributed.}
+\bmpt{\bftt{ChangeLog}}{A file that contains a list of changes made to the project \\ since the last release.}
+\bmpt{\bftt{NEWS(.md)}}{A file that contains information about new features \\ or significant changes made to the project.}
+\end{tabular}
+%\begin{itemize}
+%\item \bftt{configure}\\[0.25cm]
+%A script generated using the \bftt{configure.ac} file. It is used to configure the compilation and installation options for the project based on the operating system and development environment.
+%\item \rtt{Makefile.am}\\[0.25cm]
+%A file that contains the build rules for the project. It is used to generate the file \bftt{Makefile.in} used by the \bftt{configure} script to generate the \bftt{Makefile}.
+%\item \bftt{Makefile.in}\\[0.25cm] A file that used by the \bftt{configure} script to generate the \bftt{Makefile}.
+%\item \bftt{README}\\[0.25cm]
+%A file that contains important information about the project, such as installation and usage instructions.
+%\item \bftt{INSTALL}\\[0.25cm] A file that contains installation instructions for the project.
+%\item \bftt{AUTHORS}\\[0.25cm] A file that contains information about the author(s) of the project.
+%\item \bftt{COPYING}\\[0.25cm] A file that contains the terms of the license under which the project is distributed.
+%\item \bftt{ChangeLog}\\[0.25cm] A file that contains a list of changes made to the project since the last release.
+%\item \bftt{NEWS}\\[0.25cm] A file that contains information about new features or significant changes made to the project.
+%\end{itemize}
+\clearpage
+\noindent In order to prepare a GNU tarball it is mandatory to edit and prepare the following files:
+\begin{itemize}
+\item The \rtt{configure.ac} file.
+\item The \rtt{Makefile.am} file(s) \\
+There is usually one file in the upper directory of the archive. 
+However if the sources are organized in the form of a directory tree you might want to provide multiple \bftt{Makefile.am} file(s), 
+one at each significant level in the directory tree, this will help to simply the organization of the build process. 
+\end{itemize}
+At the build process of the GNU archive it is mandatory to have prepared all \bftt{Makefile.am} file(s) before being able to process the \bftt{configure.ac} file with \bftt{autoconf}. \\[0.25cm]
+The next sections will illustrate the creation of these 2 files. 
+
+\clearpage
+\section{The file: \bftt{configure.ac}}
+
+To start working of your GNU tarball you will need first to create a directory to work in:
+\begin{script}
+\fprompt{~} mkdir program
+\fprompt{~} cd program
+\end{script}
+\\
+\noindent Then use the \bftt{autoscan} command to generate à \bftt{configure.scan} file, 
+and rename this file as \bftt{configure.ac} (you can also remove the empty \bftt{autoscan.log} file: 
+\begin{script}
+\fprompt{~/program} \bftt{autoscan}
+\fprompt{~/program} rm -f autoscan.log
+\fprompt{~/program} mv configure.scan \bftt{configure.ac}
+\end{script}
+\\
+\noindent Then by editing the \bftt{configure.ac} file you will see that it follows the general structure:
+{\footnotesize{
+\begin{script}
+\dnl{In a \bftt{configure.ac} file, commented line(s), could start by either:}
+\dnl{\tabul- '\bftt{dnl}' and will not appear in the resulting \bftt{configure} script}
+\dnl{\tabul- '\bftt{#}' and will appear in the resulting \bftt{configure} script}
+
+\comm{Using the instructions AC\_INIT and AC\_INIT\_AUTOMAKE - see [Sec. \ref{cinit}].}
+\confb{AC\_INIT}{\cstr{FULL-PACKAGE-NAME}, \cstr{VERSION}, \cstr{BUG-REPORT-ADDRESS}}
+\confa{AM\_INIT\_AUTOMAKE}
+
+\comm{Checks for program(s) - see [Sec. \ref{cprog}].}
+
+\comm{Check for compiler(s) - see [Sec. \ref{ccomp}].}
+
+\comm{Check for libraries - see [Sec. \ref{clibs}].}
+
+\comm{Using the instruction AC\_CONFIG\_FILES and AC\_OUTPUT - see [Sec. \ref{cfinal}].}
+\confa{AC\_CONFIG\_FILES}
+\confa{AC\_OUTPUT}
+\end{script}
+}}
+\\
+\noindent In the following I will provide commented examples of the different parts of a standard \bftt{configure.ac} file, a complete file can be found in appendix [App.~\ref{configall}]. 
+\clearpage
+
+\subsection{Initialization}
+\label{cinit}
+
+The \bftt{configure.ac} always start with a mandatory \bftt{AC\_INIT} instruction. \\[0.25cm]
+Everything before \bftt{AC\_INIT} is optional. \\[0.25cm]
+A detailed example is provided thereafter to initialize your \bftt{configure.ac} file:
+{\footnotesize{
+\begin{script}
+\dnl{Ensure to use a minimum version of Autoconf:}
+\confb{AC\_PREREQ}{\red{2.59}}
+
+\dnl{Defining local variables for major, minor and patch version(s) of the program:}
+m4\_define(\bftt{major\_version}, \red{1})
+m4\_define(\bftt{minor\_version}, \red{2})
+m4\_define(\bftt{patch\_version}, \red{12})
+\dnl{Defining local variable for the global version of the program:}
+m4\_define(\bftt{version}, \bftt{major\_version}\rtt{.}\bftt{minor\_version}\rtt{.}\bftt{patch\_version})
+\dnl{Defining local variable for the bug report email:}
+m4\_define(\bftt{bug\_email}, \red{\email})
+\dnl{Defining local variable for the name of the tarball:}
+m4\_define(\bftt{tar\_name}, \red{program})
+\dnl{Defining local variable for the project URL:}
+m4\_define(\bftt{project\_url}, \red{https://www.program.com})
+
+\dnl{AC\_INIT: performs initialization and verification.}
+\dnl{This will define number of variables used afterwards:}
+\dnl{\tabul AC\_PACKAGE\_NAME}
+\dnl{\tabul AC\_PACKAGE\_VERSION}
+\dnl{\tabul AC\_PACKAGE\_BUGREPORT}
+\dnl{\tabul AC\_PACKAGE\_TARNAME}
+\dnl{\tabul AC\_PACKAGE\_URL}
+\confb{AC\_INIT}{\cstr{\bftt{prog}}, \cstr{\bftt{version}}, \cstr{\bftt{bug\_email}}, \cstr{\bftt{tar\_name}}, \cstr{\bftt{project\_url}}}
+
+\dnl{AM\_INIT\_AUTOMAKE: initializes the Automake build system}
+\dnl{It will set up the build environment, using all previously defined variables:}
+\confa{AM\_INIT\_AUTOMAKE}
+
+\dnl{Defining pre-processor variables for program version(s), major, minor and patch:}
+\dnl{\tabul AC\_DEFINE([VAR\_NAME], [VALUE], [String])}
+\dnl{Then replace all instances of VAR\_NAME in the output file(s) by VALUE}
+\dnl{\tabul AC\_SUBST(VAR\_NAME, [VALUE])}
+\confb{AC\_DEFINE}{MAJOR\_VERSION, \bftt{major\_version}, \cstr{Program major version}}
+\confb{AC\_SUBST}{MAJOR\_VERSION, \bftt{major\_version}}
+\confb{AC\_DEFINE}{MINOR\_VERSION, \bftt{minor\_version}, \cstr{Program minor version}}
+\confb{AC\_SUBST}{MINOR\_VERSION, \bftt{minor\_version}}
+\confb{AC\_DEFINE}{PATCH\_VERSION, \bftt{patch\_version}, \cstr{Program patch version}}
+\confb{AC\_SUBST}{PATCH\_VERSION, \bftt{patch\_version}}
+\end{script}
+}}
+
+\subsection{Checking for program(s)}
+\label{cprog}
+
+At some point you will need to check for the required tools and libraries. 
+The easiest way to do this is by using the \bftt{AC\_CHECK\_*} macros provided by GNU autotools. \\[0.25cm]
+The most convenient way to check for library/libraries is to use the command \bftt{pkg-config}, however you need
+to make sure that this command is available on the target system, and therefore you need to check if the program 
+\bftt{pkg-config} has been installed: 
+{\footnotesize{
+\begin{script}
+\dnl{This will check that \bftt{program} is installed.}
+\dnl{It will also set the \bftt{variable} to the path of the \bftt{program} executable.}
+\dnl{\tabul AC\_CHECK\_PROG ([variable], [program], [text-if-found], [text-if-not-found])}
+\confb{AC\_CHECK\_PROG}{[PKG\_CONFIG], [pkg-config], [yes], [no])}
+\dnl{Checking for utilities need for Freedesktop Linux integration, see [Sec. \ref{rpmpost}]:}
+\confb{AC\_CHECK\_PROG}{[UP\_MIME], [update-mime-database], [yes], [no]}
+\confb{AC\_CHECK\_PROG}{[UP\_DESKTOP], [update-desktop-database], [yes], [no]}
+\confb{AC\_CHECK\_PROG}{[UP\_APPSTREAM], [appstream-util], [yes], [no]}
+\end{script}
+}}
+\vspace{-1cm}
+\subsection{Checking for compiler(s)}
+\label{ccomp}
+
+The following examples illustrate how to check if: 
+\begin{itemize}
+\item User defined compilers flags are suitable to build the program:
+\vspace{-0.25cm}
+{\footnotesize{
+\begin{scripti}
+\dnl{Compiler(s) flags checking}
+\dnl{For some reason the AX\_CHECK\_COMPILER\_FLAGS is broken}
+\dnl{It is required to use this piece of code to define a proper test function:}
+\confb{AC\_DEFUN}{[AX\_CHECK\_COMPILER\_FLAGS],
+\tabul [AC\_PREREQ(\red{2.59}) \dnl{for \_AC\_LANG\_PREFIX}
+\tabul AC\_MSG\_CHECKING([whether \_AC\_LANG compiler accepts \$1])
+\tabul \confb{AS\_LITERAL\_IF}{[\$1],
+\tabul\tabul [AC\_CACHE\_VAL(AS\_TR\_SH(ax\_cv\_[]\_AC\_LANG\_ABBREV[]\_flags\_\$1), [
+\tabul\tabul\tabul ax\_save\_FLAGS=\$[]\_AC\_LANG\_PREFIX[]FLAGS
+\tabul\tabul\tabul \_AC\_LANG\_PREFIX[]FLAGS="\$1"
+\tabul\tabul\tabul C\_COMPILE\_IFELSE([AC\_LANG\_PROGRAM()],
+\tabul\tabul\tabul AS\_TR\_SH(ax\_cv\_[]\_AC\_LANG\_ABBREV[]\_flags\_\$1)=yes,
+\tabul\tabul\tabul AS\_TR\_SH(ax\_cv\_[]\_AC\_LANG\_ABBREV[]\_flags\_\$1)=no)
+\tabul\tabul \_AC\_LANG\_PREFIX[]FLAGS=\$ax\_save\_FLAGS])],
+\tabul\tabul [ax\_save\_FLAGS=\${[]\_AC\_LANG\_PREFIX[]FLAGS}
+\tabul\tabul \_AC\_LANG\_PREFIX[]FLAGS="\$1"
+\tabul\tabul AC\_COMPILE\_IFELSE([AC\_LANG\_PROGRAM()],
+\tabul\tabul\tabul eval AS\_TR\_SH(ax\_cv\_[]\_AC\_LANG\_ABBREV[]\_flags\_\$1)=yes,
+\tabul\tabul\tabul eval AS\_TR\_SH(ax\_cv\_[]\_AC\_LANG\_ABBREV[]\_flags\_\$1)=no)
+\tabul\tabul \_AC\_LANG\_PREFIX[]FLAGS=\$ax\_save\_FLAGS]}
+\tabul eval ax\_check\_compiler\_flags=\${AS\_TR\_SH}(ax\_cv\_[]\_AC\_LANG\_ABBREV[]\_flags\_\$1)
+\tabul AC\_MSG\_RESULT(\$ax\_check\_compiler\_flags)
+\tabul if test "x\$ax\_check\_compiler\_flags" = xyes; then
+\tabul\tabul m4\_default([\$2], :)
+\tabul else
+\tabul\tabul m4\_default([\$3], :)
+\tabul fi
+]}
+\end{scripti}
+}}
+\item Required compiler(s) to build the program can be found in the system:
+{\footnotesize{
+\begin{scripti}
+\dnl{Searching for a working C compiler:}
+\confa{AC\_PROG\_CC}
+\dnl{Checking for C FLAGS, provided on the configure line, ex: CFLAGS="-O3"}
+\confb{AX\_CHECK\_COMPILER\_FLAGS}{\cstr{\red{\${CFLAGS}}}}
+
+\dnl{Checking for a working Fortran 90 compiler}
+\dnl{Ensuring C and F90 function names compatibility:}
+\confa{AC\_FC\_WRAPPERS}
+\dnl{Switching to Fortran language:}
+\confb{AC\_LANG\_PUSH}{\cstr{Fortran}}
+\dnl{Searching for a Fortran 90 compiler:}
+\dnl{\tabul AC\_PROG\_FC (\cstr{compiler-search-list}, \cstr{dialect})}
+\confb{AC\_PROG\_FC}{\cstr{xlf95 fort ifort ifc f95 g95 pgf95 lf95 xlf90 f90 pgf90 gfortran}, 
+             \cstr{90}}
+\dnl{Specify the Fortran file(s) extension(s) for the compiling test:}
+\confb{AC\_FC\_SRCEXT}{f90, FCFLAGS\_f90="\${FCFLAGS\_f90} \${FCFLAGS}",
+                AC\_MSG\_ERROR(\cstr{Err. comp. .f90})}
+\confb{AC\_FC\_SRCEXT}{F90, FCFLAGS\_F90="\${FCFLAGS\_F90} \${FCFLAGS}", 
+                AC\_MSG\_ERROR(\cstr{Err. comp. .F90})}
+\dnl{Checking for Fortran 90 FLAGS, provided on the configure line, ex: FCFLAGS="-O3"}
+\confb{AX\_CHECK\_COMPILER\_FLAGS}{\cstr{\red{\${FCFLAGS}}}}
+\dnl{Find required linker Fortran flags:}
+\confa{AC\_FC\_LIBRARY\_LDFLAGS}
+\dnl{Ensure that Free form Fortran is allowed in the code:}
+\confa{AC\_FC\_FREEFORM}
+\dnl{Leaving Fortran language:}
+\confb{AC\_LANG\_POP}{\cstr{Fortran}}
+\end{scripti}
+}}
+\end{itemize}
+
+\subsection{Checking for libraries}
+\label{clibs}
+
+The easiest way to do this is to use \href{https://en.wikipedia.org/wiki/Pkg-config}{\bftt{pkg-config}}. \\
+\bftt{pkg-config} defines and supports a unified interface for querying installed libraries for the purpose of compiling software that depends on them. 
+It allows programmers and installation scripts to work without explicit knowledge of detailed library path information.\\ 
+To check the libraries installed on your system, and handled by \bftt{pkg-config}, use: 
+\begin{script}
+\fprompt{~} pkg-config --list-all
+\end{script}
+\clearpage
+\noindent With the list of libraries installed and the associated keywords, it is easy to prepare the testing:
+{\footnotesize{
+\begin{script}
+\dnl{To check if a library is present use the command:}
+\dnl{\tabul PKG\_CHECK\_MODULES(\rtt{Name}, [\bftt{keyword} optionally version required])}
+\dnl{It calls \bftt{pkg-config} to check for the libraries mentioned using \bftt{keyword}}
+\dnl{\rtt{Name} is a keyword used to construct variables related to designated library.}
+\dnl{Ex:}
+\dnl{\tabul PKG\_CHECK\_MODULES(GTK, [gtk4 >= 4.60])}
+\dnl{\tabul Will create a GTK\_LIBS variable to store the GTK linker flags}
+\dnl{\tabul You can then re-use theses variables later on, in particular in \bftt{Makefile.am}}
+
+\dnl{Checking for gtk+-3.0, version must be >= 3.16:}
+\confb{PKG\_CHECK\_MODULES}{\rtt{GTK}, \cstr{\bftt{gtk+-3.0} >= 3.16}}
+\dnl{PKG\_CHECK\_MODULES(GTK, [gtk4 >= 4.60])}
+
+\dnl{Checking for libxml-2.0, version must be > 2.4.0:}
+\confb{PKG\_CHECK\_MODULES}{\rtt{LIBXML2}, \cstr{\bftt{libxml-2.0} >= 2.4.0}}
+
+\dnl{Checking for libavcodec, and other FFMPEG based libraries, no version requirement:}
+\confb{PKG\_CHECK\_MODULES}{\rtt{FFMPEG}, \cstr{\bftt{libavcodec libavformat libavutil libswscale}}}
+
+\dnl{Checking for glu, no version requirement:}
+\confb{PKG\_CHECK\_MODULES}{\rtt{GLU}, \cstr{\bftt{glu}}}
+
+\dnl{Checking for epoxy, no version requirement:}
+\confb{PKG\_CHECK\_MODULES}{\rtt{EPOXY}, \cstr{\bftt{epoxy}}}
+\end{script}
+}}
+\\
+\noindent As you can understand from this example the testing could actually be performed on a single line for all libraries. 
+However I would recommend to split the test in as many libraries as required. \\[0.25cm]
+When running the \bftt{configure} script to perform the testing the standard output is:
+{\footnotesize{
+\begin{script}
+checking for \rtt{Name}... \cstr{\btt{yes} or \btt{no}}
+\end{script}
+}}
+\\
+\noindent Separate checking allows to obtain direct information on the issue without opening the \bftt{config.log} (very detailed output of the configure process) 
+file that contains more details about the process. 
+
+\clearpage
+\subsection{Checking for MS Windows}
+
+\red{It is unlikely that this section will remain in the final document} \\[0.25cm]
+Finally it might be required to test for the operating system:
+
+{\footnotesize{
+\begin{script}
+\dnl{Checking for MS Windows}
+
+case \${host} in
+  *mingw* | pw32* | cygwin*)
+    platform\_win32=yes
+    echo "Building win32 application"
+    ;;
+  *)
+    platform\_win32=no
+    ;;
+esac
+\confb{AM\_CONDITIONAL}{PLATFORM\_WIN32, test x"\${platform\_win32}" = "xyes"}
+
+case \${host} in
+  *mingw*)
+    native\_win32=yes
+    echo "Building native win32 application"
+    ;;
+  *)
+    native\_win32=no
+    ;;
+esac
+\confb{AM\_CONDITIONAL}{NATIVE\_WIN32, test x"\${native\_win32}" = "xyes"}
+
+if test "\${native\_win32} = "yes"; then
+  \confb{AC\_CHECK\_TOOL}{WINDRES, windres, no}
+  if test "\${WINDRES}" = no; then
+    \confb{AC\_MSG\_ERROR}{\cstr{*** Could not find an implementation of windres in your PATH.}}
+  fi
+fi
+\end{script}
+}}
+
+\clearpage
+
+\subsection{Finalization}
+\label{cfinal}
+
+The \bftt{configure.ac} always end with a mandatory \bftt{AC\_OUTPUT} instruction:
+{\footnotesize{
+\begin{script}
+\dnl{Where to look for \bftt{Makefile.am} file(s) and generate \bftt{Makefile}(s)}
+\confb{AC\_CONFIG\_FILES}{\cstr{
+  \red{Makefile
+  src/Makefile}
+}}
+
+\dnl{AC\_CONFIG\_HEADERS: optional, tells AC\_OUTPUT to creates a preprocessor header.}
+\dnl{This header will includes a list of all the variables defined at this stage.}
+\dnl{This allows to call these variables in your code using '#include <config.h>'}
+\confb{AC\_CONFIG\_HEADERS}{[config.h]}
+
+\dnl{Last instruction in the script}
+\confa{AC\_OUTPUT}
+\end{script}
+}}
+
+\clearpage
+\vspace{-1cm}
+\section{The file(s): \bftt{Makefile.am}}
+
+Let us consider the following example:
+{\footnotesize{
+\begin{script}
+\fprompt{~/program} ls -lh
+-rw-r--r--. 1 user group  481 24 mars  11:24 AUTHORS
+-rw-r--r--. 1 user group 2,8K 24 mars  11:24 ChangeLog
+-rw-r--r--. 1 user group 3,6K 24 mars  11:24 \bftt{configure.ac}
+-rw-r--r--. 1 user group  34K 24 mars  11:24 COPYING
+drwxr-xr-x. 2 user group 4,0K 24 mars  11:24 \btt{data}
+-rw-r--r--. 1 user group  16K 24 mars  11:24 INSTALL
+-rw-r--r--. 1 user group 4,0K 24 mars  11:24 \bftt{Makefile.am}
+drwxr-xr-x. 2 user group 4,0K 24 mars  11:24 \btt{metadata}
+-rw-r--r--. 1 user group  247 24 mars  11:24 NEWS
+drwxr-xr-x. 4 user group 4,0K 24 mars  11:24 \btt{pixmaps}
+-rw-r--r--. 1 user group 4,8K 24 mars  11:24 README
+drwxr-xr-x. 2 user group 4,0K 24 mars  11:24 \btt{src}
+\end{script}
+}}
+\vspace{-0.25cm}
+\\
+\noindent The top directory contains 4 subfolders:
+\begin{itemize}
+\item \bftt{src}:
+{\footnotesize{
+\begin{scripti}
+\fprompt{~/program} ls -lh src
+-rw-r--r--. 1 user group 13K 24 mars  11:24 file-1.f90
+-rw-r--r--. 1 user group 13K 24 mars  11:24 file-2.f90
+-rw-r--r--. 1 user group 13K 24 mars  11:24 gui.c
+-rw-r--r--. 1 user group 13K 24 mars  11:24 main.c
+-rw-r--r--. 1 user group 13K 24 mars  11:24 \bftt{Makefile.am}
+-rw-r--r--. 1 user group 13K 24 mars  11:24 mod.f90
+\end{scripti}
+}}
+\vspace{-0.75cm} \item \bftt{data}:
+{\footnotesize{
+\begin{scripti}
+\fprompt{~/program} ls -lh data
+-rw-r--r--. 1 user group 0 24 mars  11:24 file-1.dat
+-rw-r--r--. 1 user group 0 24 mars  11:24 file-2.dat
+\end{scripti}
+}}
+\vspace{-0.75cm}
+\item \bftt{pixmaps}:
+{\footnotesize{
+\begin{scripti}
+\fprompt{~/program} ls -lh pixmaps/*
+-rw-r--r--. 1 user group 5K 24 mars  11:24 pixmaps/pix-3.dat
+
+pixmaps/\btt{pix-1}:
+-rw-r--r--. 1 user group 5K 24 mars  11:24 pix-1-a.dat
+-rw-r--r--. 1 user group 5K 24 mars  11:24 pix-1-b.dat
+
+pixmaps/\btt{pix-2}:
+-rw-r--r--. 1 user group 5K 24 mars  11:24 pix-2-a.dat
+-rw-r--r--. 1 user group 5K 24 mars  11:24 pix-2-b.dat
+\end{scripti}
+}}
+\vspace{-0.75cm} \item \bftt{metadata} (this is used for Freedesktop integration, see [Sec.~\ref{rpmpost}]):
+{\footnotesize{
+\begin{scripti}
+\fprompt{~/program} ls -lh metadata
+-rw-r--r--. 1 user group 0 24 mars  11:24 com.program.www.appdata.xml
+-rw-r--r--. 1 user group 0 24 mars  11:24 program.desktop
+-rw-r--r--. 1 user group 0 24 mars  11:24 program-mime.xml
+
+metadata/\btt{icons}:
+-rw-r--r--. 1 user group 0 24 mars  11:24 program.svg
+-rw-r--r--. 1 user group 0 24 mars  11:24 program-project.svg
+-rw-r--r--. 1 user group 0 24 mars  11:24 program-workspace.svg
+\end{scripti}
+}}
+\end{itemize}
+\vspace{-0.5cm}
+First it is required to edit both \bftt{Makefile.am} and \bftt{src/Makefile.am} to define how to install and build the project. \\[0.25cm] 
+In this case:
+\begin{itemize}
+\item The \bftt{Makefile.am} (in the top directory) will:
+\begin{itemize}
+\item Reference and call the \bftt{src/Makefile.am}, see [Sec.~\ref{mainit}].
+\item Contain install instructions for the documentation, see [Sec.~\ref{idmd}].
+\item Contain install instructions for the manual pages, see [Sec.~\ref{idmd}].
+\item Contain install instructions for architecture independent data, see [Sec.~\ref{iaid}].
+\item Contain uninstall instructions for all of the above, see [Sec.~\ref{mauninst}].
+\end{itemize}
+\item The \bftt{src/Makefile.am} (in the \bftt{src} directory) will:
+\begin{itemize}
+\item Contain install instructions for the architecture dependent file(s), see [Sec.~\ref{srcmake}].
+\item Contain everything needed to build the program from the sources, see [Sec.~\ref{srcmake}].
+\end{itemize}
+\end{itemize}
+To understand how a program is built using GNU Make give a look to all \btt{Makefile.am}. \\[0.25cm]
+Basically the 2 most important types of instructions in a \btt{Makefile.am} file are:
+\begin{itemize}
+\item Target(s) that determine the action(s) to be performed when you run the \bftt{make} command. \\
+Targets are defined using the syntax\quad "\bftt{target\_name}\rtt{:}"\quad example:
+\begin{scripti}
+\rtt{clean:}
+\end{scripti}
+\item Variable(s) that allow you to define and reuse values throughout the process. \\
+Variables are defined using the syntax\quad"\bftt{variable\_name \rtt{=}}"\quad example:
+\begin{scripti}
+\dgtt{SUBDIRS = }
+\end{scripti}
+\end{itemize}
+
+\clearpage
+\subsection{Top directory {\bftt{Makefile.am}}}
+
+\subsubsection{Initialization}
+\label{mainit}
+
+\vspace{-0.5cm}
+{\footnotesize{
+\begin{script}
+\comm{Some variables are predefined, built automatically by the GNU automation tools:}
+\comm{\btt{srcdir} the GNU tarball top directory}
+\comm{\btt{datadir} the installation directory, often: /usr/share}
+\comm{\btt{docdir} the target system documentation directory, often: /usr/share/doc}
+\comm{\btt{mandir} the target system man pages directory, often: /usr/share/man}
+\comm{\btt{bindir} the target system binary directory, often: /usr/bin}
+\comm{\btt{pkgdatadir} the program installation directory, usually named after it, ex: program}
+
+\comm{\btt{DESTDIR} root directory of installation use for packaging (RPM or DEB).}
+\comm{Empty by default, \rtt{must} be used to construct all path variables for packaging.}
+\comm{Considering that our purpose is to do just that, we will prepare it now:}
+
+\dgtt{prog\_datadir} = \var{\$(DESTDIR)\$(datadir)}
+\dgtt{prog\_docdir} = \var{\$(DESTDIR)\$(docdir)}
+\dgtt{prog\_mandir} = \var{\$(DESTDIR)\$(mandir)}
+\dgtt{prog\_pkgdatadir} = \var{\$(DESTDIR)\$(pkgdatadir)}
+\dgtt{prog\_desktopdir} = \var{\$(prog\_pkgdatadir)}/applications
+\dgtt{prog\_metadir} = \var{\$(prog\_pkgdatadir)}/metainfo
+\dgtt{prog\_iconsdir} = \var{\$(prog\_pkgdatadir)}/pixmaps
+\dgtt{prog\_mimedir} = \var{\$(prog\_pkgdatadir)}/mime/packages
+
+\comm{Subdirectory(ies) that might contain others \bftt{Makefile.am} files to be processed}
+\comm{SUBDIRS = dir1 dir2 dir3 ...}
+\comm{In this example there is one more \bftt{Makefile.am} file to be processed: \btt{src/Makefile.am}}
+\dgtt{SUBDIRS} = src
+\end{script}
+}}
+
+\clearpage
+\subsubsection{Installing documentation and manual pages data}
+\label{idmd}
+
+\vspace{-0.5cm}
+{\footnotesize{
+\begin{script}
+\comm{If required specify the directory for the documentation, using the naming convention:}
+\comm{\tabul program\rtt{\_docdir}}
+\comm{Where only the suffix \rtt{\_docdir} does matter, and the \bftt{DESDIR} variable is not used:}
+\dgtt{prog\_docdir} = \var{\$(docdir)}
+\comm{And the data to be installed, using the naming convention:}
+\comm{\tabul program\rtt{\_doc\_DATA}}
+\comm{Where only the suffix \rtt{\_doc\_DATA} does matter.}
+\dgtt{prog\_doc\_DATA} = \textbackslash
+\tabul README.md \textbackslash
+\tabul AUTHORS \textbackslash
+\tabul ChangeLog
+
+\comm{If required specify the directory for the manual page(s), using the naming convention:}
+\comm{\tabul program\rtt{\_mandir}}
+\comm{Where only the suffix \rtt{\_mandir} does matter, and the \bftt{DESDIR} variable is not used:}
+\comm{And the manual page(s) data to be installed, using the naming convention:}
+\dgtt{prog\_mandir} = \var{\$(mandir)}/man1/
+\comm{Note the \bftt{man1} directory is dedicated to manual pages for applications.}
+\comm{You will need to adapt this if your distribution a library, or else.}
+\comm{And the data to be installed, using the naming convention:}
+\comm{\tabul program\rtt{\_man\_DATA}}
+\comm{Where only the suffix \rtt{\_man\_DATA} does matter.}
+\dgtt{prog\_man\_DATA} = \textbackslash
+\tabul program.1.gz 
+\end{script}
+}}
+
+\clearpage
+\subsubsection{Installing architecture independent data}
+\label{iaid}
+{\tiny{
+\begin{script}
+\comm{To install architecture independent file(s) use the \btt{install-data-local} target:}
+\rtt{install-data-local:}
+
+\comm{Example with the installation of the files located in the 'data' directory in the tarball}
+\comm{The files are to be installed in \var{\$(pkgdatadir)}/data}
+\comm{In the following the instructions:}
+\comm{\tabul 'test -d' means 'exists and is a directory'}
+\comm{\tabul 'test -f' means 'exists and is a file'}
+\tabul if test -d \var{\$(srcdir)}/data; then \textbackslash
+\tabul \tabul \var{\$(mkinstalldirs) \$(prog\_pkgdatadir)}/data; \textbackslash
+\tabul \tabul for data in \var{\$(srcdir)}/data/*; do \textbackslash
+\tabul \tabul \tabul if test -f \var{\$\$ data}; then \textbackslash
+\tabul \tabul \tabul \tabul \var{\$(INSTALL\_DATA) \${data} \$(prog\_pkgdatadir)}/data; \textbackslash
+\tabul \tabul \tabul fi \textbackslash
+\tabul \tabul done \textbackslash
+\tabul fi
+
+\comm{If the files to be installed are located in a directory tree,}
+\comm{then it is required to re-create this directory tree at install.}
+\comm{Examples with files located in the 'pixmaps' directory in the tarball}
+\tabul if test -d \var{\$(srcdir)}/pixmaps; then \textbackslash
+\tabul \tabul \var{\$(mkinstalldirs) \$(prog\_pkgdatadir)}/pixmaps; \textbackslash
+\tabul \tabul for pixmap in \var{\$(srcdir)}/pixmaps/*; do \textbackslash
+\tabul \tabul \tabul if test -f \var{\$\${pixmap}}; then \textbackslash
+\tabul \tabul \tabul \tabul \var{\$(INSTALL\_DATA) \$\${pixmap} \$(prog\_pkgdatadir)}/pixmaps; \textbackslash
+\tabul \tabul \tabul else \textbackslash
+\tabul \tabul \tabul \tabul \var{\$(mkinstalldirs) \$(prog\_pkgdatadir)/\$\${pixmap}}	; \textbackslash
+\tabul \tabul \tabul \tabul for pixma in \var{\$\${pixmap}}/*; do \textbackslash
+\tabul \tabul \tabul \tabul \tabul if test -f \var{\$\${pixma}}; then \textbackslash
+\tabul \tabul \tabul \tabul \tabul \tabul \var{\$(INSTALL\_DATA) \$\${pixma} \$(prog\_pkgdatadir)/\$\${pixmap}}; \textbackslash
+\tabul \tabul \tabul \tabul \tabul fi \textbackslash
+\tabul \tabul \tabul \tabul done \textbackslash
+\tabul \tabul \tabul fi \textbackslash
+\tabul \tabul done \textbackslash
+\tabul fi
+
+\comm{Program's icons}
+\tabul if [ ! -d \var{\$(prog\_iconsdir)} ]; then \textbackslash
+\tabul \tabul \var{\$(mkinstalldirs)} \var{\$(prog\_iconsdir)}; \textbackslash
+\tabul fi
+\tabul \var{\$(INSTALL\_DATA) \$(srcdir)}/metadata/icons/program.svg \var{\$(prog\_iconsdir)}
+\tabul \var{\$(INSTALL\_DATA) \$(srcdir)}/metadata/icons/program-project.svg \var{\$(prog\_iconsdir)}
+\tabul \var{\$(INSTALL\_DATA) \$(srcdir)}/metadata/icons/program-workspace.svg \var{\$(prog\_iconsdir)}
+\comm{Custom MIME type}
+\tabul if [ ! -d \var{\$(prog\_mimedir)} ]; then \textbackslash
+\tabul \tabul \var{\$(mkinstalldirs)} \var{\$(prog\_mimedir)}; \textbackslash
+\tabul fi
+\tabul \var{\$(INSTALL\_DATA) \$(srcdir)}/metadata/mime/program-mime.xml \var{\$(prog\_mimedir)}
+\comm{Meta info, the following instructions are required for Freedekstop integration, see [Sec. \ref{rpmpost}].}
+\tabul if [ ! -d \var{\$(prog\_metadir)} ]; then \textbackslash
+\tabul \tabul mkdir -p \var{\$(prog\_metadir)}; \textbackslash
+\tabul fi
+\tabul \var{\$(INSTALL\_DATA) \$(srcdir)}/metadata/com.program.www.appdata.xml \var{\$(prog\_metadir)}
+\comm{Desktop file, the following instructions are required for Freedesktop integration, see [Sec. \ref{rpmpost}].}
+\tabul if [ ! -d \var{\$(prog\_desktopdir)} ]; then \textbackslash
+\tabul \tabul mkdir -p \var{\$(prog\_desktopdir)}; \textbackslash
+\tabul fi
+\comm{Finalize the Freedesktop integration:}
+\tabul appstream-util validate-relax --nonet \var{\$(prog\_metadir)}/com.program.www.appdata.xml
+\tabul desktop-file-install --vendor="" \textbackslash
+\tabul \tabul --dir=\var{\$(prog\_desktopdir)} -m 644 \textbackslash
+\tabul \tabul \var{\$(prog\_desktopdir)}/program.desktop
+\tabul touch --no-create \var{\$(prog\_iconsdir)}
+\tabul if [ -u `which gtk-update-icon-cache` ]; then \textbackslash
+\tabul \tabul gtk-update-icon-cache -q \var{\$(prog\_iconsdir)}; \textbackslash
+\tabul fi
+\comm{If this is a built from sources not to build a package we need to update desktop and MIME databases:}
+\tabul if [ -z "\var{\$(DESTDIR)}" ]; then \textbackslash
+\tabul \tabul update-desktop-database \var{\$(prog\_desktopdir)} &> /dev/null || :; \textbackslash
+\tabul \tabul update-mime-database \var{\$(prog\_datadir)}/mime &> /dev/null || :; \textbackslash
+\tabul fi
+\end{script}
+}}
+
+\clearpage
+\subsubsection{Uninstall section}
+\label{mauninst}
+
+{\footnotesize{
+\begin{script}
+\comm{This section should regroup all uninstall instructions:}
+\comm{- Files or directories created installing architecture independent file(s):}
+\comm{\tabul - Using the \bftt{install-data-local} target.} 
+\comm{\tabul - Using documentation or manual pages.}
+\comm{\tabul - Using custom user-designed target(s).}
+\rtt{uninstall-local:}
+\tabul -rm -rf \var{\$(prog\_pkgdatadir)}/data/*
+\tabul -rmdir \var{\$(prog\_pkgdatadir)}/data
+\tabul -rm -rf \var{\$(prog\_pkgdatadir)}/pixmaps/*
+\tabul -rmdir \var{\$(prog\_pkgdatadir)}/pixmaps
+\tabul -rm -rf \var{\$(prog\_pkgdatadir)}/pixmaps/*
+\tabul -rmdir \var{\$(prog\_pkgdatadir)}
+\tabul -rmdir \var{\$(prog\_docdir)}
+\tabul -rm -rf \var{\$(prog\_iconsdir)}/program.svg
+\tabul -rm -rf \var{\$(prog\_iconsdir)}/program-project.svg
+\tabul -rm -rf \var{\$(prog\_iconsdir)}/program-workspace.svg
+\tabul -rm -f \var{\$(prog\_desktopdir)}/program.desktop
+\tabul -rm -f \var{\$(prog\_metadir)}/com.program.www.appdata.xml
+\tabul -rm -f \var{\$(prog\_mimedir)}/packages/program-mime.xml
+\tabul touch --no-create \var{\$(prog\_iconsdir)}
+\tabul if [ -u `which gtk-update-icon-cache` ]; then \textbackslash
+\tabul   gtk-update-icon-cache -q \var{\$(prog\_iconsdir)}; \textbackslash
+\tabul fi
+\comm{If this is a built from sources not to build a package,}
+\comm{then we need to update desktop and MIME databases:}
+\tabul if [ -z "\var{\$(DESTDIR)}" ]; then \textbackslash
+\tabul \tabul update-desktop-database \var{\$(prog\_desktopdir)} &> /dev/null || :; \textbackslash
+\tabul \tabul update-mime-database \var{\$(prog\_datadir)}/mime &> /dev/null || :; \textbackslash
+\tabul fi
+\end{script}
+}}
+\\
+\noindent In both sections [Sec.~\ref{iaid}~and~\ref{mauninst}] files located in the folder "\bftt{metadata}" are introduced.
+These files ("\bftt{*.xml}", "\bftt{*.desktop}", "\bftt{*.svg}") are required to integrate properly you program with the Linux ecosystem:
+\begin{itemize}
+\item \bftt{program-mime.xml}: use to create the file association with your program, so that a specific icon is used, and that this type of file is to be open using your program, see [Sec.~\ref{rpmpost}] for more information. 
+\item \bftt{com.program.www.appdata.xml}: metadata about your program, use for instance to integrate the software manager with proper information, see [Sec.~\ref{rpmpost}] for more information.
+\item \bftt{program.desktop}: the desktop icon for your program, use to create launchers, menus ... see [Sec.~\ref{rpmpost}] for more information.
+\item \bftt{*.svg}: the icons for the program and the associated file formats.
+\end{itemize}
+
+\clearpage
+
+\subsection{\bftt{src/Makefile.am}}
+\label{srcmake}
+
+\vspace{-0.5cm}
+{\scriptsize{
+\begin{script}
+\comm{Setup the name of the program to be generated, using:}
+\comm{\tabul\ bin\_PROGRAMS = \bftt{name}}
+\comm{This instruction also defines the install instruction for the architecture dependent binary file,}
+\comm{that instruction being to install \bftt{name} in \bftt{\$(bindir)}}
+\bad{bin\_PROGRAMS} = \rtt{prog}
+\comm{Other architecture dependent file(s) can be installed using the \btt{install-exec-local:} target.}
+
+\comm{In the following you need to specify the flags used during the compilation process.}
+\comm{To do that simply use the variables that will created by the \bftt{configure} script.}
+\comm{Appropriate variables are created for each library searched for by a \rtt{Name} specified in the \bftt{configure.ac}}
+\comm{Variables are constructed using the \rtt{Name\_} prefix, as in the example:}
+\comm{\tabul - In \bftt{configure.ac}: PKG\_CHECK\_MODULES(\rtt{GTK}, [gtk+-3.0 >= 3.16])}
+\comm{\tabul - Creates and setup the following variables to store flags: GTK\_LIBS, GTK\_CFLAGS}
+
+\comm{It is mandatory to declare to the linker the libraries to link the program with, using:}
+\comm{\tabul \bftt{name}\_LDADD = \$(lib1\_LIBS) \$(lib2\_LIBS)  ...}
+\comm{Where \bftt{lib1}, \bftt{lib2}, etc, match a \rtt{Name} specified in the \bftt{configure.ac}:}
+\dgtt{prog\_LDADD} = \var{\$(GTK\_LIBS) \$(LIBXML2\_LIBS) \$(PANGOFT2\_LIBS) \$(FFMPEG\_LIBS) \$(GLU\_LIBS) \$(EPOXY\_LIBS)}
+
+\comm{Create a variable to store the CFLAGS for all the required libraries:}
+\dgtt{LIB\_CFLAGS} = \var{\$(GTK\_CFLAGS) \$(LIBXML2\_CFLAGS) \$(PANGOFT2\_CFLAGS) \$(FFMPEG\_CFLAGS) \$(GLU\_CFLAGS) \$(EPOXY\_CFLAGS)}
+
+\comm{You can use custom flags as well, example with OpenMP:}
+\dgtt{OpenMP\_FLAGS} = -DOPENMP -fopenmp
+\comm{In this case to build an OpenMP version of the program:}
+\comm{\tabul- Use a custom flag 'OPENMP', that activates some parts of the code.}
+\comm{\tabul- Use the '-fopenmp' standard flag to activate OpenMP during compilation time.}
+
+\comm{You can add custom compilation flags to the one already provided by the configure script:}
+
+\comm{Use \bftt{AM\_LDFLAGS} to define additional linker flags:}
+\dgtt{AM\_LDFLAGS} = \var{\$(OpenMP\_FLAGS)}
+
+\comm{Use \bftt{AM\_CPPFLAGS} to define additional preprocessor flags:}
+\dgtt{AM\_CPPFLAGS} = \var{\$(OpenMP\_FLAGS)}
+
+\comm{Use \bftt{AM\_FFLAGS} to define additional Fortran 90 flags:}
+\dgtt{AM\_FFLAGS} = \var{\$(OpenMP\_FLAGS)}
+
+\comm{Use \bftt{AM\_CFLAGS} to define additional C flags, in particular library flags:}
+\dgtt{AM\_CFLAGS} = -DGDK\_DISABLE\_DEPRECATED \var{\$(OpenMP\_CFLAGS) \bftt{\$(LIB\_CFLAGS)}}
+
+\comm{Then declare the sources to build the program:}
+
+\comm{Fortran source file(s)}
+\dgtt{prog\_fortran\_files} = file-1.f90 file-2.f90
+\comm{Fortran source module(s)}
+\dgtt{prog\_fortran\_modules} = mod.f90
+\comm{Rules to ensure that Fortran modules are compiled before Fortran files}
+\dgtt{prog\_fortran} = \var{\$(prog\_fortran\_modules) \$(prog\_fortran\_files)}
+\var{\$(patsubst \%.F90,\%.o,\$(prog\_fortran\_files)): \$(patsubst \%.F90,\%.o,\$(prog\_fortran\_modules))}
+
+\comm{C source file(s)}
+\dgtt{prog\_c} = main.c gui.c
+
+\comm{A target to deal with cleaning properly:}
+\rtt{clean:}
+\tabul -rm -f *.mod
+\tabul -rm -f */*.o
+
+\comm{The "\rtt{prog}\bftt{\_SOURCES}" instruction lists the files required to build the program:}
+\dgtt{prog\_SOURCES} = \var{\$(prog\_fortran)} \var{\$(prog\_c)}
+\end{script}
+}}
+
+\section{Using the GNU Autotools to build the GNU tarball}
+
+Now that all the files required to build the GNU tarball have been prepared, you simply need to prepare the \bftt{configure} script. 
+At this stage the it is mandatory to have the following files in the top directory of the project: 
+\begin{itemize}
+\item \bftt{configure.ac}
+\item \bftt{Makefile.am}
+\item \bftt{README}
+\item \bftt{INSTALL}
+\item \bftt{AUTHORS}
+\item \bftt{COPYING}
+\item \bftt{ChangeLog} 
+\item \bftt{NEWS}
+\end{itemize}
+Then providing that the file \bftt{configure.ac} and the file(s) \bftt{Makefile.am} have been created, 
+it is possible to build the GNU tarball in 4 steps: \\
+\begin{enumerate}
+\item Use \bftt{aclocal} to generate the macros required by the \bftt{configure.ac} script:
+{\footnotesize{
+\begin{scripti}
+\fprompt{~/program} \bftt{aclocal}
+\end{scripti}
+}}
+\item Use \bftt{autoheader} to generate the headers \bftt{.h.in} files using the \bftt{configure.ac} file:
+{\footnotesize{
+\begin{scripti}
+\fprompt{~/program} \bftt{autoheader}
+\end{scripti}
+}}
+\\
+\noindent The \bftt{configure} script will create the preprocessor headers as declared in the \bftt{configure.ac} file using the \bftt{AC\_CONFIG\_HEADERS()} instruction. 
+To achieve this it requires to work using pre-edited versions of the headers having the \bftt{.h.in} extension and created by \bftt{autoheader}.
+\newpage
+\item Use \bftt{autoconf} to generate the \bftt{configure} script using the \bftt{configure.ac} file:
+{\footnotesize{
+\begin{scripti}
+\fprompt{~/program} \bftt{autoconf}
+\end{scripti}
+}}
+%\vspace{-1cm}
+\item Use \bftt{automake} to generate the \bftt{Makefile.in} files, that are used to generate \bftt{Makefile} when the software package is configured, using the \bftt{Makefile.am} files:
+{\footnotesize{
+\begin{scripti}
+\fprompt{~/program} \bftt{automake --add-missing --copy}
+\end{scripti}
+}}
+\end{enumerate}
+\vspace{-0.5cm}
+When this is done the content of the project top directory looks like:
+{\footnotesize{
+\begin{script}
+\fprompt{~/program} ls -lh
+-rw-r--r--.  1 user group  54K 24 mars  17:28 aclocal.m4
+-rw-r--r--.  1 user group  481 24 mars  11:24 AUTHORS
+drwxr-xr-x.  2 user group 4,0K 24 mars  17:28 \btt{autom4te.cache}
+-rw-r--r--.  1 user group 2,8K 24 mars  11:24 ChangeLog
+lrwxrwxrwx.  1 user group   32 24 mars  17:24 \gtt{compile}
+lrwxrwxrwx.  1 user group   37 24 mars  17:24 \gtt{config.guess}
+lrwxrwxrwx.  1 user group   35 24 mars  17:24 \gtt{config.sub}
+-rwxr-xr-x.  1 user group 243K 24 mars  17:28 \gtt{configure}
+-rw-r--r--.  1 user group 3,6K 24 mars  11:24 configure.ac
+-rw-r--r--.  1 user group  34K 24 mars  11:24 COPYING
+drwxr-xr-x.  2 user group 4,0K 24 mars  11:24 \btt{data}
+lrwxrwxrwx.  1 user group   32 24 mars  17:24 \gtt{depcomp}
+-rw-r--r--.  1 user group  34K 24 mars  11:24 config.h.in
+-rw-r--r--.  1 user group  16K 24 mars  11:24 INSTALL
+lrwxrwxrwx.  1 user group   35 24 mars  17:24 \gtt{install-sh}
+-rw-r--r--.  1 user group 4,0K 24 mars  17:03 Makefile.am
+drwxr-xr-x.  2 user group 4,0K 24 mars  11:24 \btt{metadata}
+lrwxrwxrwx.  1 user group   32 24 mars  17:24 \gtt{missing}
+-rw-r--r--.  1 user group  247 24 mars  11:24 NEWS
+drwxr-xr-x.  4 user group 4,0K 24 mars  11:24 \btt{pixmaps}
+-rw-r--r--.  1 user group 4,8K 24 mars  11:24 README
+drwxr-xr-x.  2 user group 4,0K 24 mars  11:24 \btt{src}
+\end{script}
+}}
+And the project is ready to be archived, to create the GNU tarball:
+{\footnotesize{
+\begin{script}
+\fprompt{~/program} cd ..
+\fprompt{~} tar -zcf program.tar.gz program
+\comm{ \fprompt{~} tar -jcf program.tar.bz2 program}
+\end{script}
+}}
+To obtain a package for distribution:
+{\footnotesize{
+\begin{script}
+\fprompt{~} ls -lh
+drw-r-xr-x.  1 user group  4,0K 24 mars  17:28 \btt{program}
+-rw-r--r--.  1 user group  750K 24 mars  17:28 \bftt{program.tar.gz}
+\comm{-rw-r--r--.  1 user group  550K 24 mars  17:28 \bftt{program.tar.bz2}}
+\end{script}
+}}
+
+\section{Installing a GNU tarball}
+
+You can install a program distributed using a GNU tarball in 3 steps:
+\vspace{0.25cm}
+\begin{enumerate}
+\item Use the \bftt{configure} script to configure the package for your system:
+{\footnotesize{
+\begin{scripti}
+\fprompt{~/program} \bftt{./configure}
+\end{scripti}
+}}
+At this stage you can also provided your own instruction(s) to the \bftt{configure} script:
+\begin{itemize}
+\item Customize the installation direction using the \bftt{--prefix} option:
+{\footnotesize{
+\begin{scriptii}
+\fprompt{~/program} ./configure \bftt{--prefix}=/usr/local
+\end{scriptii}
+}}
+\item Tweak the compiler flags \bftt{CFLAGS}/\bftt{FCFLAGS} options:
+{\footnotesize{
+\begin{scriptii}
+\fprompt{~/program} ./configure \bftt{CFLAGS}="\rtt{-O3}" \bftt{FCFLAGS}="\rtt{-O3}"
+\end{scriptii}
+}}
+\item And many more options, to know more: 
+{\footnotesize{
+\begin{scriptii}
+\fprompt{~/program} ./configure \bftt{--help}
+\end{scriptii}
+}}
+\end{itemize}
+\vspace{-0.75cm}
+If the \bftt{configure} script ends successfully, then \bftt{Makefile}(s) have been created.
+\\Otherwise, if the script fails, then you might need to give a look to the \bftt{config.log} that contains detailed information about the configuration process. 
+\item Use the \bftt{make} command to build the package: 
+{\footnotesize{
+\begin{scripti}
+\fprompt{~/program} \bftt{make}
+\end{scripti}
+}}
+\vspace{-0.75cm}
+\begin{itemize}
+\item For better efficiency use the \bftt{-j} \rtt{num} option, to build using \rtt{num} CPU cores:
+{\footnotesize{
+\begin{scriptii}
+\fprompt{~/program} make \bftt{-j} \rtt{12}
+\end{scriptii}
+}}
+\end{itemize}
+\vspace{-0.5cm}
+The \bftt{make} command is looking for a \bftt{Makefile} in the active directory. \\
+If the \bftt{make} command is successful then the program has been built using this \bftt{Makefile}.
+\item[3.a] Use the \bftt{make} command with the \bftt{install} target to install the package: 
+{\footnotesize{
+\begin{scripti}
+\fprompt{~/program} \bftt{make install}
+\end{scripti}
+}}
+\item[3.b] Use the \bftt{make} command with the \bftt{uninstall} target to uninstall the package: 
+{\footnotesize{
+\begin{scripti}
+\fprompt{~/program} \bftt{make uninstall}
+\end{scripti}
+}}
+
+\end{enumerate}
+
+\section{Conclusion}
+
+At this point you gained basic knowledge of the preparation and installation of GNU package. 
+This was the first prerequisite to be able take advantage of the package delivery system of the open source community
+to distribute your software. 

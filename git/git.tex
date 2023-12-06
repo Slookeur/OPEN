@@ -1,0 +1,183 @@
+\chapter{Version management using Git}
+
+\section{Introduction}
+
+\href{https://git-scm.com}{Git} is a distributed version control system that allows you to keep track of changes to your code over time. 
+It is widely used among programmers collaboratively developing source code. \\[0.25cm]
+Git was originally developed by Linus Torvald in 2005 to improve the collaboration of coders working on the Linux kernel. \\[0.25cm]
+Basically Git offers a simple command line interface, several GUI frontends being available, 
+that allows you keep track easily of the modification(s) on the project file(s) that you are monitoring. \\
+The next sections will introduce a limited number of Git features to present the basics required to manage a project using Git. \\
+For more complete documentation:
+\begin{itemize}
+\item The official Git documentation: \href{https://git-scm.com/doc}{https://git-scm.com/doc}
+\item The reference manual: \href{https://git-scm.com/docs}{https://git-scm.com/docs}
+\item The Pro Git Book: \href{https://git-scm.com/book/en/v2}{https://git-scm.com/book/en/v2}
+\end{itemize}
+
+\section{Installing Git}
+
+Before to start using Git, it is required to install it on your computer (if not done already). 
+For Linux use your favorite software management utility: 
+\begin{itemize}
+\item Red Hat based Linux (using the \bftt{dnf} command):
+\begin{scripti}
+\fprompt{~} sudo \bftt{dnf} install git
+\end{scripti}
+\item Debian based Linux (using the \bftt{apt} command):
+\begin{scripti}
+\uprompt{~} sudo \bftt{apt} install git
+\end{scripti}
+\end{itemize}
+To learn more about software installation on Linux check out my \href{https://www.ipcms.fr/wp-content/uploads/2021/11/linux.pdf}{Linux tutorial}. \\
+To learn more about scripting and the usage of the command line check out my \href{https://www.ipcms.fr/wp-content/uploads/2021/05/bash.pdf}{Bash tutorial}.\\[0.25cm]
+For Windows and Mac download the latest version of Git from the official Git website (\href{https://git-scm.com/downloads}{https://git-scm.com/downloads}) 
+and follow the installation instructions provided on the website for your operating system.
+
+\section{Configuring Git}
+\label{gitconfig}
+Once Git is installed, you need to configure it with your name and email address:
+Open a terminal and enter the following commands:
+\begin{script}
+\fprompt{~} \bftt{git} \rtt{config} \blue{--global} user.name "\abtt{Your Name}"
+\fprompt{~} \bftt{git} \rtt{config} \blue{--global} user.email \dctt{\email}
+\end{script}
+\\[-0.25cm]
+\noindent Replace \abtt{Your Name} and \dctt{\email} with your own. \\
+The effect of the "\blue{\texttt{-{-}global}}" option is that \abtt{Your Name} and \dctt{\email} will be used as credentials by default for all your Git repositories. \\
+However you might need to work on repositories where name and email could be different, in that case use the same command line without the "\blue{\texttt{-{-}global}}" option, 
+but only after the initialization of the working repository (see bellow).
+
+\section{Creating a Git repository}
+
+To start using Git, you need to create a Git repository. 
+A Git repository is a folder that contains your source code, Git will keep track of changes to your code within this folder. 
+To create a Git repository, navigate to the folder where you want to store your code, and use:
+\begin{script}
+\fprompt{~} cd program
+\fprompt{~/program} \bftt{git} \rtt{init}
+\end{script}
+\\[-0.25cm]
+\noindent This will create a new Git repository in the current directory. \\
+You can check that the repository has been created by listing the hidden files in the active folder: 
+\begin{script}
+\fprompt{~/program} ls -hla 
+drwxr-xr-x.  8 leroux dmo 4,0K 27 mars  21:58 \btt{.git}
+\end{script}
+\\
+\noindent This \bftt{.git} folder will contain all the versioning information of your project. \\
+If you erase this folder you erase all project history, also called index, 
+and the only information that will remain consist of the current file(s) and folder(s) in the active directory. 
+
+\section{Adding a branch to the project}
+
+Git projects can be seen as tree view, made with branches. The "\bftt{git} \rtt{init}" command creates a first branch called "\texttt{master}" 
+to allow you to start working immediately. 
+However you will likely need to create your own branches, in particular for web hosting proposes (see chapter~\ref{hosting})
+where main branches are usually called "\texttt{Main}" or "\texttt{main}". \\[0.25cm]
+To create a branch use: 
+\begin{script}
+\fprompt{~/program} \bftt{git} \rtt{branch} \btt{-m} Main
+\end{script} \\[-0.75cm]
+\noindent To switch to another branch: 
+\begin{script}
+\fprompt{~/program} \bftt{git} \rtt{checkout} branch
+\end{script} \\[-0.75cm]
+\noindent Where the last option on the line, in this example "\texttt{branch}", is the name of the target branch to switch to. \\
+You can also create a branch and immediately switch to that branch:
+\begin{script}
+\fprompt{~/program} \bftt{git} \rtt{checkout} -b branch
+\end{script} \\[-0.75cm]
+\noindent The latest actually check if "\texttt{branch}" exists, if it does not create it, then switch to the target branch. \\
+In the following the sentence "adding file(s) to your Git repository" will be used extensively, it will be more accurate to write 
+"adding file(s) to target branch of your Git repository". 
+
+\section{Adding files to the project index}
+
+Now that you have a Git repository, and that you created your main branch, you can add file(s) to your Git repository, using:
+\begin{script}
+\fprompt{~/program} \bftt{git} \rtt{add} this.file
+\end{script}
+\\[-0.25cm]
+For example to add the file \btt{README.md}, use: 
+\begin{script}
+\fprompt{~/program} \bftt{git} \rtt{add} \btt{README.md}
+\end{script}
+\\[-0.25cm]
+\noindent To add all file(s) and folder(s) in the active folder, use:
+\begin{script}
+\fprompt{~/program} \bftt{git} \rtt{add} \btt{.}
+\end{script}
+\\[-0.5cm]
+\noindent The \bftt{git} \rtt{add} command is used to add file contents to the project index, it updates the index using files 
+found in the working directory tree: 
+\begin{itemize}
+\item It is required to use the \rtt{add} command to add any newly created, modified or deleted files to the index. 
+\item This command can be performed several times before a commit. 
+\item The \bftt{git} \rtt{status} command can used to obtain a summary of the files that have been changed and that staged for the next commit:
+{\scriptsize{
+\begin{scripti}
+\fprompt{~} mkdir program
+\fprompt{~} cd program
+\fprompt{~/program} \bftt{git} init
+\brown{astuce: Utilisation de 'master' comme nom de la branche initiale. Le nom de la branche
+astuce: par défaut peut changer. Pour configurer le nom de la branche initiale
+astuce: pour tous les nouveaux dépôts, et supprimer cet avertissement, lancez :
+astuce: 
+astuce: 	git config --global init.defaultBranch <nom>
+astuce: 
+astuce: Les noms les plus utilisés à la place de 'master' sont 'main', 'trunk' et
+astuce: 'development'. La branche nouvellement créée peut être rénommée avec :
+astuce: 
+astuce: 	git branch -m <nom>}
+Dépôt Git vide initialisé dans ~/program/.git/
+\fprompt{~/program} cp ../README.md .
+\fprompt{~/program} \bftt{git} \rtt{add} \btt{README.md}
+\fprompt{~/program} \bftt{git} \rtt{status}
+Sur la branche master
+
+Aucun commit
+
+Modifications qui seront validées :
+  (utilisez "git rm --cached <fichier>..." pour désindexer)
+	\dgtt{nouveau fichier : README.md}
+\end{scripti}
+}}
+\end{itemize}
+\section{Committing changes}
+
+Now that you have added file(s) to your Git repository, you can {\bf{commit}} the changes. 
+That means apply the changes to the repository and create a commit: a snapshot of the current state of your project/code history recorded by Git. \\
+To commit changes, use the following command:
+\begin{script}
+\fprompt{~/program} \bftt{git} \rtt{commit} \btt{-m} "Commit message"
+\end{script}
+\\[-0.25cm]
+\noindent Replace \texttt{"Commit message"} with a brief description of the changes you made, ex:
+\begin{script}
+\fprompt{~/program} now=`date`
+\fprompt{~/program} version="1.0"
+\fprompt{~/program} \bftt{git} \rtt{commit} \btt{-m}  "Program [V-\var{\$version}] \var{\$now}"
+\end{script}
+
+\section{Checking commit history}
+
+To view the commit history of a Git repository, use the following command:
+\begin{script}
+\fprompt{~/program} \bftt{git} \rtt{log}
+\end{script}
+\\[-0.25cm]
+\noindent This will display a list of all the commits that have been made to the repository, 
+along with their commit messages and other information.
+
+\section{Using Git to work on a remote, on-line, repository}
+
+The main interest of Git is to help you manage collaborative work(s) on remote, on-line, repositories, hosted on platforms like \href{https://github.com}{GitHub} or \href{https://gitlab.com}{GitLab}. 
+Furthermore it is almost mandatory to host your project on such platforms if you intent to distribute it using the pipelines of the open source community. \\
+The next chapter will present how to host a project on these websites, then it introduce the basic Git commands to use to manage such a project, see [Sec.~\ref{onlinegit}] for details. 
+
+\section{Conclusion}
+
+At this point you should have gained basic knowledge of Git a powerful tool for managing source codes essential to any developer. 
+This was the second prerequisite to be able take advantage of the package delivery system of the open source community to distribute your software.
+

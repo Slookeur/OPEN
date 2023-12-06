@@ -1,0 +1,350 @@
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{babel}
+
+\usepackage{textcomp}
+\usepackage{pifont}
+% Les polices possibles (pour tout le document)
+%\usepackage[bitstream-charter]{mathdesign}
+
+%Font ps pour le pdf
+\usepackage{pslatex}
+%Hyperliens pour le pdf
+\usepackage[pdfauthor   = {Sébastien\ Le\ Roux},
+    pdftitle = {From\ the\ source\ code\ to\ free\ software\ distribution:\ review\ and\ tips},
+    pdfsubject = {From\ the\ source\ code\ to\ software\ distribution},
+    pdfkeywords = {Linux\ GNU\ Make\ RPM\ DEB\ Git\ Github},
+    pdfcreator = {Latex+DviPDF},
+    pdfproducer = {LaTeX+DviPDF},
+    pdfstartview=FitV   % Ouverture avec ajustement de l'image
+    dvips=true,         % Use hyperref with dvips
+    colorlinks=true,    % Lien hypertext en couleur
+    plainpages=false,   %
+    pagebackref=true,   % Permet d'ajouter des liens retour dans la biblio ...
+    backref=page,       % .. ces liens pointent vers les 'pages' des citations
+    hyperindex=true,    % Ajoute des liens dans l'index
+    linktocpage=true,   % Lien sur les numéros de page et non le text 
+    breaklinks=true,    % Permet le retour à la ligne dans les liens trop longs
+    urlcolor= blue,     % Couleur des liens externes
+%    linkcolor= black,   % Couleur des liens internes
+    bookmarks=true,     % Création des signets pour Acrobat
+    bookmarksopen=false % Toute l'arborescence est dépliée à l'ouverture
+]{hyperref}
+%\usepackage[pageref]{backref}
+
+%Insertion d'images
+\usepackage{graphicx}
+\DeclareGraphicsExtensions{.eps}
+
+%Dessins latex
+% Brouillon ? = afficher les images "false" ou seulement les cadres "true"
+% effet sur tout le document
+\newcommand{\ddst}{false}
+%\usepackage{picins}
+
+\usepackage[x11names]{xcolor}
+
+% Mode verbatim avancé
+\usepackage{alltt}
+
+% Système de liste/énumération
+\usepackage{pifont}
+\usepackage{enumerate}
+%\usepackage{enumitem}
+
+% Ecriture des mathématiques
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amscd}
+\usepackage{theorem}
+
+% tableaux
+\usepackage{hhline}
+%\usepackage{array}
+\usepackage{multirow}
+\usepackage{tabls}
+%\usepackage{bbding}
+
+%% Mise en page
+%\voffset         0.0cm
+%\hoffset         0.0cm
+%\textheight     23.0cm
+%\textwidth      16.0cm
+%\topmargin      -0.5cm
+%\oddsidemargin   0.0cm
+%\evensidemargin  0.0cm
+
+% pages en landscape dans document portrait
+\usepackage{lscape}
+
+% Aspect de pages
+\usepackage{setspace}
+%\onehalfspacing
+%\doublespacing
+%\setstretch{3}
+
+%\usepackage{fancyhdr,fancybox}
+%\fancyhead{}
+%\fancyhead[RO]{\scriptsize{\slshape\rightmark}}
+%\fancyhead[LO]{\scriptsize{\thepage}}
+%\fancyhead[RE]{\scriptsize{\thepage}}
+%\fancyhead[LE]{\scriptsize{\slshape\leftmark}}
+%\pagestyle{fancy}
+
+% Numérotation pour les sous-sous-sections
+\setcounter{secnumdepth}{3}
+% Table des matières/figures/tables par chapitre
+%\usepackage{minitoc}
+% Pour placer des notes de bas de pages dans les titres
+%\usepackage[stable]{footmisc}
+
+%Définitions de théorèmes
+\theoremstyle{plain}
+\theoremheaderfont{\scshape}
+\theorembodyfont{\normalfont\itshape}
+\newtheorem{HK}{Théorème}
+
+% notsotiny font size
+\makeatletter
+\newcommand\notsotiny{\@setfontsize\notsotiny{6.5}{7.6878}}
+\newcommand\notsofoot{\@setfontsize\notsofoot{9.5}{11.6}}
+\makeatother
+
+% Créer un environnement résumé
+\def\abstract{
+   \begin{center}
+   \begin{minipage}{12cm}
+   \begin{center}{\bf Résumé}\end{center}\par\small}
+\def\endabstract{\par\end{minipage}\end{center}\vspace{1cm}}
+
+% Bilblio:
+\input{bibsymb}
+%\usepackage{chapterbib}
+
+\usepackage[square,comma,sort&compress]{natbib}
+\usepackage{hypernat}
+
+% Algo XML
+\usepackage{listings}
+
+% Texte souligné
+\usepackage[normalem]{ulem}
+
+% Mise en forme des légendes
+
+\usepackage[hang]{caption}
+%\renewcommand{\captionfont}{\it}
+%\renewcommand{\captionlabelfont}{\bf}
+%\renewcommand{\captionlabeldelim}{$\quad$}
+\usepackage{subcaption}
+
+\newcommand{\atomes}{{\em{\bf{atomes}}}}
+\newcommand{\github}{\href{https://github.com}{GitHub}}
+\newcommand{\gitlab}{\href{https://gitlab.com}{GitLab}}
+\newcommand{\salsa}{\href{https://salsa.debian.org}{Salsa}}
+\newcommand{\email}{your.email@host.eu}
+\newcommand{\metamail}{your.email\_AT\_host.eu}
+\newcommand{\gitauth}{https://github.com/Author}
+\newcommand{\gitprog}{\gitauth/Program}
+\newcommand{\tabul}{\hspace{0.5cm}}
+%\usepackage[format=plain,labelfont=bf,up,textfont=it,up]{caption}
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+\newcommand{\pink}[1]{\textcolor{pink}{#1}}
+\newcommand{\green}[1]{\textcolor{green}{#1}}
+\newcommand{\cyan}[1]{\textcolor{cyan}{#1}}
+\definecolor{cadmium}{rgb}{0.05,0.5,0.06}
+\newcommand{\dgreen}[1]{\textcolor{cadmium}{#1}}
+\newcommand{\blue}[1]{\textcolor{blue}{#1}}
+\newcommand{\brown}[1]{\textcolor{brown}{#1}}
+\newcommand{\dblue}[1]{\textcolor{DodgerBlue4}{#1}}
+\newcommand{\aqua}[1]{\textcolor{SpringGreen3}{#1}}
+\newcommand{\magenta}[1]{\textcolor{magenta}{#1}}
+\newcommand{\violet}[1]{\textcolor{violet}{#1}}
+\definecolor{lg}{rgb}{0.95,0.95,0.95}
+\newcommand{\rtt}[1]{{\bf{\texttt{\red{#1}}}}}
+\newcommand{\gtt}[1]{{\bf{\texttt{\green{#1}}}}}
+\newcommand{\dgtt}[1]{{\bf{\texttt{\dgreen{#1}}}}}
+\newcommand{\btt}[1]{{\bf{\texttt{\blue{#1}}}}}
+\newcommand{\dbtt}[1]{{\bf{\texttt{\dblue{#1}}}}}
+\newcommand{\abtt}[1]{{\bf{\texttt{\aqua{#1}}}}}
+\newcommand{\dctt}[1]{{\bf{\texttt{\cyan{#1}}}}}
+\newcommand{\bbtt}[1]{{\bf{\texttt{\brown{#1}}}}}
+\newcommand{\rgtt}[1]{\rtt{/}{\gtt{#1}}}
+\newcommand{\rbtt}[1]{\rtt{/}{\btt{#1}}}
+\newcommand{\bftt}[1]{{\bf{\texttt{#1}}}}
+
+\usepackage{placeins}
+\usepackage{keystroke}
+
+% Créer un environnement codage bash
+\newsavebox{\cobox}
+\def\script{
+  \noindent \\[0.25cm] \\
+  \begin{lrbox}
+  \cobox
+  \begin{minipage}[l]{16cm}
+  \begin{alltt}}
+\def\endscript{
+  \end{alltt}
+  \end{minipage}
+  \end{lrbox}
+  \colorbox{lg}{\usebox{\cobox}}
+  \vspace{0.25cm}\par\noindent}
+
+% Idem mais avec puces (itemize) -1.0334 cm / puces
+\newsavebox{\coboxi}
+\def\scripti{
+  \noindent \\[0.25cm] \\
+  \begin{lrbox}
+  \coboxi
+  \begin{minipage}[l]{14.966cm}
+  \begin{alltt}}
+\def\endscripti{
+  \end{alltt}
+  \end{minipage}
+  \end{lrbox}
+  \colorbox{lg}{\usebox{\coboxi}}
+  \vspace{0.25cm}\par\noindent}
+
+\newsavebox{\coboxii}
+\def\scriptii{
+  \noindent \\[0.25cm] \\
+  \begin{lrbox}
+  \coboxii
+  \begin{minipage}[l]{13.9332cm}
+  \begin{alltt}}
+\def\endscriptii{
+  \end{alltt}
+  \end{minipage}
+  \end{lrbox}
+  \colorbox{lg}{\usebox{\coboxii}}
+  \vspace{0.25cm}\par\noindent}
+
+\newsavebox{\coboxiii}
+\def\scriptiii{
+  \noindent \\[0.25cm] \\
+  \begin{lrbox}
+  \coboxiii
+  \begin{minipage}[l]{12.9004cm}
+  \begin{alltt}}
+\def\endscriptiii{
+  \end{alltt}
+  \end{minipage}
+  \end{lrbox}
+  \colorbox{lg}{\usebox{\coboxiii}}
+  \vspace{0.25cm}\par\noindent}
+
+\newcommand{\fscript}[1]{{\footnotesize{\begin{script}#1\end{script}}}}
+\newcommand{\sscript}[1]{{\scriptsize{\begin{script}#1\end{script}}}}
+
+%Coloration synthaxique
+\newcommand{\bash}{\textcolor{blue}{\#!/bin/bash}}
+\newcommand{\bif}{\textcolor{brown}{{\bf{\texttt{if [}}}}}
+\newcommand{\then}{\textcolor{brown}{{\bf{\texttt{]; then}}}}}
+\newcommand{\bli}{\textcolor{brown}{{\bf{\texttt{elif [}}}}}
+\newcommand{\bel}{\textcolor{brown}{{\bf{\texttt{else}}}}}
+\newcommand{\bfi}{\textcolor{brown}{{\bf{\texttt{fi}}}}}
+\newcommand{\blet}{\textcolor{brown}{{\bf{\texttt{let}}}}}
+\newcommand{\bfor}{\textcolor{brown}{{\bf{\texttt{for}}}}}
+\newcommand{\while}{\textcolor{brown}{{\bf{\texttt{while [}}}}}
+\newcommand{\until}{\textcolor{brown}{{\bf{\texttt{until [}}}}}
+\newcommand{\bin}{\textcolor{brown}{{\bf{\texttt{in}}}}}
+\newcommand{\bdo}{\textcolor{brown}{{\bf{\texttt{do}}}}}
+\newcommand{\done}{\textcolor{brown}{{\bf{\texttt{done}}}}}
+\newcommand{\comm}[1]{\textcolor{blue}{\# #1}}
+\newcommand{\var}[1]{\textcolor{cyan}{#1}}
+\newcommand{\dvar}[1]{\textcolor{violet}{\$#1}}
+\newcommand{\vard}[1]{\$#1}
+\newcommand{\echo}{\textcolor{brown}{{\bf{\texttt{echo}}}}}
+\newcommand{\bcp}{\textcolor{brown}{{\bf{\texttt{cp}}}}}
+\newcommand{\cd}{\textcolor{brown}{{\bf{\texttt{cd}}}}}
+\newcommand{\mv}{\textcolor{brown}{{\bf{\texttt{mv}}}}}
+\newcommand{\brm}{\textcolor{brown}{{\bf{\texttt{rm}}}}}
+\newcommand{\mkdir}{\textcolor{brown}{{\bf{\texttt{mkdir}}}}}
+\newcommand{\mkdirp}{\textcolor{brown}{{\bf{\texttt{mkdir -p}}}}}
+\newcommand{\bnum}[1]{\textcolor{red}{\texttt{#1}}}
+\newcommand{\say}[1]{\textcolor{brown}{"}\textcolor{magenta}{#1}\textcolor{brown}{"}}
+\newcommand{\beq}{\textcolor{brown}{{\bf{\texttt{-eq}}}}}
+\newcommand{\bne}{\textcolor{brown}{{\bf{\texttt{!=}}}}}
+\newcommand{\bap}{\textcolor{brown}{\texttt{"}}}
+\newcommand{\pipe}{\textcolor{brown}{{\bf{\texttt{|}}}}}
+\newcommand{\svar}[1]{\textcolor{blue}{\texttt{`#1`}}}
+\newcommand{\reg}[1]{\bbtt{\textquotesingle}\magenta{#1}\bbtt{\textquotesingle}}
+\newcommand{\bad}[1]{\textcolor{brown}{{\bf{\texttt{#1}}}}}
+\newcommand{\lint}{\bftt{lintian}}
+\newcommand{\piup}{\rtt{sudo} \bftt{piuparts}}
+\newcommand{\func}[1]{\textcolor{cyan}{{\bf{\texttt{function #1 \{ }}}}}
+\newcommand{\efunc}{\textcolor{cyan}{{\bf{\texttt{\}}}}}}
+
+%markdown:
+\newcommand{\mdcom}[1]{\textcolor{cyan}{\texttt{<!-{-} #1 -{-}>}}}
+
+% prompt
+\newcommand{\uprompt}[1]{\dgtt{user@localhost}:\btt{#1}\$}
+\newcommand{\fprompt}[1]{user@localhost #1]\$}
+\newcommand{\lsr}{\bftt{ls} \rtt{-R}}
+
+% configure
+\newcommand{\bmpt}[2]{\begin{minipage}{3cm}#1\end{minipage} & $\Longrightarrow$ & 
+	\begin{minipage}{12cm}#2\end{minipage} \\ \\ \\}
+\newcommand{\dnl}[1]{\textcolor{blue}{dnl #1}}
+\newcommand{\cpink}[1]{\textcolor{pink}{\texttt{#1}}}
+\newcommand{\confa}[1]{\textcolor{cyan}{{\bf{\texttt{#1}}}}}
+\newcommand{\confb}[2]{\textcolor{cyan}{{\bf{\texttt{#1(}}}}#2\textcolor{cyan}{{\bf{\texttt{)}}}}}
+\newcommand{\cstr}[1]{\dgtt{[}#1\dgtt{]}}
+
+% Command
+\newcommand{\cmd}[4]{
+\begin{itemize}
+\item
+\begin{tabular*}{0.95\textwidth}{l@{\extracolsep{\fill}}r}
+\textcolor{blue}{\bf{\texttt{#1}}} & {\it{"#2"}}
+\end{tabular*} \\
+\hspace{1cm} - usage:\quad {\bf{\texttt{#1 #3}}} \\
+\hspace{1cm} - ex:   \quad \texttt{ user@localhost ]\$ #1 #4}
+\end{itemize}
+}
+% Command with options
+\newcommand{\cmdo}[5]{
+\begin{itemize}
+\item
+\begin{tabular*}{0.95\textwidth}{l@{\extracolsep{\fill}}r}
+\textcolor{blue}{\bf{\texttt{#1}}} & {\it{"#2"}} 
+\end{tabular*} \\
+\hspace{1cm} - usage:\quad {\bf{\texttt{#1 #3}}} \\
+\hspace{1cm} - ex:   \quad \texttt{ user@localhost ]\$ #1 #4} \\
+\hspace{1cm} - options: #5
+\end{itemize}
+}
+% Command with redirection
+\newcommand{\cmdr}[4]{
+\begin{itemize}
+\item
+\begin{tabular*}{0.95\textwidth}{l@{\extracolsep{\fill}}r}
+\textcolor{blue}{\bf{\texttt{#1}}} & {\it{"#2"}}
+\end{tabular*} \\
+\hspace{1cm} - usage:\quad {\bf{\texttt{#3}}} \\
+\hspace{1cm} - ex:   \quad \texttt{ user@localhost ]\$ #4}
+\end{itemize}
+}
+
+% Custom environemnts for the tables 'tableh' and figures 'figureh'
+% to deal both with font size and the centering, so that you do not need to use 
+% a \begin{center} and \end{center} each time
+% You can adapt it to your liking by changing the font size command \scriptsize
+\def\tableh{
+  \begin{table}[h!]\centering}
+  \def\endtableh{\par\end{table}}
+
+\def\figureh{
+  \begin{figure}[h!]\centering}
+\def\endfigureh{\par\end{figure}}
+
+\def\tablep{
+  \begin{table}[p!]\centering}
+  \def\endtablep{\par\end{table}}
+
+\def\figurep{
+  \begin{figure}[p!]\centering}
+\def\endfigurep{\par\end{figure}}

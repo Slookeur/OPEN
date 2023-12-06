@@ -1,0 +1,31 @@
+#!/bin/bash
+
+NOMF=open
+
+rm -f $NOMF.aux
+rm -f $NOMF.bbl
+rm -f $NOMF.blg
+rm -f $NOMF.brf
+rm -f $NOMF.cb
+rm -f $NOMF.dvi
+rm -f $NOMF.flg
+rm -f $NOMF.idx
+rm -f $NOMF.ilg
+rm -f $NOMF.ind
+rm -f $NOMF.lof
+rm -f $NOMF.log
+rm -f $NOMF.lot
+rm -f $NOMF.out
+rm -f $NOMF.pdf
+rm -f $NOMF.ps
+rm -f $NOMF.toc
+
+latex $NOMF
+bibtex $NOMF
+latex $NOMF
+bibtex $NOMF
+latex $NOMF
+latex $NOMF
+
+dvips $NOMF
+dvipdf $NOMF

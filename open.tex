@@ -1,0 +1,119 @@
+\documentclass{./these-seb}
+
+\input{preambule}
+
+\includeonly{autotools/autotools, git/git, hosting/hosting, packaging/packaging, appendix/appendix}
+%\includeonly{git/git}
+%\includeonly{git/git, github/github}
+
+\begin{document}
+
+% Préparation pour mini-table des matières, des figures et des tables si besoin
+%\dominitoc
+%\dominilof
+%\dominilot
+
+%
+\newcommand{\ubuntu}{Ubuntu }
+\renewcommand{\figurename}{Figure}
+\renewcommand{\tablename}{Table}
+
+\titleEN{From source code\\ to packaging:\\ open source software\\ distribution review and tips\\}
+
+\author{Sébastien {\sc{Le Roux}}\quad\href{mailo:sebastien.leroux@ipcms.unistra.fr}{sebastien.leroux@ipcms.unistra.fr}}
+\universite{Institut de Physique et de Chimie des Mat\'eriaux de Strasbourg, \\
+D\'epartement des Mat\'eriaux Organiques, \\
+23 rue du Loess, BP43, \\ F-67034 Strasbourg Cedex 2, France\\[0.25cm]{\textrm{\today}}}
+
+\beforepreface
+
+\setcounter{page}{1}            % Je recommence la numerotation a un pour pas
+                                % decaler l'alternance droite/gauche et que
+                                % les pages impaires soient bien a droite.
+%\setcounter{tocdepth}{4}
+
+% Mise en forme TOC/TOF/LOT
+{\small \tableofcontents}
+\addcontentsline{toc}{chapter}{Contents}
+%{\it \footnotesize \listoffigures}
+%\addcontentsline{toc}{chapter}{List of figures}
+%\chaptermark{List of figures}
+%{\it \footnotesize \listoftables}
+%\addcontentsline{toc}{chapter}{List of tables}
+%\chaptermark{List of tables}
+
+\afterpreface
+
+\vfill                          % Je remplis avec du rien (\vfill}
+\pagebreak                      % Je change de page.
+%{\small \printindex}
+
+\chapter{Introduction}
+
+\section{Purpose}
+
+The purpose of this tutorial is to introduce the essential steps required to publish an open source software. 
+It is a both a personal review of the process and a collection of tips, intended to help the programmer navigates from its source code up to free software distribution. \\
+It is not, and does not aim to be comprehensive, but to be a proper recollection of my own experiences, so that these could help others. 
+
+\section{Prerequisites}
+
+In the following I will consider that the reader is familiar with using the command line. \\
+To learn more about the command line and Linux check out my \href{https://www.ipcms.fr/wp-content/uploads/2021/11/linux.pdf}{Linux tutorial}. \\
+To learn more about scripting and advanced command line use check out my \href{https://www.ipcms.fr/wp-content/uploads/2021/05/bash.pdf}{Bash tutorial}. 
+
+\section{Target readers}
+
+Any one who want to publish an open source program, in particular if that person is interested in having its code distributed within the Linux open source community. 
+
+\section{Software build}
+
+Starting from the next chapter I will consider that you already have a piece of code written and ready to be used, even ready to be distributed. 
+The programming language does not matter, I will simply focus on what comes next. \\[0.25cm]
+The example I will use through out this tutorial is based on my \href{https://atomes.ipcms.fr}{Atomes} software, 
+and will offer various illustrations for the build automation process, packaging and distribution of a code that requires: 
+\begin{itemize}
+\item To be built using:
+\begin{itemize}
+\item The \href{https://www.gnu.org/software/gcc/}{gcc} compiler (part of the sources are in C).
+\item The \href{https://gcc.gnu.org/wiki/GFortran}{gfortran} compiler (part of the sources are if Fortran90).
+\end{itemize}
+\item To be linked with:
+\begin{itemize}
+\item The \href{https://www.gtk.org/}{GTK3} library.
+\item The \href{http://xmlsoft.org/}{libxml2} library.
+\item The \href{https://gitlab.freedesktop.org/mesa/glu}{MESA GLu} library.
+\item The \href{https://github.com/anholt/libepoxy}{libepoxy} library.
+\item The \href{https://ffmpeg.org}{FFMPEG} libraries (libavcodec, libavformat, libavutil, libswscale)
+\end{itemize}
+\end{itemize}
+\vspace{0.25cm}
+\noindent Our concern will be focused on the software building process, that is the process of converting source code file(s) into standalone software(s) 
+that can be run on a computer (see \href{https://en.wikipedia.org/wiki/Software\_build}{software build process on Wikipedia}), and, 
+the build automation process, that is the automating of the creation of a software build and the associated tasks (compiling, packaging, testing ...) (see \href{https://en.wikipedia.org/wiki/Build\_automation}{build automation on Wikipedia}).  
+
+\include{autotools/autotools}
+\include{git/git}
+\include{hosting/hosting}
+\include{packaging/packaging}
+
+\appendix
+
+\include{appendix/appendix}
+
+\normalem
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Biblio %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bibliographystyle{these}
+\bibliography{full-biblio}
+
+% Colophon
+\colophon{This document has been prepared using the Linux operating system and free softwares:
+\begin{tabular}{lc}
+The text editor & "\href{https://www.vim.org/}{gVim}" \\
+The vector graphics editor & \href{https://inkscape.org/}{Inkscape} \\
+The GNU image manipulation program & "\href{https://www.gimp.org/}{GIMP}" \\
+And the document preparation system & "\href{https://www.latex-project.org/}{\LaTeXe}".
+\end{tabular}}
+
+\end{document}
