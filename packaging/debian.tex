@@ -216,8 +216,8 @@ This is a standard way of doing things in the Debian world. \\
 
 \bad{Package:} program
 \bad{Architecture:} any
-	\bad{Depends:} program-data (= \var{\${source:Version}}),
-          \var{\${shlibs:Depends}}, \var{\${misc:Depends}},
+	\bad{Depends:} program-data (= \var{\$\{source:Version\}}),
+          \var{\$\{shlibs:Depends\}}, \var{\$\{misc:Depends\}},
           libgtk-3-0,
           libglu1-mesa,
           bash-completion
@@ -229,7 +229,7 @@ This is a standard way of doing things in the Debian world. \\
 \bad{Package:} program-data
 \bad{Architecture:} all
 \bad{Multi-Arch:} foreign
-\bad{Depends:} \var{\${misc:Depends}}
+\bad{Depends:} \var{\$\{misc:Depends\}}
 \bad{Enhances:} program
 \bad{Suggests:} program
 \bad{Description:} program is doing something (data)
@@ -261,7 +261,7 @@ The "\texttt{copyright}" file is likely the most complicated file to prepare for
 This file describes the licensing of every file in your package: 
 \begin{itemize}
 \item The software license for your program
-\item The software license for every piece of program used to build or run your program 
+\item The software license for every third-party library you ship together with the program, or, for files in your source code with specific copyright. 
 \end{itemize}
 In each case license information must includes:
 \begin{itemize}
@@ -650,8 +650,8 @@ To submit your DEB package to the Debian community:
 
 \subsubsection{Create a Salsa account}
 
-\salsa is a collaborative development server for Debian based on the \href{https://gitlab.com}{GitLab} software. 
-\salsa is supposed to provide the necessary tools for package maintainers, packaging teams and other Debian related individuals and groups for collaborative development (see [Fig.~\ref{salsa}]).
+\salsa\ is a collaborative development server for Debian based on the \href{https://gitlab.com}{GitLab} software. 
+\salsa\ is supposed to provide the necessary tools for package maintainers, packaging teams and other Debian related individuals and groups for collaborative development (see [Fig.~\ref{salsa}]).
 \begin{figure}[!h]
 \includegraphics[width=1.0\textwidth,keepaspectratio=true,draft=\ddst]{img/deb/salsa}
 \caption{The Debian \salsa\ web site}\label{salsa}
