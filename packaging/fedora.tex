@@ -1,24 +1,24 @@
 \section{RPM}
 
-I the next pages I will introduce the proper way to build a RPM file suitable to be distributed by \href{https://www.fedora.org}{Fedora Linux} 
+I the next pages I will introduce the proper way to build an RPM file suitable to be distributed by \href{https://www.fedora.org}{Fedora Linux}, 
 which is the upstream source for Red Hat Enterprise Linux. \\[0.25cm]
-Maybe more importantly I will assume that you are working on Fedora Linux, 
-that would make a lost of sense since we are talking about building Fedora RPMs here. 
+Maybe more importantly, I will assume that you are working on Fedora Linux – 
+that would make a lot of sense, since we will be talking about building Fedora RPMs here. 
 Some of the commands I will use thereafter can only be found on Fedora, 
 therefore I would recommend to download and install \href{https://getfedora.org/fr/workstation/download/}{the latest Fedora version} either on your computer or in a virtual machine. \\[0.5cm]
-To prepare a RPM file you need first to install the appropriate tools: 
+To prepare an RPM file you need first to install the appropriate tools: 
 \begin{script}
 \fprompt{~} sudo dnf install fedora-packager fedpkg rpmdevtools
 \end{script}
 \\[-0.5cm]
-\noindent If I intend to provide tips and trick to help you prepare your RPM, I strongly recommend that you give a look to:
+\noindent While I intend to provide tips and tricks to help you prepare your RPM, I strongly recommend that you take a look at:
 \begin{itemize}
 \item The \href{https://rpm-packaging-guide.github.io/}{RPM Packaging Guide}.
 \item The official \href{https://docs.fedoraproject.org/en-US/packaging-guidelines/}{Fedora packaging guidelines}. 
 \item The \href{https://docs.fedoraproject.org/en-US/packaging-guidelines/}{Fedora packaging tutorial}.
 \end{itemize}
-Indeed this guide is not meant to be a thorough review of RPM packaging,  
-that is actually much more complicated than for the simple desktop application used afterward to illustrate the process. 
+Indeed, this guide is not meant to be a thorough review of RPM packaging;  
+that is actually much more complicated than for the simple desktop application shown below, to illustrate the process. 
 
 \subsection{The "\bftt{.spec}" file}
 
@@ -83,7 +83,7 @@ can be completed by your own set of specific instructions. \\[0.25cm]
 \end{script}
 }}
 \\
-\noindent In the next pages we will browse and complete this file section by section.
+\noindent In the next pages we will go over and complete this file section by section.
 
 \clearpage
 \subsubsection{Initialization section}
@@ -93,13 +93,13 @@ can be completed by your own set of specific instructions. \\[0.25cm]
 \begin{script}
 \comm{In a spec file, commented lines:}
 \comm{\tabul Start by the \# symbol.}
-\comm{\tabul When commenting a \% symbol, require to double it using another \%.}
-\comm{Ex: This line is a commented line, \%\%\{Name\} is the first variable defined bellow.}
+\comm{\tabul When commenting a \% symbol, it is required to escape it using another \%.}
+\comm{Ex: This line is a commented line, \%\%\{Name\} is the first variable defined below.}
 
 \comm{The name of the package, \bftt{MUST} be identical to the prefix name of the ".spec" file:}
 \bad{Name:}      program
 \comm{Optional, to define a variable using the \bftt{\%\%global} instruction.}
-\comm{A variable \bftt{upname} is created, and used bellow as the name of the GitHub repository,}
+\comm{A variable \bftt{upname} is created, and used below as the name of the GitHub repository,}
 \bftt{\%global} \var{upname} Program
 \comm{Version of the program:}
 \bad{Version:}   1.2.12
@@ -151,7 +151,7 @@ This program is amazing:
 \subsubsection{Requirement sections}
 \label{rpmreq}
 
-This section regroups requirements, to build and to run the program:
+This section lists the packages required to build and to run the program:
 {\footnotesize{
 \begin{script}
 \comm{To set a requirement to build the program use the \bftt{BuildRequires:} instruction:}
@@ -181,7 +181,7 @@ This section regroups requirements, to build and to run the program:
 \comm{To sign the RPM package with a GPG key uncomment the next line:} 
 \comm{BuildRequires: gnupg2}
 
-\comm{To set a requirement to run the program use the \bftt{Requires:} instruction:}
+\comm{Packages that are required for the program to run are declared using the \bftt{Requires:} instruction:}
 \comm{Requirements, packages that are needed, at runtime.}
 \comm{The only ways to be sure what to add here: }
 \comm{- Use \bftt{rpmlint} to verify your rpm after the build - see [Sec.~\ref{rpmtesting}]}
@@ -194,7 +194,7 @@ This section regroups requirements, to build and to run the program:
 \clearpage
 \subsubsection{Preparation section}
 \label{rpmprep}
-This section prepare everything required to build the package, not only the program itself.
+This section prepares everything required to build the package, not only the program itself.
 {\footnotesize{
 \begin{script}
 \dgtt{\%prep}
@@ -215,7 +215,7 @@ This section prepare everything required to build the package, not only the prog
 \subsubsection{Build instructions section}
 \label{rpmbuild}
 
-This section describes the instructions requires to build the program. 
+This section contains the instructions required to build the program. 
 {\footnotesize{
 \begin{script}
 \dgtt{\%build}
@@ -223,7 +223,7 @@ This section describes the instructions requires to build the program.
 \bftt{\%configure}
 \comm{Then build the program using the \bftt{make} command, using:}
 \bftt{\%make\_build}
-\comm{This will force to use parallel building.}
+\comm{This will force parallel building.}
 \comm{If you want to tweak the number of CPU cores, use:}
 \comm{make \%\%{smp\_mflags -j20}}
 \end{script}
@@ -232,7 +232,7 @@ This section describes the instructions requires to build the program.
 \subsubsection{Install instructions section}
 \label{rpminst}
 
-This section describes the instructions requires to install the program. 
+This section contains the instructions required to install the program. 
 {\footnotesize{
 \begin{script}
 \dgtt{\%install}
@@ -246,31 +246,35 @@ This section describes the instructions requires to install the program.
 \label{rpmpost}
 
 The \bftt{check} section allows to input commands required after the installation process. \\
-If your are building an application then 2 files must be delivered with your package:
+If your are building an application then several accompanying files must be delivered with your package:
 \begin{itemize}
 \item The custom MIME association "\bftt{-mime.xml}" file \\[0.25cm]
 \href{https://help.gnome.org/admin/system-admin-guide/stable/mime-types.html.en}{MIME types} are used to create and define file association(s) with a program. \\ 
-An example of custom MIME association file is provided in the appendix [App.~\ref{mime}].
+An example of a custom MIME association file is provided in the appendix [App.~\ref{mime}].
 \item The desktop entry or "\bftt{.desktop}" file \\[0.25cm]
 \href{https://specifications.freedesktop.org/desktop-entry-spec/latest/}{Desktop entries} are desktop configuration files describing 
 how a particular program is to be launched, how it appears in menus, etc. \\
-An example of desktop entry for a desktop application is provided in the appendix [App.~\ref{desktop}].
-\item The AppStream metadata or "\bftt{.appdata.xml}" file \\[0.25cm]
+An example of a desktop entry for a desktop application is provided in the appendix [App.~\ref{desktop}].
+\item The AppStream metadata or "\bftt{.metainfo.xml}" file \\[0.25cm]
 \href{https://www.freedesktop.org/software/appstream/docs/}{AppStream metadata} allows upstream projects to define metadata 
 about the components they provide using small XML files, metainfo files, which get installed into locations on the client system 
 and are used by distributors to enhance their metadata. \\ 
-The name of this file should follow the structure:
+The name of this file, like the \{id\} tag defined in it, should follow a reverse-DNS structure:
 \vspace{-0.125cm}
-\begin{center}\btt{web.adress.reversed}\rtt{.}\bftt{appdata.xml}\end{center}
+\begin{center}\btt{tld.vendor.product}\rtt{.}\bftt{metainfo.xml}\end{center}
+\vspace{-0.25cm}
+In the case that there is a website associated with the program, the \{id\} can take the form:
+\vspace{-0.125cm}
+\begin{center}\btt{web.adress.reversed}\rtt{.}\bftt{metainfo.xml}\end{center}
 \vspace{-0.25cm}
 \begin{itemize}
 \item The website of the program is: \quad https://\red{www.program.com}
-\item The file should be named: \quad\qquad \btt{com.program.www}\rtt{.}\bftt{appdata.xml}
+\item The file should be named: \quad\qquad \btt{com.program.www}\rtt{.}\bftt{metainfo.xml}
 \end{itemize}
 An example of AppStream metadata file for a desktop application is provided in the appendix [App.~\ref{appstream}].
 \end{itemize}
-Both cases require actions to be performed so that the system will know new data has been installed,
-these actions, standard Linux system post-installation and integration commands, are to be described in the \bftt{check} section:
+Inclusion of such files requires specific actions to be performed, so that the system will know new data has been installed.
+These actions, which are standard Linux system post-installation and integration commands, are to be described in the \bftt{check} section:
 {\footnotesize{
 \begin{script}
 \comm{You can add in the \bftt{check} section any action required after install:}
@@ -357,8 +361,8 @@ In the initialization section:
 \subsection{Building the RPM}
 
 Now that you prepared a "\bftt{.spec}" for your program your are ready to build the RPM. \\
-This manual will not only focus on the options required to build a RPM using a "\bftt{.spec}" file. \\[0.25cm]
-You have several ways to build a RPM using a "\bftt{.spec}" file for the Fedora platform:
+This manual will not only focus on the options required to build an RPM using a "\bftt{.spec}" file. \\[0.25cm]
+You have several ways to build an RPM using a "\bftt{.spec}" file for the Fedora platform:
 \begin{itemize}
 \item Local build using \bftt{rpmbuild}: on your computer.
 \item Local build using \bftt{fedpkg}: on your computer.
@@ -620,7 +624,7 @@ Watching tasks (this may be safely interrupted)...
 \subsection{Testing the RPM}
 \label{rpmtesting}
 
-Up to this point I introduced the different ways to build a RPM, leaving apart possible failures and errors. 
+Up to this point I introduced the different ways to build an RPM, leaving apart possible failures and errors. 
 However if you intend to distribute your RPM, even if not by the official Fedora software repositories, it is important to know 
 how to check for possible issues. In particular because even a successful build can contain errors.  
 Also, not surprisingly, the first step in getting your RPM distributed by Red Hat is to get rid of 
