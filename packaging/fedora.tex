@@ -245,8 +245,8 @@ This section contains the instructions required to install the program.
 \subsubsection{Post-installation Linux and FreeDesktop integration section}
 \label{rpmpost}
 
-The \bftt{check} section allows to input commands required after the installation process. \\
-If your are building an application then several accompanying files must be delivered with your package:
+The \bftt{check} section is executed after the installation process and its main purpose is to run any tests that accompany the program. \\
+If your are building a graphical application, then several accompanying files must be delivered with your package and the corresponding validation tests must be run within the \bftt{check} block:
 \begin{itemize}
 \item The custom MIME association "\bftt{-mime.xml}" file \\[0.25cm]
 \href{https://help.gnome.org/admin/system-admin-guide/stable/mime-types.html.en}{MIME types} are used to create and define file association(s) with a program. \\ 
@@ -257,8 +257,8 @@ how a particular program is to be launched, how it appears in menus, etc. \\
 An example of a desktop entry for a desktop application is provided in the appendix [App.~\ref{desktop}].
 \item The AppStream metadata or "\bftt{.metainfo.xml}" file \\[0.25cm]
 \href{https://www.freedesktop.org/software/appstream/docs/}{AppStream metadata} allows upstream projects to define metadata 
-about the components they provide using small XML files, metainfo files, which get installed into locations on the client system 
-and are used by distributors to enhance their metadata. \\ 
+about the components they provide using small XML files, metainfo files, which get installed on the client system 
+and are used by various "Software Centers" to present the applications to the end users. \\ 
 The name of this file, like the \{id\} tag defined in it, should follow a reverse-DNS structure:
 \vspace{-0.125cm}
 \begin{center}\btt{tld.vendor.product}\rtt{.}\bftt{metainfo.xml}\end{center}
@@ -291,7 +291,7 @@ appstream-util validate-relax --nonet \textbackslash
 \subsubsection{Package file paths section}
 \label{rpmfiles}
 
-The \bftt{files} section describes the directory created, and the files installed, by the package.
+The \bftt{files} section lists the directories created and the files installed by the package.
 {\footnotesize{
 \begin{script}
 \dgtt{\%files}
@@ -302,7 +302,7 @@ The \bftt{files} section describes the directory created, and the files installe
 \comm{The package home directory, usually '/usr/share/prog'}
 \comm{that contains the data required by the program.}
 \comm{Note there is no need to specify all files.}
-\comm{The name of the directory to be removed is enough:}
+\comm{The name of the directory to be created is enough:}
 \var{\%\{\_datadir\}}/\var{\%\{name\}}
 \comm{The package documentation directory:}
 \var{\%\{\_datadir\}}/doc/\var{\%\{name\}}
@@ -311,7 +311,7 @@ The \bftt{files} section describes the directory created, and the files installe
 \comm{The package desktop entry:}
 \var{\%\{\_datadir\}}/applications/\var{\%\{name\}}.desktop
 \comm{The package metadata:}
-\var{\%\{\_metainfodir\}}/com.\var{\%\{name\}}.www.appdata.xml
+\var{\%\{\_metainfodir\}}/*.metainfo.xml
 \comm{The package custom MIME type:}
 \var{\%\{\_datadir\}}/mime/packages/\var{\%\{name\}}.xml
 \comm{The package icons:}
@@ -360,13 +360,13 @@ In the initialization section:
 \newpage
 \subsection{Building the RPM}
 
-Now that you prepared a "\bftt{.spec}" for your program your are ready to build the RPM. \\
-This manual will not only focus on the options required to build an RPM using a "\bftt{.spec}" file. \\[0.25cm]
+Now that you have prepared the "\bftt{.spec}" file for your program your are ready to build the RPM. \\
+This manual will present the different methods available to build an RPM using a "\bftt{.spec}" file. \\[0.25cm]
 You have several ways to build an RPM using a "\bftt{.spec}" file for the Fedora platform:
 \begin{itemize}
 \item Local build using \bftt{rpmbuild}: on your computer.
 \item Local build using \bftt{fedpkg}: on your computer.
-\item Mock build using \bftt{mock} or \bftt{fedpkg}: on your computer in a virtual, clean, environment.\\ 
+\item Mock build using \bftt{mock} or \bftt{fedpkg}: on your computer in a virtual, clean, environment (chroot).\\ 
 It allows to check if you declared properly all dependencies to build your program.
 \item Copr build: remotely on the \href{https://copr.fedorainfracloud.org}{Fedora Copr} project hosting server: to full-proof your RPM. \\
 The Copr server is the closest thing to the official Fedora build system named \href{https://koji.fedoraproject.org/koji}{Koji}. \\
@@ -377,7 +377,7 @@ Also Copr has all the testing tools required to full-proof your RPM package befo
 \subsubsection{Local build}
 
 The first and most simple build is the local build using \bftt{rpmbuild}. \\[0.25cm]
-To build the source RPM use: 
+Do note this requires that all of the build-time dependencies of your program be installed on the system. To build the source RPM use: 
 \begin{script}
 \fprompt{~} \bftt{rpmbuild} \rtt{-bs} program.spec
 \end{script}
