@@ -181,7 +181,7 @@ This section lists the packages required to build and to run the program:
 \comm{To sign the RPM package with a GPG key uncomment the next line:} 
 \comm{BuildRequires: gnupg2}
 
-\comm{Packages that are required for the program to run are declared using the \bftt{Requires:} instruction:}
+\comm{Packages required for the program to run are declared using the \bftt{Requires:} instruction:}
 \comm{Requirements, packages that are needed, at runtime.}
 \comm{The only ways to be sure what to add here: }
 \comm{- Use \bftt{rpmlint} to verify your rpm after the build - see [Sec.~\ref{rpmtesting}]}
@@ -287,7 +287,6 @@ appstream-util validate-relax --nonet \textbackslash
 \end{script}
 }}
 
-\clearpage
 \subsubsection{Package file paths section}
 \label{rpmfiles}
 
@@ -967,7 +966,7 @@ test-proofed the Koji build for this new package, see [Sec.~\ref{kojib}].
 \end{enumerate}
 
 \subsubsection{Building the new package using the update(s)}
-
+\label{buildup}
 This is also done using the \bftt{fedpkg} command:
 \begin{enumerate}
 \item Request a build for Fedora branch(es), first of all for the rawhide branch:
@@ -1008,14 +1007,17 @@ If successful the builds will be available shortly to update the versions of the
 This is done via the web interface called Bodhi: \href{https://bodhi.fedoraproject.org}{https://bodhi.fedoraproject.org}. \\ 
 \href{https://fedoraproject.org/wiki/Bodhi}{Bodhi} is a web-based system that facilitates the process of publishing package updates for Fedora. \\
 \begin{center}
-%\includegraphics[width=0.75\textwidth,keepaspectratio=true,draft=\ddst]{img/rpms/bodhi/bodhi-0.eps}
+\includegraphics[width=1.0\textwidth,keepaspectratio=true,draft=\ddst]{img/rpms/bodhi/bodhi-0.eps}
 \end{center}
 To update the Fedora repositories with the new builds:
 \begin{enumerate}
 \item Login on Bodhi using your Fedora Account
-\item Click on "\texttt{Updates}" 
-\item Search for your package name, here "\texttt{program}" 
-\item Need to create a new update to see what's next with more details
+\item Click on "\texttt{New Update}" 
+\item Search for your package name, in this exampe "\texttt{atomes}" my own program, then add the latest Koji build(s), available depending on the branch(es) requested for your program, see section [Sec.~\ref{buildup}].
+\item Simply fill the form to create the update, then click on "\texttt{Submit}"
 \end{enumerate}
+\begin{center}
+\includegraphics[width=1.0\textwidth,keepaspectratio=true,draft=\ddst]{img/rpms/bodhi/bodhi-1b.eps}
+\end{center}
 
 \clearpage
