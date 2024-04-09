@@ -1,0 +1,17 @@
+\chapter{Linux distribution}
+
+In the Linux world two distrubtions beccame widely famous, mostly because of the package distribution systems they implemented: 
+\begin{itemize}
+\item The \href{https://www.redhat.com}{Red Hat Linux} distribution that created and maintain the \href{https://en.wikipedia.org/wiki/RPM\_Package\_Manager}{RPM Package-Manager} "Red Hat Package Manager" system, that handles the installation/removal of \href{RPM "Red Hat Packages"}, files with the \bftt{.rpm} extension.
+\item The \href{https://www.debian.org}{Debian Linux} distribution that created and maintain the \href{https://en.wikipedia.org/wiki/Dpkg}{dpkg} package management system, that handles the installation/removal of \href{https://en.wikipedia.org/wiki/Deb\_(file\_format)}{DEB "Debian Packages"}, files with \bftt{{.deb}} extension.
+\end{itemize}
+In 2023 there are thousands of Linux distributions, most of them are either Red Hat based and integrate the RPM Package-Manager, or, Debian based and integrate the dpkg package management system. \\
+Integrating the package management systems of both Red Hat and Debian distributions is the most natural way to efficiently distribute your program to the entire open source / Linux community. \\
+In the next sections I will review the requirements to achieve it providing that you already built a proper GNU tarball, or for that matter that you are already using any other build system. 
+\clearpage
+
+\input{packaging/fedora}
+\input{packaging/debian}
+
+\section{Flatpak}
+

@@ -1,0 +1,107 @@
+\section{Appimage}
+
+\href{https://appimage.org/}{AppImage} is an open-source format for distributing portable software on Linux.  
+It aims to allow the installation of programs independently of specific Linux distributions, a concept often referred to as upstream packaging. \\
+As a result, an AppImage can be installed and run across \href{https://ubuntu.com}{Ubuntu}, \href{https://archlinux.org}{Arch Linux}, and \href{https://www.redhat.com}{Red Hat Enterprise Linux} without needing to use specific files. 
+The AppImage is a format that's self-contained, rootless, and independent of the underlying Linux distribution. 
+
+\subsection{Prerequesites}
+
+Give a look to the following tutorials:
+\begin{itemize}
+\item \href{https://docs.appimage.org/}{https://docs.appimage.org/}
+\item \href{https://docs.appimage.org/packaging-guide/index.html}{https://docs.appimage.org/packaging-guide/index.html}
+\item \href{https://appimage-builder.readthedocs.io/en/latest/}{https://appimage-builder.readthedocs.io/en/latest/}
+\item \href{https://github.com/AppImage/AppImageKit/wiki/Creating-AppImages/cc2441518975caca23e9ce2dba6f08a22c678d1e}{Creating appimage}
+\end{itemize}
+To create an appimage of your program, you can work using either:
+\begin{itemize}
+\item Using the program sources and "\texttt{appimage-builder}"
+\begin{itemize}
+\item Configure and build the program with the installation prefix set to "\texttt{/usr}"
+{\footnotesize{
+\begin{scriptii}
+\bftt{./configure} \dgtt{--prefix=/usr}
+\bftt{make}
+\end{scriptii}
+}}
+\item Create an "\texttt{AppDir}" directory to install the program using the \bftt{DESTDIR} variable: 
+{\footnotesize{
+\begin{scriptii}
+\bftt{mkdir} \dgtt{AppDir}
+\bftt{make} \dgtt{install} \rtt{DESTDIR}=\dvar{PWD}"/AppDir"
+\end{scriptii}
+}}
+\item Get "\texttt{appimage-builder}" \\[0.5cm]
+"\texttt{appimage-builder}" can be downloaded as ready to use for AMD64 systems:
+{\tiny{
+\begin{scriptii}
+\bftt{wget} \dgtt{-O} appimage-builder-x86\_64.AppImage \textbackslash
+https://github.com/AppImageCrafters/appimage-builder/releases/download/v1.1.0/appimage-builder-1.1.0-x86\_64.AppImage
+
+# make executable
+\bftt{chmod} \dgtt{+x} appimage-builder-x86\_64.AppImage
+
+# install in PATH to make it available as command (optional)
+\rtt{sudo} \bftt{mv} appimage-builder-x86\_64.AppImage /usr/local/bin/appimage-builder
+\end{scriptii}
+}}
+\item Prepare you "\texttt{appimage-builder}" recipe, in a file named "\texttt{program.yml}" 
+{\footnotesize{
+\begin{scriptii}
+\comm{appimage-builder recipe, for details see:}
+\comm{ \href{https://appimage-builder.readthedocs.io}{https://appimage-builder.readthedocs.io}}
+\cyan{version:} \magenta{1}
+\cyan{AppDir:}
+  \cyan{path:} ./AppDir
+  \cyan{app\_info:}
+    \cyan{id:} com.program.www
+    \cyan{name:} program
+    \cyan{icon:} program
+    \cyan{version:} \magenta{1.2.12}
+    \cyan{exec:} usr/bin/program
+    \cyan{exec\_args:} \$@
+  \cyan{files:}
+    \cyan{exclude:}
+    \bbtt{-} usr/share/man
+    \bbtt{-} usr/share/doc/program/* 
+  \cyan{test:}
+    \cyan{fedora:}
+      \cyan{image:} appimagecrafters/tests-env:fedora-30
+      \cyan{command:} ./AppRun
+      \cyan{use\_host\_x:} True
+    \cyan{debian:}
+      \cyan{image:} appimagecrafters/tests-env:debian-stable
+      \cyan{command:} ./AppRun
+      \cyan{use\_host\_x:} True
+\cyan{AppImage:}
+  \cyan{arch:} x86\_64
+  \cyan{update-information:} guess
+\end{scriptii}
+}}
+\item Build the appimage using "\texttt{appimage-builder}" and the recipe
+{\footnotesize{
+\begin{scriptii}
+\bftt{appimage-builder} \dgtt{--recipe} \rtt{program.yml}
+\end{scriptii}
+}}
+\end{itemize}
+\item Using the Debian package and "\texttt{pkg2appimage}"
+\begin{itemize}
+\item Get "\texttt{pkg2appimage}" \\[0.5cm]
+"\texttt{pkg2appimage}" can be downloaded as ready to use for AMD64 systems:
+{\tiny{
+\begin{scriptii}
+\bftt{wget} -c \$(wget -q https://api.github.com/repos/AppImageCommunity/pkg2appimage/releases \textbackslash
+-O - | grep "pkg2appimage-.*-x86\_64.AppImage" | grep browser\_download\_url | head -n 1 | cut -d '"' -f 4) \textbackslash
+
+# make executable
+\bftt{chmod} \dgtt{+x} ./pkg2appimage-*.AppImage
+
+# install in PATH to make it available as command (optional)
+\rtt{sudo} \bftt{mv} pkg2appimage-*.AppImage /usr/local/bin/pkg2appimage
+\end{scriptii}
+}}
+\item Prepare you "\texttt{pkg2appimage}" recipe
+\end{itemize}
+\end{itemize}
