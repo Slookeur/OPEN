@@ -92,27 +92,29 @@ You can also create a branch and immediately switch to that branch:
 In the following the sentence "adding file(s) to your Git repository" will be used extensively, it will be more accurate to write 
 "adding file(s) to target branch of your Git repository". 
 
-\section{Adding files to the project index}
+\section{Adding modifications to a project branch}
 
-Now that you have a Git repository, and that you created your main branch, you can add file(s) to your Git repository, using:
+Now that you have a Git repository, and that you created a branch to work on, you can modify your Git branch, using:
 \begin{script}
 \fprompt{~/program} \bftt{git} \rtt{add} this.file
 \end{script}
 \\[-0.25cm]
-For example to add the file \btt{README.md}, use: 
+If the file "\texttt{this.file}" is new then the entire content of the file will be added to the project repository, 
+otherwise only potential modification(s) to this file will be recorded. \\[0.25cm]
+For example to add the file \btt{README.md}, or modification(s) to this file, use: 
 \begin{script}
 \fprompt{~/program} \bftt{git} \rtt{add} \btt{README.md}
 \end{script}
 \\[-0.25cm]
-\noindent To add all file(s) and folder(s) in the active folder, use:
+\noindent To add all modification(s) to any file(s) and / or folder(s) in the active repository, use:
 \begin{script}
 \fprompt{~/program} \bftt{git} \rtt{add} \btt{.}
 \end{script}
 \\[-0.5cm]
-\noindent The \bftt{git} \rtt{add} command is used to add file contents to the project index, it updates the index using files 
+\noindent The \bftt{git} \rtt{add} command is used to add modification(s) to the project index, it updates the index using files 
 found in the working directory tree: 
 \begin{itemize}
-\item It is required to use the \rtt{add} command to add any newly created, modified or deleted files to the index. 
+\item It is required to use the \rtt{add} command to append any newly created, modified or deleted file(s) / folder(s) to the index. 
 \item This command can be performed several times before a commit. 
 \item The \bftt{git} \rtt{status} command can used to obtain a summary of the files that have been changed and that staged for the next commit:
 {\scriptsize{
@@ -146,7 +148,7 @@ Modifications qui seront validées :
 \end{itemize}
 \section{Committing changes}
 
-Now that you have added file(s) to your Git repository, you can {\bf{commit}} the changes. 
+Now that you have added modification(s) to your Git repository, you can {\bf{commit}} the changes. 
 That means apply the changes to the repository and create a commit: a snapshot of the current state of your project/code history recorded by Git. \\
 To commit changes, use the following command:
 \begin{script}
@@ -174,7 +176,7 @@ along with their commit messages and other information.
 
 The main interest of Git is to help you manage collaborative work(s) on remote, on-line, repositories, hosted on platforms like \href{https://github.com}{GitHub} or \href{https://gitlab.com}{GitLab}. 
 Furthermore it is almost mandatory to host your project on such platforms if you intent to distribute it using the pipelines of the open source community. \\
-The next chapter will present how to host a project on these websites, then it introduce the basic Git commands to use to manage such a project, see [Sec.~\ref{onlinegit}] for details. 
+The next chapter will present how to host a project on these websites, then it will introduce the basic Git commands to use to manage such a project, see [Sec.~\ref{onlinegit}] for details. 
 
 \section{Conclusion}
 

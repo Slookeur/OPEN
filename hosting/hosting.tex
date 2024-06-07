@@ -141,9 +141,9 @@ As soon as the keys have been installed you are ready to work with your on line 
 
 \section{Branch protection}
 
-If you are managing collaborative project, with several developers being able to push commits to the Git (and \github\ or \gitlab) repository, 
-then you need to ensure that branches of your project are being protected against errors, ensuring that changes are handled by the project manager, or designated and selected developers. \\
-To do that you need to enable, and adjust, branches protection:
+If you are managing collaborative project, with several developers being able to push commits to the Git (and \github\ or \gitlab) repository branch(es), 
+then you need to ensure that branch(es) of your project is (are) being protected against errors, ensuring that changes are handled by the project manager, or designated and selected developers. \\
+To do that you need to enable, and adjust, branch(es) protection:
 \begin{itemize}
 \item \github\ (see figure~\ref{bgithub}):
 \begin{itemize}
@@ -205,7 +205,7 @@ On \github\ and \gitlab\ releases are deployable software versions made availabl
 Releases are based on tags targeting specific points in the history of the repository. \\
 To create a release: 
 \begin{itemize}
-\item On \github (see figure~\ref{rgithub}):
+\item On \github\ (see figure~\ref{rgithub}):
 \begin{itemize}
 \item Click on "\texttt{Create a new release}"
 \item Click on "\bftt{Choose a tag}" to open the corresponding combo box:
@@ -220,7 +220,7 @@ To create a release:
 \end{itemize}
 On \github\ releases packages have the form: "\rtt{tag}\bftt{.tar.gz}" \\
 Extracting the archive on your hard drive will create a folder named: "\dgtt{repository-}\rtt{tag}"
-\item On \gitlab (see figure~\ref{rgitlab}):
+\item On \gitlab\ (see figure~\ref{rgitlab}):
 \begin{itemize}
 \item On the left side menu, click on "\texttt{Deploy}" $\Longrightarrow$ "\texttt{Releases}"
 \item Then click on "\texttt{Create a new release}"
@@ -253,9 +253,11 @@ Extracting the archive on your hard drive will create a folder named: "\dgtt{pro
 \section{Using Git to manage your GitHub / GitLab project}
 \label{onlinegit}
 
+\subsection{Setting up work on you local computer} 
+
 To start working on a remote repository using Git you can:
 \begin{itemize}
-\item Clone the distant repository:
+\item {\bf{Clone}} the distant repository:
 \begin{itemize}
 \item \github:
 {\footnotesize{
@@ -347,10 +349,29 @@ origin	git@github.com:\rtt{Author}/\btt{Program} (push)
 \item \btt{Program}\quad is the name of the repository. 
 \end{itemize}
 
+\subsection{Contributing to other project(s) and collaborative work}
+
+If you want to work on project hosted on \github\ or \gitlab, and that you are not managing the project you intend to work on, then you need first to {\bf{fork}} this project. 
+That means to create your own personnal copy of this project, independent of the original repository. \\
+Afterwards to submit your modification(s) to the main repository you will need to create a dedicated branch and request to merge your branch to the main project. 
+Modification(s) will be checked by a project manager, and if appropriate will be merged to the main branch of the repository. \\[0.25cm]
+To fork an exisiting project:
+\begin{itemize}
+\item On \github\ (see figure~\ref{fgithub}):
+\begin{itemize}
+\item Navigate to the \github\ project page of the repository you want to fork
+\item Click on "\texttt{Fork}" to open the scrolling menu, and select "\texttt{Create a new fork}"
+\item Follow the dialog to create a fork on the project in your own repository, you can select a specific branch if required, then when ready click on "\texttt{Create fork}"
+\item It's done your own fork of the target project is now ready for you to work on in your own \github\ repository. 
+\end{itemize}
+\item On \gitlab\ (see figure~\ref{fgitlab}):
+
+\end{itemize}
+
 \newpage
 \section{Project pages and documentation}
 
-This section will illustrates how to use a GitHub / GitLab repository and web pages to host a static web documentation for your project. 
+This section will illustrates how to use a \github\ / \gitlab\ repository and web pages to host a static web documentation for your project. 
 
 \subsection{prerequisites}
 
