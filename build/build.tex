@@ -1,0 +1,36 @@
+\chapter{Building system and automation}
+
+In order to distribute your code it is almost mandatory to have a build system in mind, that is an automation tool that will help you to build your software using the sources, link it with used libraries, and even handle the installation process. \\
+Historically build automation was handled using basic Makefile(s), but now more advanced tools are available, the most well known likely being:
+\begin{itemize}
+\item \href{https://en.wikipedia.org/wiki/Make\_(software)}{Make} 
+\item \href{https://en.wikipedia.org/wiki/CMake}{CMake}
+\item \href{https://en.wikipedia.org/wiki/Meson\_(software)}{Meson}
+\end{itemize}
+But there are many others. \\
+In the following I will present examples using:
+\begin{itemize}
+\item The \href{https://www.gnu.org/software/make/}{GNU Make} implementation of the Make building system. 
+The GNU Make is a standard distribution format, if your are familiar with open source software it is likely that your already stumbled upon a GNU tarball (or archive), 
+either in Gzip of Bzip2 format:
+\begin{itemize}
+\item {\bftt{program.tar.gz}}, to be opened using: \begin{script}\fprompt{~} tar -zxf program.tar.gz\end{script}
+\item {\bftt{program.tar.bz2}}, to be opened using: \begin{script}\fprompt{~} tar -jxf program.tar.bz2\end{script}
+\end{itemize}
+Very often the content of this archive is based on the GNU automation build system. 
+In the following I will provide an example of the preparation of basic GNU tarball, that represents the first step in distributing your software to the open source community.
+\item The \href{https://cmake.org/}{CMake} cross-platform open-source software for build automation, testing, packaging and installation of software by using a compiler-independent method. \\
+\href{https://cmake.org/}{CMake} is not a build system itself, it generates another system's build files and can invoke native building environments such as Make. 
+\end{itemize}
+
+\newpage
+
+\input{build/autotools}
+
+\input{build/cmake}
+
+\section{Conclusion}
+
+At this point you gained basic knowledge of the preparation of an automated installation package. 
+This was the first prerequisite to be able take advantage of the package delivery system of the open source community
+to distribute your software. 

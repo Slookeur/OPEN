@@ -1,0 +1,90 @@
+\section{cmake}
+
+
+
+\subsection{The "\texttt{CMakeLists.txt}" file} 
+
+The "\texttt{CMakeLists.txt}" is a configuration file that defines:  
+\begin{itemize}
+\item The rules to configure your project
+\item The rules to build your project
+\item The rules to install your project
+\end{itemize}
+To start working your CMake package you will need first to create a directory to work in:
+\begin{script}
+\fprompt{~} mkdir program
+\fprompt{~} cd program
+\end{script}
+Then simply use a text editor to work on this file and insert instructions regarding configuration, building and installation of your program. 
+
+\subsubsection*{CMake version information}
+
+The "\texttt{CMakeLists.txt}" file always starts by the minimum CMake version to use: 
+\begin{script}
+\confa{cmake_minimum_required} (\bftt{VERSION} 3.10)
+\end{script}
+
+\subsubsection*{Project name, version and programmation languages}
+
+Describe project information using the \bftt{project} command:
+\begin{script}
+\confa{project} (prog \bftt{VERSION} 1.2.12)
+\confa{project} (prog \bftt{DESCRIPTION} "A tool box")
+\confa{project} (prog \bftt{HOMEPAGE_URL} "https://www.program.com")
+\confa{project} (prog \bftt{LANGUAGES} C Fortran)
+\end{script}
+CMake will decompose the \bftt{VERSION} command in:
+\begin{center}\texttt{MAJOR\_VERSION.MINOR\_VERSION.PATCH\_VERSION} \end{center}
+The \bftt{LANGUAGES} option allows to check for compilers, however other dependencies might be needed (see bellow). \\[0.25cm]
+For more information see the CMake \bftt{project} command related documentation \href{https://cmake.org/cmake/help/latest/command/project.html\#command:project}{here}.
+
+\subsubsection*{Dependencies}
+\label{cmake_deps}
+
+Check for package using the \bftt{find\_package} and \bftt{pkg\_check\_modules} commands: 
+\begin{script}
+\confa{find_package} (PkgConfig \bftt{REQUIRED})
+
+\comm{Checking for gtk+3.0:}
+\confa{pkg_check_modules} (GTK3 \bftt{REQUIRED} IMPORTED_TARGET gtk3)
+
+\comm{Checking for libxml-2.0:}
+\confa{pkg_check_modules} (LIBXML2 \bftt{REQUIRED} IMPORTED_TARGET libxml-2.0)
+
+\comm{Checking for libavcodec, and other FFMPEG based libraries:}
+\confa{pkg_check_modules} (LIBAVUTIL \bftt{REQUIRED} IMPORTED_TARGET libavutil)
+\confa{pkg_check_modules} (LIBAVCODEC \bftt{REQUIRED} IMPORTED_TARGET libavcodec)
+\confa{pkg_check_modules} (LIBAVFORMAT \bftt{REQUIRED} IMPORTED_TARGET libavformat)
+\confa{pkg_check_modules} (LIBSWSCALE \bftt{REQUIRED} IMPORTED_TARGET libswscale)
+
+\comm{Checking for epoxy:}
+\confa{pkg_check_modules} (EPOXY \bftt{REQUIRED} IMPORTED_TARGET epoxy)
+\end{script}
+
+\subsubsection*{Compiler options}
+
+\begin{script}
+\confa{set} (\confa{CMAKE_C_FLAGS} "-fopenmp")
+\confa{set} (\confa{CMAKE_Fortran_FLAGS} "-fopenmp")
+\end{script}
+
+
+\subsection{Configuration using CMake}
+
+\begin{script}
+\fprompt{~/program} cmake .
+\end{script}
+
+\subsection{Building using CMake}
+
+\begin{script}
+\fprompt{~/program} cmake --build . -j 12
+\end{script}
+
+\subsection{Packaging with CPack}
+
+\href{https://cmake.org/cmake/help/book/mastering-cmake/chapter/Packaging\%20With\%20CPack.html}{CPack} is a powerful, easy to use, 
+cross-platform software packaging tool distributed with CMake. 
+It uses the generators concept from CMake to abstract package generation on specific platforms. 
+It can be used with or without CMake, but it may depend on some software being installed on the system. 
+Using a simple configuration file, or using a CMake module, the author of a project can package a complex project into a simple installer. 
