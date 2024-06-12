@@ -1,6 +1,89 @@
-\section{cmake}
+\section{CMake}
 
+\href{https://cmake.org}{CMake} is a tool to manage the software build process. 
+Originally, CMake was designed as a generator for various dialects of Makefile, today CMake generates modern buildsystems such as Ninja as well as project files for IDEs such as Visual Studio and Xcode. \\
+Most of the information bellow is adapted from the main documentation: 
+\begin{center}\href{https://cmake.org/cmake/help/latest/}{https://cmake.org/cmake/help/latest/} \end{center}
+Also a GUI tool called \bftt{cmake-gui} is available, but its usage is not covered in this manual.  \\
+As for the GNU Autotools, \href{https://en.wikipedia.org/wiki/Pkg-config}{pkg-config} will be used extensively thereafter.  
+Before going further into this guide, and if you want to try to build and package your pogram using CMake, you will have to install the following tools: 
+\begin{itemize}
+\item For Windows and OSX please refer to the corresponding websites.
+\item For Linux you can quite conveniently use the command line as follow:
+\begin{itemize}
+\item Red Hat based Linux (using the \bftt{dnf} command):
+\begin{scriptii}
+\fprompt{~} sudo \bftt{dnf} install cmake
+\fprompt{~} sudo \bftt{dnf} install pkg-config gcc gcc-gfortran
+\end{scriptii}
+\item Debian based Linux (using the \bftt{apt} command):
+\begin{scriptii}
+\fprompt{~} sudo \bftt{apt} install cmake
+\fprompt{~} sudo \bftt{apt} install pkg-config gcc gfortran
+\end{scriptii}
+\end{itemize}
+\end{itemize}
+To learn more about software installation on Linux check out my \href{https://www.ipcms.fr/wp-content/uploads/2021/11/linux.pdf}{Linux tutorial}. \\
+To learn more about scripting and the usage of the command line check out my \href{https://www.ipcms.fr/wp-content/uploads/2021/05/bash.pdf}{Bash tutorial}.
 
+\subsection{Example project}
+
+I will use afterwards an example project with the same structure as the one used to illustrate the capabilities of the Autotools system: 
+{\footnotesize{
+\begin{script}
+\fprompt{~/program} ls -lh
+-rw-r--r--. 1 user group 2,8K 24 mars  11:24 ChangeLog
+-rw-r--r--. 1 user group  34K 24 mars  11:24 COPYING
+drwxr-xr-x. 2 user group 4,0K 24 mars  11:24 \btt{data}
+drwxr-xr-x. 2 user group 4,0K 24 mars  11:24 \btt{metadata}
+drwxr-xr-x. 4 user group 4,0K 24 mars  11:24 \btt{pixmaps}
+-rw-r--r--. 1 user group 4,8K 24 mars  11:24 README
+drwxr-xr-x. 2 user group 4,0K 24 mars  11:24 \btt{src}
+\end{script}
+}}
+\vspace{-0.25cm}
+\\
+\noindent The top directory contains 4 subfolders:
+\begin{itemize}
+\item \bftt{src}:
+{\footnotesize{
+\begin{scripti}
+\fprompt{~/program} ls src
+file-1.f90    file-2.f90    gui.c    main.c    mod.f90
+\end{scripti}
+}}
+\vspace{-0.75cm} \item \bftt{data}:
+{\footnotesize{
+\begin{scripti}
+\fprompt{~/program} ls data
+file-1.dat    file-2.dat
+\end{scripti}
+}}
+\vspace{-0.75cm}
+\item \bftt{pixmaps}:
+{\footnotesize{
+\begin{scripti}
+\fprompt{~/program} ls pixmaps/*
+pixmaps/pix-3.dat
+
+pixmaps/\btt{pix-1}:
+pix-1-a.dat    pix-1-b.dat
+
+pixmaps/\btt{pix-2}:
+pix-2-a.dat    pix-2-b.dat
+\end{scripti}
+}}
+\vspace{-0.75cm} \item \bftt{metadata} (this is used for Freedesktop integration, see [Sec.~\ref{rpmpost}]):
+{\footnotesize{
+\begin{scripti}
+\fprompt{~/program} ls metadata
+com.program.www.appdata.xml    program.desktop    program-mime.xml
+
+metadata/\btt{icons}:
+program.svg    program-project.svg    program-workspace.svg
+\end{scripti}
+}}
+\end{itemize}
 
 \subsection{The "\texttt{CMakeLists.txt}" file} 
 
@@ -15,7 +98,11 @@ To start working your CMake package you will need first to create a directory to
 \fprompt{~} mkdir program
 \fprompt{~} cd program
 \end{script}
-Then simply use a text editor to work on this file and insert instructions regarding configuration, building and installation of your program. 
+\\[-0.25cm]
+\noindent Then simply use a text editor to work on this file and insert instructions regarding configuration, building and installation of your program:
+\begin{script}
+\fprompt{~} \bftt{vi} \rtt{CMakeLists.txt}
+\end{script}
 
 \subsubsection*{CMake version information}
 
@@ -25,57 +112,160 @@ The "\texttt{CMakeLists.txt}" file always starts by the minimum CMake version to
 \end{script}
 
 \subsubsection*{Project name, version and programmation languages}
+\label{cmake_pname}
 
 Describe project information using the \bftt{project} command:
 \begin{script}
-\confa{project} (prog \bftt{VERSION} 1.2.12)
-\confa{project} (prog \bftt{DESCRIPTION} "A tool box")
-\confa{project} (prog \bftt{HOMEPAGE_URL} "https://www.program.com")
-\confa{project} (prog \bftt{LANGUAGES} C Fortran)
+\confb{project}{\gtt{prog} \bftt{VERSION} 1.2.12}
+\confb{project}{\gtt{prog} \bftt{DESCRIPTION} \red{"A tool box"}}
+\confb{project}{\gtt{prog} \bftt{HOMEPAGE_URL} \red{"https://www.program.com"}}
+\confb{project}{\gtt{prog} \bftt{LANGUAGES} C Fortran}
 \end{script}
-CMake will decompose the \bftt{VERSION} command in:
+\\[-0.25cm]
+\noindent Where "\gtt{prog}" is the project name, and is the keyword that will used thereafter to associate CMake actions to the project. \\ 
+CMake will split the \bftt{VERSION} command in:
 \begin{center}\texttt{MAJOR\_VERSION.MINOR\_VERSION.PATCH\_VERSION} \end{center}
 The \bftt{LANGUAGES} option allows to check for compilers, however other dependencies might be needed (see bellow). \\[0.25cm]
-For more information see the CMake \bftt{project} command related documentation \href{https://cmake.org/cmake/help/latest/command/project.html\#command:project}{here}.
+For more information see the CMake \confb{project}{} command related documentation \href{https://cmake.org/cmake/help/latest/command/project.html\#command:project}{here}.
 
 \subsubsection*{Dependencies}
 \label{cmake_deps}
 
-Check for package using the \bftt{find\_package} and \bftt{pkg\_check\_modules} commands: 
+In this manual I will only focus on the \bftt{pkg-config} way of doing things, other possibilites are available and documented in the official CMake documentation: 
+\begin{center}\href{https://cmake.org/cmake/help/latest/command/find\_package.html\#find-package}{https://cmake.org/cmake/help/latest/command/find\_package.html\#find-package}\end{center}
+Check for package(s) using the \confb{find\_package}{} and \confb{pkg\_check\_modules}{} commands: 
 \begin{script}
-\confa{find_package} (PkgConfig \bftt{REQUIRED})
+\confb{find_package}{PkgConfig \bftt{REQUIRED}}
 
 \comm{Checking for gtk+3.0:}
-\confa{pkg_check_modules} (GTK3 \bftt{REQUIRED} IMPORTED_TARGET gtk3)
+\confb{pkg_check_modules}{\red{GTK3} \bftt{REQUIRED} IMPORTED_TARGET \dgtt{gtk3}}
 
 \comm{Checking for libxml-2.0:}
-\confa{pkg_check_modules} (LIBXML2 \bftt{REQUIRED} IMPORTED_TARGET libxml-2.0)
+\confb{pkg_check_modules}{\red{LIBXML2} \bftt{REQUIRED} IMPORTED_TARGET \dgtt{libxml-2.0}}
 
 \comm{Checking for libavcodec, and other FFMPEG based libraries:}
-\confa{pkg_check_modules} (LIBAVUTIL \bftt{REQUIRED} IMPORTED_TARGET libavutil)
-\confa{pkg_check_modules} (LIBAVCODEC \bftt{REQUIRED} IMPORTED_TARGET libavcodec)
-\confa{pkg_check_modules} (LIBAVFORMAT \bftt{REQUIRED} IMPORTED_TARGET libavformat)
-\confa{pkg_check_modules} (LIBSWSCALE \bftt{REQUIRED} IMPORTED_TARGET libswscale)
+\confb{pkg_check_modules}{\red{LIBAVUTIL} \bftt{REQUIRED} IMPORTED_TARGET \dgtt{libavutil}}
+\confb{pkg_check_modules}{\red{LIBAVCODEC} \bftt{REQUIRED} IMPORTED_TARGET \dgtt{libavcodec}}
+\confb{pkg_check_modules}{\red{LIBAVFORMAT} \bftt{REQUIRED} IMPORTED_TARGET \dgtt{libavformat}}
+\confb{pkg_check_modules}{\red{LIBSWSCALE} \bftt{REQUIRED} IMPORTED_TARGET \dgtt{libswscale}}
 
 \comm{Checking for epoxy:}
-\confa{pkg_check_modules} (EPOXY \bftt{REQUIRED} IMPORTED_TARGET epoxy)
+\confb{pkg_check_modules}{\red{EPOXY} \bftt{REQUIRED} IMPORTED_TARGET \dgtt{epoxy}}
 \end{script}
+\\[-0.25cm]
+\noindent Where keywods in red define variable names for the CMake project, eg. "\texttt{\red{GTK3}}", 
+and keywords in dark green, eg. "\dgtt{gtk3}", are the associated to \bftt{pkg-config} libraries (see Sec.~\ref{clibs}). \\ 
+Later on you will also need to link the project to the required libraries using associated \\
+\confb{target\_link\_libraries}{} instructions, but only after the build target is declared, see page~\pageref{clink}.
 
 \subsubsection*{Compiler options}
 
+To define specific compiler flags use the \confb{set}{} command with the "\texttt{CMAKE\_<LANG>\_FLAGS}" 
+argument, "\texttt{<LANG>}" being the target programming language:
 \begin{script}
-\confa{set} (\confa{CMAKE_C_FLAGS} "-fopenmp")
-\confa{set} (\confa{CMAKE_Fortran_FLAGS} "-fopenmp")
+\confb{set}{\confa{CMAKE_C_FLAGS} \red{"-O3 -fopenmp"}}
+\confb{set}{\confa{CMAKE_Fortran_FLAGS} \red{"-O3 -fopenmp"}}
+\end{script}
+\\[-0.25cm]
+\noindent Flags should be put between double quotes. 
+
+\subsubsection*{Preprocessor variable definitions}
+
+To define compiler variables use the \confb{add\_compile\_definitions}{} instruction:
+\begin{script}
+\confb{add_compile_definitions}{OPENMP}
+\confb{add_compile_definitions}{PACKAGE_LOGO=\red{"pixmaps/logo.png"}}
+\end{script}
+\\[-0.25cm]
+\noindent On a GNU compiler command line, the previous instructions would be translated in:
+\begin{script}
+\fprompt{~} \bftt{gcc} \dgtt{-D}OPENMP \dgtt{-D}PACKAGE_LOGO=\red{"pixmaps/logo.png"}
+\end{script}
+
+\subsubsection*{Declaring the project sources}
+
+In CMake you declare sources in list of file, that your refer to using a variable name.
+\begin{itemize}
+\item Recursively, not recommended for a distribution purposes:
+{\footnotesize{
+\begin{scripti}
+\confb{file}{GLOB_RECURSE \bftt{C_SOURCES} RELATIVE \btt{\$\{CMAKE_SOURCE_DIR\}} \red{"src/*.c"}}
+\confb{file}{GLOB_RECURSE \bftt{F_SOURCES} RELATIVE \btt{\$\{CMAKE_SOURCE_DIR\}} \red{"src/*.f90"}}
+\end{scripti}
+}} \\[-0.5cm]
+\noindent The variable "\bftt{C\_SOURCES}" will contain the list of files with the extension "\texttt{*.c}" that CMake can find recursively in the source directory "\texttt{src}". \\
+Similarly the variable "\bftt{F\_SOURCES}" will contain the list of files with the extension "\texttt{*.f90}" that CMake can find recursively in the source directory "\texttt{src}".
+\item Folder by folder, then you need to include any sub-folder that contains source file(s):
+{\footnotesize{
+\begin{scripti}
+\confb{file}{GLOB \bftt{C_SRC} RELATIVE \btt{\$\{CMAKE_SOURCE_DIR\}} \red{"src/*.c"}}
+\confb{file}{GLOB \bftt{F_SRC} RELATIVE \btt{\$\{CMAKE_SOURCE_DIR\}} \red{"src/*.f90"}}
+\end{scripti}
+}} \\[-0.5cm]
+\noindent The variable "\bftt{C\_SRC}" will contain the list of files with the extension "\texttt{*.c}" that CMake can find in the source directory "\texttt{src}" only. \\
+Similarly the variable "\bftt{F\_SRC}" will contain the list of files with the extension "\texttt{*.f90}" that CMake can find in the source directory "\texttt{src}" only. 
+\end{itemize}
+
+\subsubsection*{Declaring the project building process}
+
+At this point it is appropriate to declare the building instructions for the project: 
+\begin{script}
+\confb{add_executable}{\gtt{prog} \bftt{\$\{C_SOURCES\} \$\{F_SOURCES\}}}
+\end{script}
+\\[-0.25cm]
+\noindent Where "\gtt{prog}" is the project name (see page~\pageref{cmake_pname}), followed by the list of sources, here C and Fortran90 sources files declared previously and listed in the "\texttt{\$\{C\_SOURCES\}}" and "\texttt{\$\{F\_SOURCES\}}" variables. 
+
+\subsubsection*{Declaring project headers include directories}
+
+When the buidling instructions have been specified using the \confb{add\_executable}{} instruction, then it possible to declare project headers include directory using: 
+\begin{script}
+\confb{target_include_directories}{\gtt{prog} \bftt{PUBLIC} src}
+\end{script} \\[-0.5cm]
+\noindent Where "\gtt{prog}" is the project name (see page~\pageref{cmake_pname}), followed by a space separated list of directory(ies) to look into to search for header files. 
+
+\subsubsection*{Linking to external libraries}
+\label{clink}
+Again only focusing on the \bftt{pkg-config} way of doing things, but other options are available:
+\begin{center}\href{https://cmake.org/cmake/help/latest/command/target\_link\_libraries.html}{https://cmake.org/cmake/help/latest/command/target\_link\_libraries.html} \end{center}
+To link the project to libraries use the \confb{target\_link\_libraries}{} instructions:
+\begin{script}
+\confb{target_link_libraries}{\gtt{prog} \bftt{PUBLIC} PkgConfig::\red{GTK3}}
+\confb{target_link_libraries}{\gtt{prog} \bftt{PUBLIC} PkgConfig::\red{LIBXML2}}
+\confb{target_link_libraries}{\gtt{prog} \bftt{PUBLIC} PkgConfig::\red{LIBAVUTIL}}
+\confb{target_link_libraries}{\gtt{prog} \bftt{PUBLIC} PkgConfig::\red{LIBAVCODEC}}
+\confb{target_link_libraries}{\gtt{prog} \bftt{PUBLIC} PkgConfig::\red{LIBAVFORMAT}}
+\confb{target_link_libraries}{\gtt{prog} \bftt{PUBLIC} PkgConfig::\red{LIBSWSCALE}}
+\confb{target_link_libraries}{\gtt{prog} \bftt{PUBLIC} PkgConfig::\red{EPOXY}}
+\end{script}
+\\[-0.25cm]
+\noindent Where "\gtt{prog}" is the project name, see page~\pageref{cmake_pname}, and the keywords in red in the \confb{target\_link\_libraries}{} instructions, 
+refers to the keywords used in the \confb{pkg\_check\_modules}{} instructions, eg. "\texttt{\red{GTK3}}", see page~\pageref{cmake_deps}.
+
+\subsubsection*{Installation using CMake}
+
+To generate installation rules for your project use the \confb{install}{} instruction:
+\begin{script}
+\comm{First import the GNU installation directory variables}
+\confb{include}{GNUInstallDirs}
+
+\confb{install}{PROGRAMS prog DESTINATION \$\{CMAKE_INSTALL_BINDIR\}}
+\confb{install}{DIRECTORY data DESTINATION \$\{CMAKE_INSTALL_DATADIR\}/prog PATTERN "data/*"}
+\confb{install}{DIRECTORY metadata/icons DESTINATION \$\{CMAKE_INSTALL_DATADIR\}/pixmaps PATTERN "metadata/cions/*.svg"}
+\confb{install}{FILES metadata/com.program.www.appdata.xml \$\{CMAKE_INSTALL_DATADIR\}/metainfo}
+\confb{install}{FILES metadata/program-mime.xml \$\{CMAKE_INSTALL_DATADIR\}/mime/packages}
+
 \end{script}
 
 
-\subsection{Configuration using CMake}
+\subsection{Configuring, building and install a CMake package}
+
+\subsubsection*{Configuration}
 
 \begin{script}
 \fprompt{~/program} cmake .
 \end{script}
 
-\subsection{Building using CMake}
+\subsubsection*{Building}
 
 \begin{script}
 \fprompt{~/program} cmake --build . -j 12
