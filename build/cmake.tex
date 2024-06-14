@@ -4,7 +4,8 @@
 Originally, CMake was designed as a generator for various dialects of Makefile, today CMake generates modern buildsystems such as Ninja as well as project files for IDEs such as Visual Studio and Xcode. \\
 Most of the information bellow is adapted from the main documentation: 
 \begin{center}\href{https://cmake.org/cmake/help/latest/}{https://cmake.org/cmake/help/latest/} \end{center}
-Also a GUI tool called \bftt{cmake-gui} is available, but its usage is not covered in this manual.  \\
+Also a GUI tool called \bftt{cmake-gui} is available, but its usage is not covered in this manual. \\
+Finally please note that in the following I will only consider basic, targeted, usage of \href{https://cmake.org}{CMake}, that is a complexe tool with much more capabilities. \\[0.25cm]
 As for the GNU Autotools, \href{https://en.wikipedia.org/wiki/Pkg-config}{pkg-config} will be used extensively thereafter.  
 Before going further into this guide, and if you want to try to build and package your pogram using CMake, you will have to install the following tools: 
 \begin{itemize}
@@ -23,13 +24,12 @@ Before going further into this guide, and if you want to try to build and packag
 \end{scriptii}
 \end{itemize}
 \end{itemize}
-Note that in the following I will only consider basic, targeted, usage of \href{https://cmake.org}{CMake}, that is a complexe tool with much more capabilities. \\
 To learn more about software installation on Linux check out my \href{https://www.ipcms.fr/wp-content/uploads/2021/11/linux.pdf}{Linux tutorial}. \\
-To learn more about scripting and the usage of the command line check out my \href{https://www.ipcms.fr/wp-content/uploads/2021/05/bash.pdf}{Bash tutorial}.
+To learn more about scripting and the usage of the command line check out my \href{https://www.ipcms.fr/wp-content/uploads/2021/05/bash.pdf}{Bash tutorial}. 
 
 \subsection{Example project}
 
-I will use afterwards an example project with the same structure as the one used to illustrate the capabilities of the Autotools system: 
+In the next sections the example project will be similar to the case of the GNU autotools: 
 {\footnotesize{
 \begin{script}
 \fprompt{~/program} ls -lh
@@ -86,9 +86,9 @@ program.svg    program-project.svg    program-workspace.svg
 }}
 \end{itemize}
 
-\subsection{The "\texttt{CMakeLists.txt}" file} 
+\subsection{The file: \bftt{CMakeLists.txt}} 
 
-The "\texttt{CMakeLists.txt}" is a configuration file that defines:  
+The file \bftt{CMakeLists.txt} is a configuration file that defines:  
 \begin{itemize}
 \item The rules to configure your project
 \item The rules to build your project
@@ -102,12 +102,12 @@ To start working your CMake package you will need first to create a directory to
 \\[-0.25cm]
 \noindent Then simply use a text editor to work on this file and insert instructions regarding configuration, building and installation of your program:
 \begin{script}
-\fprompt{~} \bftt{vi} \rtt{CMakeLists.txt}
+\fprompt{~/program} \bftt{vi} \rtt{CMakeLists.txt}
 \end{script}
 
 \subsubsection*{CMake version information}
 
-The "\texttt{CMakeLists.txt}" file always starts by the minimum CMake version to use: 
+The file \bftt{CMakeLists.txt} always starts by the minimum CMake version to use: 
 \begin{script}
 \confa{cmake_minimum_required} (\bftt{VERSION} 3.10)
 \end{script}
@@ -123,7 +123,7 @@ Describe project information using the \bftt{project} command:
 \confb{project}{\gtt{prog} \bftt{LANGUAGES} C Fortran}
 \end{script}
 \\[-0.25cm]
-\noindent Where "\gtt{prog}" is the project name, and is the keyword that will used thereafter to associate CMake actions to the project. \\ 
+\noindent Where \gtt{prog} is the project name, and is the keyword that will used thereafter to associate CMake actions to the project. \\ 
 CMake will split the \bftt{VERSION} command in:
 \begin{center}\texttt{MAJOR\_VERSION.MINOR\_VERSION.PATCH\_VERSION} \end{center}
 The \bftt{LANGUAGES} option allows to check for compilers, however other dependencies might be needed (see bellow). \\[0.25cm]
@@ -154,21 +154,18 @@ Check for package(s) using the \confb{find\_package}{} and \confb{pkg\_check\_mo
 \confb{pkg_check_modules}{\magenta{EPOXY} \bftt{REQUIRED} IMPORTED_TARGET \dgtt{epoxy}}
 \end{script}
 \\[-0.25cm]
-\noindent Where keywods in pink define variable names for the CMake project, eg. "\texttt{\magenta{GTK3}}", 
-and keywords in dark green, eg. "\dgtt{gtk3}", are the associated to \bftt{pkg-config} libraries (see Sec.~\ref{clibs}). \\ 
-Later on you will also need to link the project to the required libraries using associated \\
-\confb{target\_link\_libraries}{} instructions, but only after the build target is declared, see page~\pageref{clink}.
+\noindent Where keywods in pink define variable names for the CMake project, eg. \texttt{\magenta{GTK3}}, 
+and keywords in dark green, eg. \dgtt{gtk3}, are the associated to \bftt{pkg-config} libraries (see Sec.~\ref{clibs}). \\ 
+You will also need to link the project to the required libraries, but only after the build target is declared, see page~\pageref{clink}.
 
 \subsubsection*{Compiler options}
 
-To define specific compiler flags use the \confb{set}{} command with the "\texttt{CMAKE\_<LANG>\_FLAGS}" 
-argument, "\texttt{<LANG>}" being the target programming language:
+To define specific compiler flags use the \confb{set}{} command with the \confa{CMAKE\_}\bftt{<LANG>}\confa{\_FLAGS}
+argument, \bftt{<LANG>} being the target programming language:
 \begin{script}
 \confb{set}{\confa{CMAKE_C_FLAGS} \magenta{"-O3 -fopenmp"}}
 \confb{set}{\confa{CMAKE_Fortran_FLAGS} \magenta{"-O3 -fopenmp"}}
 \end{script}
-\\[-0.25cm]
-\noindent Flags should be put between double quotes. 
 
 \subsubsection*{Preprocessor variable definitions}
 
@@ -180,12 +177,12 @@ To define compiler variables use the \confb{add\_compile\_definitions}{} instruc
 \\[-0.25cm]
 \noindent On a GNU compiler command line, the previous instructions would be translated in:
 \begin{script}
-\fprompt{~} \bftt{gcc} \dgtt{-D}OPENMP \dgtt{-D}PACKAGE_LOGO=\magenta{"pixmaps/logo.png"}
+\bftt{gcc} \dgtt{-D}OPENMP \dgtt{-D}PACKAGE_LOGO=\magenta{"pixmaps/logo.png"}
 \end{script}
 
 \subsubsection*{Declaring the project sources}
 
-In CMake you declare sources in list of file, that your refer to using a variable name.
+In CMake you declare sources in list of file(s), that your refer to using a variable name.
 \begin{itemize}
 \item Recursively, not recommended for a distribution purposes:
 {\footnotesize{
@@ -194,8 +191,8 @@ In CMake you declare sources in list of file, that your refer to using a variabl
 \confb{file}{GLOB_RECURSE \bftt{F_SOURCES} RELATIVE \varc{CMAKE_SOURCE_DIR} \magenta{"src/*.f90"}}
 \end{scripti}
 }} \\[-0.5cm]
-\noindent "\bftt{C\_SOURCES}" is the name of a variable that will contain the list of files with the extension "\texttt{*.c}" that CMake can find recursively in the source directory "\texttt{src}". \\
-Similarly "\bftt{F\_SOURCES}" is the name of a variable that will contain the list of files with the extension "\texttt{*.f90}" that CMake can find recursively in the source directory "\texttt{src}".
+\noindent \bftt{C\_SOURCES} is the name of a variable that will contain the list of files with the extension \texttt{\magenta{"*.c"}} that CMake can find recursively in the source directory \texttt{\magenta{"src"}}. \\
+Similarly \bftt{F\_SOURCES} is the name of a variable that will contain the list of files with the extension \texttt{\magenta{"*.f90"}} that CMake can find recursively in the source directory \texttt{\magenta{"src"}}.
 \item Folder by folder, then you need to include any sub-folder that contains source file(s):
 {\footnotesize{
 \begin{scripti}
@@ -203,18 +200,19 @@ Similarly "\bftt{F\_SOURCES}" is the name of a variable that will contain the li
 \confb{file}{GLOB \bftt{F_SRC} RELATIVE \varc{CMAKE_SOURCE_DIR} \magenta{"src/*.f90"}}
 \end{scripti}
 }} \\[-0.5cm]
-\noindent "\bftt{C\_SRC}" is the name of a variable that will contain the list of files with the extension "\texttt{*.c}" that CMake can find in the source directory "\texttt{src}" only. \\
-Similarly "\bftt{F\_SRC}" is the name of a variable that will contain the list of files with the extension "\texttt{*.f90}" that CMake can find in the source directory "\texttt{src}" only. 
+\noindent \bftt{C\_SRC} is the name of a variable that will contain the list of files with the extension \texttt{\magenta{"*.c"}} that CMake can find in the source directory \texttt{\magenta{"src"}} only. \\
+Similarly \bftt{F\_SRC} is the name of a variable that will contain the list of files with the extension \texttt{\magenta{"*.f90"}} that CMake can find in the source directory \texttt{\magenta{"src"}} only. 
 \end{itemize}
 
+\newpage
 \subsubsection*{Declaring the project building process}
 
-At this point it is appropriate to declare the building instructions for the project: 
+How to build the project is declared using the \confb{add\_executable}{} instruction:
 \begin{script}
-\confb{add_executable}{\gtt{prog} \varc{C_SOURCES} \varc{F_SOURCES}}
+\confb{add_executable}{\gtt{prog} \varc{C_SRC} \varc{F_SRC}}
 \end{script}
 \\[-0.25cm]
-\noindent Where "\gtt{prog}" is the project name (see page~\pageref{cmake_pname}), followed by the list of sources, here C and Fortran90 sources files declared previously and listed in the "\varc{C\_SOURCES}" and "\varc{F\_SOURCES}" variables. 
+\noindent Where \gtt{prog} is the project name (see page~\pageref{cmake_pname}), followed by the list of sources, here C and Fortran90 sources files declared previously and listed in the \varc{C\_SRC} and \varc{F\_SRC} variables. 
 
 \subsubsection*{Declaring project headers include directories}
 
@@ -222,7 +220,7 @@ When the buidling instructions have been specified using the \confb{add\_executa
 \begin{script}
 \confb{target_include_directories}{\gtt{prog} \bftt{PUBLIC} src}
 \end{script} \\[-0.5cm]
-\noindent Where "\gtt{prog}" is the project name (see page~\pageref{cmake_pname}), followed by a space separated list of directory(ies) to look into to search for header files. 
+\noindent Where \gtt{prog} is the project name (see page~\pageref{cmake_pname}), followed by a space separated list of directory(ies) to look into to search for header files. 
 
 \subsubsection*{Linking to external libraries}
 \label{clink}
@@ -239,9 +237,10 @@ To link the project to libraries use the \confb{target\_link\_libraries}{} instr
 \confb{target_link_libraries}{\gtt{prog} \bftt{PUBLIC} PkgConfig::\magenta{EPOXY}}
 \end{script}
 \\[-0.25cm]
-\noindent Where "\gtt{prog}" is the project name, see page~\pageref{cmake_pname}, and the keywords in pink in the \confb{target\_link\_libraries}{} instructions, 
-refers to the keywords used in the \confb{pkg\_check\_modules}{} instructions, eg. "\texttt{\magenta{GTK3}}", see page~\pageref{cmake_deps}.
+\noindent Where \gtt{prog} is the project name, see page~\pageref{cmake_pname}, and the keywords in pink in the \confb{target\_link\_libraries}{} instructions, 
+refers to the keywords used in the \confb{pkg\_check\_modules}{} instructions, eg. \texttt{\magenta{GTK3}}, see page~\pageref{cmake_deps}.
 
+\newpage
 \subsubsection*{Installation using CMake}
 
 To generate installation rules for your project use the \confb{install}{} instruction:
@@ -269,26 +268,77 @@ To generate installation rules for your project use the \confb{install}{} instru
 \bftt{        DESTINATION} \varc{CMAKE_INSTALL_DATADIR}/metainfo}
 \confb{install}{\bftt{FILES} metadata/program-mime.xml
 \bftt{        DESTINATION} \varc{CMAKE_INSTALL_DATADIR}/mime/packages}
-
-\comm{Post installation script}
-\confb{install}{\bftt{SCRIPT} post-install.cmake}
 \end{script}
 }}
 
-\subsection{Configuring, building and install a CMake package}
+\subsubsection*{Post-installation script}
+
+To use apply post-installation configuration, including system integration, an option is to use a script call by the \confb{install}{} command with 
+the \bftt{CODE} argument: 
+{\footnotesize{
+\begin{script}
+\comm{Creating a variable that contains the installation directory:}
+\confb{set}{\bftt{INSTALL_DIR} "\varc{CMAKE_INSTALL_PREFIX}/\varc{CMAKE_INSTALL_DATADIR}"}
+
+\comm{Runnng the post installation script:}
+\confb{install}{\bftt{CODE} \magenta{"}\confb{execute_process}{\bftt{COMMAND} \magenta{./post-install.sh} \varc{INSTALL_DIR}}\magenta{"}}
+\end{script}
+}}
+\\[-0.5cm]
+This will execute the command \texttt{./post-install.sh} which is a script containing the post-installation instructions. 
+It is required to transmit to the script the installation directory selected by CMake, this is done using the variable \varc{INSTALL\_DIR}
+in argument of the script. 
+Note that you can define variable, eg. \varc{INSTALL\_DIR}, using the \confb{set}{} instruction. \\
+An example of content for the script \texttt{post-install.sh} is provided in appendix [App.~\ref{poscript}]. \\[0.25cm]
+A complete example of the file \bftt{CMakeLists.txt} is provided in appendix [App.~\ref{cmakelist}].
+
+\subsection{Configuring, building and installing a CMake package}
+
+To configure, build and install a CMake package use the \bftt{cmake} command. \\
+In the following I will consider that the file \bftt{CMakeLists.txt} was completed: 
+{\footnotesize{
+\begin{script}
+\fprompt{~/program} ls -lh
+-rw-r--r--. 1 user group 2,8K 24 mars  12:25 ChangeLog
+-rw-r--r--. 1 user group 5,3K 24 mars  12:25 \rtt{CMakeLists.txt}
+-rw-r--r--. 1 user group  34K 24 mars  12:25 COPYING
+drwxr-xr-x. 2 user group 4,0K 24 mars  12:25 \btt{data}
+drwxr-xr-x. 2 user group 4,0K 24 mars  12:25 \btt{metadata}
+drwxr-xr-x. 4 user group 4,0K 24 mars  12:25 \btt{pixmaps}
+-rw-r--r--. 1 user group 4,8K 24 mars  12:25 README
+drwxr-xr-x. 2 user group 4,0K 24 mars  12:25 \btt{src}
+\end{script}
+}}
 
 \subsubsection*{Configuration}
 
+To configure use \bftt{cmake}:
+\begin{itemize}
+\item Without option
+\item Followed by the name of the directory of the \bftt{CMakeLists.txt} file
+\end{itemize}
+\vspace{-1cm}
 \begin{script}
-\fprompt{~/program} cmake .
+\fprompt{~/program} \bftt{cmake} \dgtt{.}
 \end{script}
+\\[-0.5cm]
+\noindent The single argument of the command is the location of the file \bftt{CMakeLists.txt}, in this example case "\dgtt{.} $=$ current directory".
 
 \subsubsection*{Building}
 
+To build use \bftt{cmake}:
+\begin{itemize}
+\item With the \rtt{-{-}build} option
+\item Followed by the name of the directory of the \bftt{CMakeLists.txt} file
+\end{itemize}
+\vspace{-1cm}
 \begin{script}
-\fprompt{~/program} cmake --build . -j 12
-\end{script}
+	\fprompt{~/program} \bftt{cmake} \rtt{--build} \dgtt{.} \btt{-j 12}
+\end{script} 
+\\[-0.5cm]
+\noindent The first option of the command is to request to build the project, it is followed by the is the location of the file \bftt{CMakeLists.txt}, in this example case "\dgtt{.} $=$ current directory", and optionnaly by other options, in this example to request a parallel build using 12 threads. 
 
+\clearpage
 \subsection{Packaging with CPack}
 
 \href{https://cmake.org/cmake/help/book/mastering-cmake/chapter/Packaging\%20With\%20CPack.html}{CPack} is a powerful, easy to use, 
