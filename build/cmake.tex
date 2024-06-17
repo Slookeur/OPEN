@@ -19,8 +19,8 @@ Before going further into this guide, and if you want to try to build and packag
 \end{scriptii}
 \item Debian based Linux (using the \bftt{apt} command):
 \begin{scriptii}
-\fprompt{~} sudo \bftt{apt} install cmake
-\fprompt{~} sudo \bftt{apt} install pkg-config gcc gfortran
+\uprompt{~} sudo \bftt{apt} install cmake
+\uprompt{~} sudo \bftt{apt} install pkg-config gcc gfortran
 \end{scriptii}
 \end{itemize}
 \end{itemize}
@@ -439,3 +439,15 @@ CPack creates a package using:
 \item A configuration file designated using the option \rtt{-C} (or \rtt{-{-}config})
 \item The type of package using the option \rtt{-G}
 \end{itemize}
+
+\subsection{Difference with the GNU autotools}
+
+The main difference between the GNU autotools introduced in the first part of the chapter, and CMake, 
+is that you cannot easily uninstall a CMake package, for example using: 
+\begin{script}
+\fprompt{~/program} \gtt{sudo} \bftt{make} \rtt{uninstall}
+\end{script}
+\\[-0.5cm]
+In the CMake case you will need to remove files manually. \\[0.25cm]
+However this does not really matter when the project is prepared to be distributed by the Linux software repositories in the RPM or the DEB format. 
+
