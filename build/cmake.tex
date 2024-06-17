@@ -326,19 +326,34 @@ To configure use \bftt{cmake}:
 
 \subsubsection*{Building}
 
-To build use \bftt{cmake}:
+To build use \bftt{cmake} with:
 \begin{itemize}
-\item With the \rtt{-{-}build} option
+\item The \rtt{-{-}build} option
 \item Followed by the name of the directory of the \bftt{CMakeLists.txt} file
 \end{itemize}
 \vspace{-1cm}
 \begin{script}
-	\fprompt{~/program} \bftt{cmake} \rtt{--build} \dgtt{.} \btt{-j 12}
+	\fprompt{~/program} \bftt{cmake} \rtt{--build} \dgtt{.} \btt{-j} \dctt{12}
 \end{script} 
 \\[-0.5cm]
 \noindent The first option of the command is to request to build the project, it is followed by the is the location of the file \bftt{CMakeLists.txt}, in this example case "\dgtt{.} $=$ current directory", and optionnaly by other options, in this example to request a parallel build using 12 threads. 
 
 \clearpage
+
+\subsubsection*{Installing}
+
+To install use \bftt{cmake} with:
+\begin{itemize}
+\item The \rtt{-{-}install} option
+\item Followed by the name of the directory of the \bftt{CMakeLists.txt} file
+\end{itemize}
+\vspace{-1cm}
+\begin{script}
+\fprompt{~/program} \bftt{cmake} \rtt{--install} \dgtt{.} \btt{--prefix} \dctt{/usr/local}
+\end{script}
+\\[-0.5cm]
+\noindent The first option of the command is to request to install the project, it is followed by the is the location of the file \bftt{CMakeLists.txt}, in this example case "\dgtt{.} $=$ current directory", and optionnaly by other options in this example you can overide the default installation directory using the \btt{--prefix} option followed by the new installation directory
+
 \subsection{Packaging with CPack}
 
 \href{https://cmake.org/cmake/help/book/mastering-cmake/chapter/Packaging\%20With\%20CPack.html}{CPack} is a powerful, easy to use, 
