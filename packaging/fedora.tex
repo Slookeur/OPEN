@@ -26,8 +26,8 @@ The "\bftt{.spec}" file is a fundamental element in the packaging workflow.
 This file can be thought of as the "recipe" that the rpmbuild utility uses to actually build an RPM. 
 It tells the build system what to do by defining instructions in a series of sections. \\
 The next pages will introduce the basics required to create a simple "\bftt{.spec}", 
-the complete example is provided in appendix [App.~\ref{spec}]. \\[0.25cm]
-Please consider that each section of the "\bftt{.spec}" file as detailed between sections [Sec.~\ref{rpminit}] and [Sec.~\ref{rpmlog}] 
+the complete example is provided in appendix~\ref{spec}. \\[0.25cm]
+Please consider that each section of the "\bftt{.spec}" file as detailed between sections~\ref{rpminit}] and \ref{rpmlog} 
 can be completed by your own set of specific instructions. \\[0.25cm] 
 \noindent To create a new "\bftt{.spec}" file, use:
 \begin{script}
@@ -250,11 +250,11 @@ If your are building an application then 2 files must be delivered with your pac
 \begin{itemize}
 \item The custom MIME association "\bftt{-mime.xml}" file \\[0.25cm]
 \href{https://help.gnome.org/admin/system-admin-guide/stable/mime-types.html.en}{MIME types} are used to create and define file association(s) with a program. \\ 
-An example of custom MIME association file is provided in the appendix [App.~\ref{mime}].
+An example of custom MIME association file is provided in the appendix~\ref{mime}.
 \item The desktop entry or "\bftt{.desktop}" file \\[0.25cm]
 \href{https://specifications.freedesktop.org/desktop-entry-spec/latest/}{Desktop entries} are desktop configuration files describing 
 how a particular program is to be launched, how it appears in menus, etc. \\
-An example of desktop entry for a desktop application is provided in the appendix [App.~\ref{desktop}].
+An example of desktop entry for a desktop application is provided in the appendix~\ref{desktop}.
 \item The AppStream metadata or "\bftt{.appdata.xml}" file \\[0.25cm]
 \href{https://www.freedesktop.org/software/appstream/docs/}{AppStream metadata} allows upstream projects to define metadata 
 about the components they provide using small XML files, metainfo files, which get installed into locations on the client system 
@@ -267,7 +267,7 @@ The name of this file should follow the structure:
 \item The website of the program is: \quad https://\red{www.program.com}
 \item The file should be named: \quad\qquad \btt{com.program.www}\rtt{.}\bftt{appdata.xml}
 \end{itemize}
-An example of AppStream metadata file for a desktop application is provided in the appendix [App.~\ref{appstream}].
+An example of AppStream metadata file for a desktop application is provided in the appendix~\ref{appstream}.
 \end{itemize}
 Both cases require actions to be performed so that the system will know new data has been installed,
 these actions, standard Linux system post-installation and integration commands, are to be described in the \bftt{check} section:
@@ -933,7 +933,7 @@ program.spec README.md sources
 \fprompt{~}
 \end{scripti}
 \\[-0.75cm]
-\noindent Note that you must use the name of the official Fedora repository as created in section [Sec.~\ref{create_frepo}], in this case: "\texttt{program}"  
+\noindent Note that you must use the name of the official Fedora repository as created in section~\ref{create_frepo}, in this case: "\texttt{program}"  
 \item Download the sources from the official repository:  
 \begin{scripti}
 \fprompt{~} cd prog
