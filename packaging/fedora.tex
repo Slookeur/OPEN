@@ -25,7 +25,7 @@ that is actually much more complicated than for the simple desktop application u
 The "\bftt{.spec}" file is a fundamental element in the packaging workflow. 
 This file can be thought of as the "recipe" that the rpmbuild utility uses to actually build an RPM. 
 It tells the build system what to do by defining instructions in a series of sections. \\
-The next pages will introduce the basics required to create a simple "\bftt{.spec}", 
+The next pages will introduce the basics required to create a simple "\bftt{.spec}" file, 
 the complete example is provided in appendix~\ref{spec}. \\[0.25cm]
 Please consider that each section of the "\bftt{.spec}" file as detailed between sections~\ref{rpminit}] and \ref{rpmlog} 
 can be completed by your own set of specific instructions. \\[0.25cm] 
@@ -155,10 +155,23 @@ This section regroups requirements, to build and to run the program:
 {\footnotesize{
 \begin{script}
 \comm{To set a requirement to build the program use the \bftt{BuildRequires:} instruction:}
-\comm{The GNU Autotools are required to build it:}
+
+\comm{If the GNU Autotools are required to build it:}
 \bad{BuildRequires:} make
 \bad{BuildRequires:} automake
 \bad{BuildRequires:} autoconf
+\end{script}
+}}
+\vspace{-0.75cm}
+{\footnotesize{
+\begin{script}
+\comm{If the CMake is required to build it:}
+\bad{BuildRequires:} cmake
+\end{script}
+}}
+\vspace{-0.75cm}
+{\footnotesize{
+\begin{script}
 \bad{BuildRequires:} pkgconf-pkg-config
 \bad{BuildRequires:} gcc
 \bad{BuildRequires:} gcc-gfortran
@@ -212,36 +225,60 @@ This section prepare everything required to build the package, not only the prog
 \end{script}
 }}
 
+\vspace{-0.25cm}
 \subsubsection{Build instructions section}
 \label{rpmbuild}
 
 This section describes the instructions requires to build the program. 
 {\footnotesize{
 \begin{script}
+\comm{With the GNU Autotools:}
 \dgtt{\%build}
-\comm{With the GNU Autotools the first step is to call the \bftt{configure} script:}
+\comm{The first step is to call the \bftt{configure} script:}
 \bftt{\%configure}
-\comm{Then build the program using the \bftt{make} command, using:}
+\comm{Then build the program using the \bftt{make} command:}
 \bftt{\%make\_build}
 \comm{This will force to use parallel building.}
-\comm{If you want to tweak the number of CPU cores, use:}
-\comm{make \%\%{smp\_mflags -j20}}
+\comm{If you want to ajdust the number of CPU cores, use:}
+\comm{\%\%make \%\%{smp\_mflags -j20}}
+\end{script}
+}}
+\vspace{-0.75cm}
+{\footnotesize{
+\begin{script}
+\comm{With CMake:}
+\dgtt{\%build}
+\comm{To confifgure use:}
+\bftt{\%cmake}
+\comm{Then to build use:}
+\bftt{\%cmake\_build}
+\comm{This will force to use parallel building.}
 \end{script}
 }}
 
+\vspace{-0.25cm}
 \subsubsection{Install instructions section}
 \label{rpminst}
 
 This section describes the instructions requires to install the program. 
 {\footnotesize{
 \begin{script}
+\comm{With the GNU Autotools:}
 \dgtt{\%install}
-\comm{Build the program using the \bftt{make} command, using:}
+\comm{Install the program using the \bftt{make} command:}
 \bftt{\%make\_install}
 \end{script}
 }}
+\vspace{-1cm}
+{\footnotesize{
+\begin{script}
+\comm{With CMake:}
+\dgtt{\%install}
+\comm{Install the program using:}
+\bftt{\%cmake\_install}
+\end{script}
+}}
 
-\clearpage
 \subsubsection{Post-installation Linux and FreeDesktop integration section}
 \label{rpmpost}
 

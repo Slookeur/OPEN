@@ -40,7 +40,7 @@ To install Flatpak and the tools required to build your program:
 \bftt{flatpak} \rtt{install} \rtt{flathub} \btt{org.freedesktop.Platform//22.08}
 \end{scripti}
 }}
-\item Install the corresponding Flatpak Software Development Kit 'SDK':
+\item Install the corresponding Flatpak Software Development Kit "SDK":
 {\footnotesize{
 \begin{scripti}
 \bftt{flatpak} \rtt{install} \rtt{flathub} \btt{org.freedesktop.Sdk//22.08}
@@ -58,7 +58,11 @@ To install Flatpak and the tools required to build your program:
 
 \begin{enumerate}
 \item Prepare the YAML file that describe your project: "\texttt{org.flatpak.prog.yml}"
-\item Init a Git repository and install the shared modules repository (required to use glu)
+\item Init a Git repository and install the shared modules repository
+\begin{itemize}
+\item This is required to use glu in the example
+\item You might need it for other purposes later on
+\end{itemize}
 \item Build the Flatpak
 \end{enumerate}
 
@@ -79,7 +83,7 @@ This file describes the contruction protocole to build the Flatpak for your proj
     \var{no-autogen:} \magenta{true}
     \var{sources:}
       - type: archive
-        url: https://github.com/AUTHOR/RESPOSITORY/archive/refs/tags/v1.2.12.tar.gz
+	url: https://github.com/\rtt{AUTHOR}/\bftt{RESPOSITORY}/archive/refs/tags/v1.2.12.tar.gz
         sha256: "c9a540d0492f8c6b4d829b7cb8df5fc2fa5cf6374ee4e3c13f90865e9303d143"
 \end{script}
 }}

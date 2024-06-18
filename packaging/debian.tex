@@ -1,6 +1,6 @@
 \section{DEB}
 
-\newcommand{\ddir}{"\texttt{debian}" directory}
+\newcommand{\ddir}{"\bftt{debian}" directory}
 \newcommand{\dpkg}{"\bftt{dpkg}" command}
 
 The next pages will focus on building a DEB ("\texttt{.deb}") file suitable for distribution by \href{https://www.debian.org}{Debian} Linux. \\[0.25cm]
@@ -223,7 +223,6 @@ This is a standard way of doing things in the Debian world. \\
           bash-completion
 \bad{Description:} program is doing something
  Program is a tool box to analyze many things
- .
  This package provides the binaries.
 
 \bad{Package:} program-data
@@ -237,7 +236,8 @@ This is a standard way of doing things in the Debian world. \\
  .
  This package contains data files for program.
 \end{script}
-}}
+}}\\[-0.5cm]
+\noindent In the \bad{Build-Depends} section if you are using CMake, replace \texttt{automake} and \texttt{autoconf} by \texttt{cmake}. 
 \newpage
 \noindent Few tips to help you prepare this file:
 \begin{itemize}
