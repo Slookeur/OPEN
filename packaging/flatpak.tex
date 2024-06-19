@@ -71,20 +71,20 @@ To install Flatpak and the tools required to build your program:
 This file describes the contruction protocole to build the Flatpak for your project:
 {\footnotesize{
 \begin{script}
-\var{app-id}: org.flatpak.prog
-\var{runtime}: org.freedesktop.Platform
-\var{runtime-version}: \magenta{'22.08'}
-\var{sdk:} org.freedesktop.Sdk
-\var{command:} prog
-\var{modules:}
-  - shared-modules/glu/glu-9.json
-  - \var{name:} prog
-    \var{buildsystem:} autotools
-    \var{no-autogen:} \magenta{true}
-    \var{sources:}
-      - type: archive
-	url: https://github.com/\rtt{AUTHOR}/\bftt{RESPOSITORY}/archive/refs/tags/v1.2.12.tar.gz
-        sha256: "c9a540d0492f8c6b4d829b7cb8df5fc2fa5cf6374ee4e3c13f90865e9303d143"
+\yml{app-id} org.flatpak.prog
+\yml{runtime} org.freedesktop.Platform
+\yml{runtime-version} \magenta{'22.08'}
+\yml{sdk} org.freedesktop.Sdk
+\yml{command} prog
+\yml{modules}
+  \bbtt{-} shared-modules/glu/glu-9.json
+  \bbtt{-} \yml{name} prog
+    \yml{buildsystem} autotools
+    \yml{no-autogen} \magenta{true}
+    \yml{sources}
+      \bbtt{-} \yml{type} archive
+        \yml{url} https//github.com/\rtt{AUTHOR}/\bftt{RESPOSITORY}/archive/refs/tags/v1.2.12.tar.gz
+        \yml{sha256} \magenta{"c9a540d0492f8c6b4d829b7cb8df5fc2fa5cf6374ee4e3c13f90865e9303d143"}
 \end{script}
 }}
 \\[-0.5cm]

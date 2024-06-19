@@ -1,3 +1,7 @@
+\newpage
+\newcommand{\abuild}{\bftt{appimage-builder}}
+\newcommand{\pbuild}{\bftt{pkg2appimage}}
+
 \section{Appimage}
 
 \href{https://appimage.org/}{AppImage} is an open-source format for distributing portable software on Linux.  
@@ -13,29 +17,16 @@ Give a look to the following tutorials:
 \item \href{https://docs.appimage.org/packaging-guide/index.html}{https://docs.appimage.org/packaging-guide/index.html}
 \item \href{https://appimage-builder.readthedocs.io/en/latest/}{https://appimage-builder.readthedocs.io/en/latest/}
 \item \href{https://github.com/AppImage/AppImageKit/wiki/Creating-AppImages/cc2441518975caca23e9ce2dba6f08a22c678d1e}{Creating appimage}
+\item \href{https://docs.appimage.org/packaging-guide/converting-binary-packages/pkg2appimage.html}{https://docs.appimage.org/packaging-guide/converting-binary-packages/pkg2appimage.html}
 \end{itemize}
-To create an appimage of your program, you can work using either:
+\vspace{0.25cm}
+To create an appimage of your program, you can work using either using:
+\vspace{0.25cm}
 \begin{itemize}
-\item Using the program sources and "\texttt{appimage-builder}"
-\begin{itemize}
-\item Configure and build the program with the installation prefix set to "\texttt{/usr}"
-{\footnotesize{
-\begin{scriptii}
-\bftt{./configure} \dgtt{--prefix=/usr}
-\bftt{make}
-\end{scriptii}
-}}
-\item Create an "\texttt{AppDir}" directory to install the program using the \bftt{DESTDIR} variable: 
-{\footnotesize{
-\begin{scriptii}
-\bftt{mkdir} \dgtt{AppDir}
-\bftt{make} \dgtt{install} \rtt{DESTDIR}=\dvar{PWD}"/AppDir"
-\end{scriptii}
-}}
-\item Get "\texttt{appimage-builder}" \\[0.5cm]
-"\texttt{appimage-builder}" can be downloaded as ready to use for AMD64 systems:
-{\tiny{
-\begin{scriptii}
+
+\item \abuild\ that you can install using:
+{\notsoscript{
+\begin{scripti}
 \bftt{wget} \dgtt{-O} appimage-builder-x86\_64.AppImage \textbackslash
 https://github.com/AppImageCrafters/appimage-builder/releases/download/v1.1.0/appimage-builder-1.1.0-x86\_64.AppImage
 
@@ -44,54 +35,11 @@ https://github.com/AppImageCrafters/appimage-builder/releases/download/v1.1.0/ap
 
 # install in PATH to make it available as command (optional)
 \rtt{sudo} \bftt{mv} appimage-builder-x86\_64.AppImage /usr/local/bin/appimage-builder
-\end{scriptii}
+\end{scripti}
 }}
-\item Prepare you "\texttt{appimage-builder}" recipe, in a file named "\texttt{program.yml}" 
-{\footnotesize{
-\begin{scriptii}
-\comm{appimage-builder recipe, for details see:}
-\comm{ \href{https://appimage-builder.readthedocs.io}{https://appimage-builder.readthedocs.io}}
-\cyan{version:} \magenta{1}
-\cyan{AppDir:}
-  \cyan{path:} ./AppDir
-  \cyan{app\_info:}
-    \cyan{id:} com.program.www
-    \cyan{name:} program
-    \cyan{icon:} program
-    \cyan{version:} \magenta{1.2.12}
-    \cyan{exec:} usr/bin/program
-    \cyan{exec\_args:} \$@
-  \cyan{files:}
-    \cyan{exclude:}
-    \bbtt{-} usr/share/man
-    \bbtt{-} usr/share/doc/program/* 
-  \cyan{test:}
-    \cyan{fedora:}
-      \cyan{image:} appimagecrafters/tests-env:fedora-30
-      \cyan{command:} ./AppRun
-      \cyan{use\_host\_x:} True
-    \cyan{debian:}
-      \cyan{image:} appimagecrafters/tests-env:debian-stable
-      \cyan{command:} ./AppRun
-      \cyan{use\_host\_x:} True
-\cyan{AppImage:}
-  \cyan{arch:} x86\_64
-  \cyan{update-information:} guess
-\end{scriptii}
-}}
-\item Build the appimage using "\texttt{appimage-builder}" and the recipe
-{\footnotesize{
-\begin{scriptii}
-\bftt{appimage-builder} \dgtt{--recipe} \rtt{program.yml}
-\end{scriptii}
-}}
-\end{itemize}
-\item Using the Debian package and "\texttt{pkg2appimage}"
-\begin{itemize}
-\item Get "\texttt{pkg2appimage}" \\[0.5cm]
-"\texttt{pkg2appimage}" can be downloaded as ready to use for AMD64 systems:
-{\tiny{
-\begin{scriptii}
+\item \pbuild\ that you can install using:
+{\notsoscript{
+\begin{scripti}
 \bftt{wget} -c \$(wget -q https://api.github.com/repos/AppImageCommunity/pkg2appimage/releases \textbackslash
 -O - | grep "pkg2appimage-.*-x86\_64.AppImage" | grep browser\_download\_url | head -n 1 | cut -d '"' -f 4) \textbackslash
 
@@ -100,8 +48,172 @@ https://github.com/AppImageCrafters/appimage-builder/releases/download/v1.1.0/ap
 
 # install in PATH to make it available as command (optional)
 \rtt{sudo} \bftt{mv} pkg2appimage-*.AppImage /usr/local/bin/pkg2appimage
-\end{scriptii}
+\end{scripti}
 }}
-\item Prepare you "\texttt{pkg2appimage}" recipe
 \end{itemize}
+
+\newpage
+\subsection{\abuild}
+
+To build an appimage using \abuild\ requires to prepare a recipe in a JSON file. \\
+Several methods are available to let \abuild\ know how to retreive your program's data to build the appimage. 
+
+\subsubsection*{Recipe using a local build of your program}
+
+\begin{itemize}
+\item Configure and build the program with the installation prefix set to "\texttt{/usr}"
+{\footnotesize{
+\begin{scripti}
+\fprompt{~/program-1.2.12} \bftt{./configure} \dgtt{--prefix=/usr}
+\fprompt{~/program-1.2.12} \bftt{make}
+\end{scripti}
+}}
+\item Create an "\texttt{AppDir}" directory to install the program using the \bftt{DESTDIR} variable: 
+{\footnotesize{
+\begin{scripti}
+\fprompt{~/program-1.2.12} \bftt{mkdir} \dgtt{AppDir}
+\fprompt{~/program-1.2.12} \bftt{make} \dgtt{install} \rtt{DESTDIR}=\dvar{PWD}"/AppDir"
+\end{scripti}
+}}
+\item Prepare you \abuild\ recipe, in a file named "\texttt{program.yml}" 
+{\footnotesize{
+\begin{scripti}
+\comm{appimage-builder recipe, for details see:}
+\comm{\href{https://appimage-builder.readthedocs.io}{https://appimage-builder.readthedocs.io}}
+\yml{version} \magenta{1}
+\yml{AppDir}
+  \yml{path} ./AppDir
+  \yml{app\_info}
+    \yml{id} com.program.www
+    \yml{name} program
+    \yml{icon} program
+    \yml{version} \magenta{1.2.12}
+    \yml{exec} usr/bin/program
+    \yml{exec\_args} \$@
+  \yml{files}
+    \yml{exclude}
+    \bbtt{-} usr/share/man
+    \bbtt{-} usr/share/doc/program/* 
+  \yml{test}
+    \yml{fedora}
+      \yml{image} appimagecrafters/tests-envfedora-30
+      \yml{command} ./AppRun
+      \yml{use\_host\_x} True
+    \yml{debian}
+      \yml{image} appimagecrafters/tests-envdebian-stable
+      \yml{command} ./AppRun
+      \yml{use\_host\_x} True
+\yml{AppImage}
+  \yml{arch} x86\_64
+  \yml{update-information} guess
+\end{scripti}
+}}
+\end{itemize}
+
+\newpage
+\subsubsection*{Recipe using packages from official Debian repositories}
+
+{\em{So far not working, no way to add  /retreive and add the GPG keys for the repository of sources.}}
+
+\begin{itemize}
+\item Prepare you \abuild\ recipe, in a file named "\texttt{program.yml}" 
+{\notsoscript{
+\begin{scripti}
+\comm{appimage-builder recipe, for details see:}
+\comm{\href{https://appimage-builder.readthedocs.io}{https://appimage-builder.readthedocs.io}}
+\yml{version} \magenta{1}
+\yml{AppDir}
+  \yml{path} ./AppDir
+  \yml{app\_info}
+    \yml{id} com.program.www
+    \yml{name} program
+    \yml{icon} program
+    \yml{version} \magenta{1.2.12}
+    \yml{exec} usr/bin/program
+    \yml{exec\_args} \$@
+  \yml{apt}
+  \yml{arch} amd64
+    \yml{sources} 
+      \bbtt{-} \yml{sourceline} 'deb [arch=amd64] http://ftp.fr.debian.org/debian bookworm-backports main'
+         \yml{key_url} 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x254cf3b5aec0a8f0'
+    \yml{include}
+      \bbtt{-} libgtk-3-0
+      \bbtt{-} libxml-2.0
+      \bbtt{-} pangoft2
+      \bbtt{-} glu
+      \bbtt{-} epoxy
+      \bbtt{-} libavutils
+      \bbtt{-} libavcodec
+      \bbtt{-} libavformat
+      \bbtt{-} libswscale
+  \yml{files}
+    \yml{exclude}
+    \bbtt{-} usr/share/man
+    \bbtt{-} usr/share/doc/program/* 
+  \yml{test}
+    \yml{fedora}
+      \yml{image} appimagecrafters/tests-envfedora-30
+      \yml{command} ./AppRun
+      \yml{use\_host\_x} True
+    \yml{debian}
+      \yml{image} appimagecrafters/tests-envdebian-stable
+      \yml{command} ./AppRun
+      \yml{use\_host\_x} True
+\yml{AppImage}
+  \yml{arch} x86\_64
+  \yml{update-information} guess
+\end{scripti}
+}}
+\end{itemize}
+
+\subsubsection*{Build the appimage using \abuild\ and the recipe}
+
+{\footnotesize{
+\begin{script}
+\fprompt{~/program-1.2.12} \abuild \dgtt{--recipe} \rtt{program.yml}
+\end{script}
+}}
+
+\newpage
+\subsection{\pbuild}
+
+{\em{Note: same issue as before, only the local build is wokring so far, no way to use the on-line repositories because of the GPG key issue.}}
+
+\begin{itemize}
+\item Prepare you \pbuild\ recipe, in a file named "\texttt{prog.yml}"
+{\footnotesize{
+\begin{scripti}
+\yml{app} program
+\yml{binpatch} true
+
+\yml{ingredients}
+  \yml{dist} bookworm-backports
+\comm{Either retreive the package from an official Debian repository ...}
+  \yml{sources}
+    \bbtt{-} deb http//ftp.fr.debian.org/debian/ bookworm-backports main 
+\comm{... or select local .deb files using complete file path}
+  \yml{debs}
+    \bbtt{-} /home/user/files/git-files/program/program_1.2.12-1_amd64.deb
+    \bbtt{-} /home/user/files/git-files/program/prog-data_1.2.12-1_all.deb
+  \yml{packages}
+    \bbtt{-} program
+    \bbtt{-} prgram-data
+  \yml{script}
+    \bbtt{-} ls ../program_*deb|sed 's/..\/program_//1' | cut -d "-" -f 1 > ../VERSION
+    \bbtt{-} cp usr/share/pixmaps/program.svg .
+\end{scripti}
+}}
+\item Put the "\texttt{prog.yml}" file in a "\texttt{recipes}" folder
+{\footnotesize{
+\begin{scripti}
+\fprompt{~/program-1.2.12} \bftt{mkdir} recipes
+\fprompt{~/program-1.2.12} \bftt{mv} \rtt{prog.yml} recipes/
+\end{scripti}
+}}
+\item Build the appimage using \pbuild\ and the recipe
+{\footnotesize{
+\begin{scripti}
+\fprompt{~/program-1.2.12} \pbuild \rtt{recipes/prog.yml}
+\end{scripti}
+}}
 \end{itemize}
