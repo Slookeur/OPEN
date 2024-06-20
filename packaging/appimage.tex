@@ -84,16 +84,12 @@ Several methods are available to let \abuild\ know how to retreive your program'
 \yml{AppDir}
   \yml{path} ./AppDir
   \yml{app\_info}
-    \yml{id} com.program.www
-    \yml{name} program
-    \yml{icon} program
+    \yml{id} program     \comm{Name of the .desktop file}
+    \yml{name} program   \comm{Name of the program}
+    \yml{icon} program   \comm{Name of the icon file, no extention required}
     \yml{version} \magenta{1.2.12}
     \yml{exec} usr/bin/program
     \yml{exec\_args} \$@
-  \yml{files}
-    \yml{exclude}
-    \bbtt{-} usr/share/man
-    \bbtt{-} usr/share/doc/program/* 
   \yml{test}
     \yml{fedora}
       \yml{image} appimagecrafters/tests-envfedora-30
@@ -113,8 +109,6 @@ Several methods are available to let \abuild\ know how to retreive your program'
 \newpage
 \subsubsection*{Recipe using packages from official Debian repositories}
 
-{\em{So far not working, no way to add  /retreive and add the GPG keys for the repository of sources.}}
-
 \begin{itemize}
 \item Prepare you \abuild\ recipe, in a file named "\texttt{program.yml}" 
 {\notsoscript{
@@ -125,46 +119,41 @@ Several methods are available to let \abuild\ know how to retreive your program'
 \yml{AppDir}
   \yml{path} ./AppDir
   \yml{app\_info}
-    \yml{id} com.program.www
-    \yml{name} program
-    \yml{icon} program
+    \yml{id} program     \comm{Name of the .desktop file}
+    \yml{name} program   \comm{Name of the program}
+    \yml{icon} program   \comm{Name of the icon file, no extention required}
     \yml{version} \magenta{1.2.12}
-    \yml{exec} usr/bin/program
+    \yml{exec} usr/bin/program 
     \yml{exec\_args} \$@
   \yml{apt}
-  \yml{arch} amd64
-    \yml{sources} 
-      \bbtt{-} \yml{sourceline} 'deb [arch=amd64] http://ftp.fr.debian.org/debian bookworm-backports main'
-         \yml{key_url} 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x254cf3b5aec0a8f0'
+    \yml{arch} amd64
+    \yml{sources}
+      \bbtt{-} \yml{sourceline} \magenta{'deb [arch=amd64, signed-by=/usr/share/keyrings/debian-archive-bookworm-automatic.gpg] 
+                          http://deb.debian.org/debian bookworm-backports main'}
+      \bbtt{-} \yml{sourceline} \magenta{'deb [arch=amd64, signed-by=/usr/share/keyrings/debian-archive-bookworm-automatic.gpg] 
+                          http://deb.debian.org/debian bookworm main'}
+    \comm{Package and dependencies to be included:}
     \yml{include}
+      \bbtt{-} program
+      \bbtt{-} program-data
       \bbtt{-} libgtk-3-0
-      \bbtt{-} libxml-2.0
-      \bbtt{-} pangoft2
-      \bbtt{-} glu
-      \bbtt{-} epoxy
-      \bbtt{-} libavutils
-      \bbtt{-} libavcodec
-      \bbtt{-} libavformat
-      \bbtt{-} libswscale
-  \yml{files}
-    \yml{exclude}
-    \bbtt{-} usr/share/man
-    \bbtt{-} usr/share/doc/program/* 
-  \yml{test}
-    \yml{fedora}
-      \yml{image} appimagecrafters/tests-envfedora-30
-      \yml{command} ./AppRun
-      \yml{use\_host\_x} True
-    \yml{debian}
-      \yml{image} appimagecrafters/tests-envdebian-stable
-      \yml{command} ./AppRun
-      \yml{use\_host\_x} True
+      \bbtt{-} libxml2
+      \bbtt{-} libpangoft2-1.0-0
+      \bbtt{-} libglu1-mesa
+      \bbtt{-} libepoxy0
+      \bbtt{-} libavutil57
+      \bbtt{-} libavcodec59
+      \bbtt{-} libavformat59
+      \bbtt{-} libswscale6
 \yml{AppImage}
   \yml{arch} x86\_64
   \yml{update-information} guess
 \end{scripti}
 }}
 \end{itemize}
+The \yml{apt} section describes packages to be downloaded using the \bftt{apt} command, therefore this recipe file is for Debian based Linux. 
+
+
 
 \subsubsection*{Build the appimage using \abuild\ and the recipe}
 
@@ -181,7 +170,7 @@ Several methods are available to let \abuild\ know how to retreive your program'
 
 \begin{itemize}
 \item Prepare you \pbuild\ recipe, in a file named "\texttt{prog.yml}"
-{\footnotesize{
+{\notsoscript{
 \begin{scripti}
 \yml{app} program
 \yml{binpatch} true
@@ -190,6 +179,11 @@ Several methods are available to let \abuild\ know how to retreive your program'
   \yml{dist} bookworm-backports
 \comm{Either retreive the package from an official Debian repository ...}
   \yml{sources}
+    \bbtt{-} \yml{sourceline} \magenta{'deb [arch=amd64, signed-by=/usr/share/keyrings/debian-archive-bookworm-automatic.gpg]
+                                            http://deb.debian.org/debian bookworm-backports main'}
+    \bbtt{-} \yml{sourceline} \magenta{'deb [arch=amd64, signed-by=/usr/share/keyrings/debian-archive-bookworm-automatic.gpg]
+                                            http://deb.debian.org/debian bookworm main'}
+
     \bbtt{-} deb http//ftp.fr.debian.org/debian/ bookworm-backports main 
 \comm{... or select local .deb files using complete file path}
   \yml{debs}
@@ -198,6 +192,17 @@ Several methods are available to let \abuild\ know how to retreive your program'
   \yml{packages}
     \bbtt{-} program
     \bbtt{-} prgram-data
+    \bbtt{-} program
+    \bbtt{-} program-data
+    \bbtt{-} libgtk-3-0
+    \bbtt{-} libxml2
+    \bbtt{-} libpangoft2-1.0-0
+    \bbtt{-} libglu1-mesa
+    \bbtt{-} libepoxy0
+    \bbtt{-} libavutil57
+    \bbtt{-} libavcodec59
+    \bbtt{-} libavformat59
+    \bbtt{-} libswscale6
   \yml{script}
     \bbtt{-} ls ../program_*deb|sed 's/..\/program_//1' | cut -d "-" -f 1 > ../VERSION
     \bbtt{-} cp usr/share/pixmaps/program.svg .
