@@ -27,6 +27,7 @@ If I intend to provide tips and trick to help you prepare your DEB, I strongly r
 \item \href{https://www.debian.org/doc/manuals/packaging-tutorial/packaging-tutorial.fr.pdf}{Tutoriel: la construction de paquets Debian}
 \item \href{https://wiki.debian.org/SimplePackagingTutorial}{Simple packaging tutorial}
 \item \href{file://usr/share/doc/debmake-doc/}{debmake documentation}
+\item \href{https://wiki.debian.org/PackagingWithGit/}{https://wiki.debian.org/PackagingWithGit/}
 \end{itemize}
 Indeed this guide is not meant to be a thorough review of DEB packaging, that is actually
 much more complicated than for the simple desktop application used afterward to illustrate the process.
@@ -831,13 +832,37 @@ You can search for teams and the corresponding group on \salsa\ at: \\[0.25cm]
 \href{https://wiki.debian.org/Teams\#Packaging\_teams}{https://wiki.debian.org/Teams\#Packaging\_teams} \\[0.25cm]
 Then "Request Access" to the packaging team for your package. \\[0.25cm]
 Your mentor will create a repository for your package in the selected packaging team, once the membership granted you will be able 
-to upload data in your repository on \salsa\ at the address: \\[0.25cm] 
-https://salsa.debian.org/PACKAGING-team/Program \\[0.25cm]
+to upload data in your repository on \salsa\ at the address:
+\begin{center}https://salsa.debian.org/PACKAGING-team/Program\end{center}
 The official respository for your package on \salsa\ will contain 3 branches:
 \begin{itemize}
 \item "\texttt{upstream}": the sources of your program
 \item "\texttt{pristine-tar}": the "\texttt{orig}" archive for your package, that contains both sources and the "\texttt{debian}" directory to build the DEB package. 
 \item "\texttt{master}": the sources of your program and the "\texttt{debian}" directory to build the DEB package
 \end{itemize}
-
+Debian offers a tool to hanlde packaging using the \bftt{git} command:
+\begin{script}
+\uprompt{~} sudo apt install git-buildpackage
+\end{script}\\[-0.5cm]
+\noindent The Debian package "\texttt{git-buildpackage}" provides acces to the \bftt{gbp} command that you can use to maintain your package with Git:
+\begin{itemize}
+\item Upload the new sources on the \texttt{master}" branch using standard Git commands: 
+\begin{scripti}
+\uprompt{~/program-1.2.12} git checkout master
+\uprompt{~/program-1.2.12} git add .
+\uprompt{~/program-1.2.12} git commit -a
+\end{scripti}
+\item Then use the "\bftt{gbp}" for \bftt{g}it \bftt{b}uild \bftt{p}ackage to build the package:
+\begin{scripti}
+\uprompt{~/program-1.2.12} \bftt{gbp} \rtt{buildpackage}
+\end{scripti}
+\\[-0.5cm] This will trigger the build of the source and binary packages from your Salsa repository.
+\item When you have produced a release ready package, tag it using:
+\begin{scripti}
+\uprompt{~/program-1.2.12} \bftt{gbp} \rtt{buildpackage} \btt{--git-tag}
+\end{scripti}
+\\[-0.5cm]
+		\noindent This creates a tag, as illustrated in the chapter dedicated to hosting platforms (Sec.~\ref{gtags}), simply using Git, the tag is extracted from the file "\texttt{debian/changelog}" and will have the form: \texttt{debian/version}", where "\texttt{version}" is the last version number in the file "\texttt{debian/changelog}", in this example "\texttt{1.2.12}", 
+\end{itemize}
+For more information on \bftt{gbp}: \href{https://wiki.debian.org/PackagingWithGit}{https://wiki.debian.org/PackagingWithGit}
 \newpage
