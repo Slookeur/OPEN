@@ -2,8 +2,8 @@
 
 \input{preambule}
 
-\includeonly{build/build, git/git, hosting/hosting, packaging/packaging, appendix/appendix}
-%\includeonly{build/build, appendix/appendix}
+\includeonly{greats, build/build, git/git, hosting/hosting, packaging/packaging, appendix/appendix}
+%\includeonly{greats, build/build, appendix/appendix}
 %\includeonly{git/git}
 %\includeonly{hosting/hosting}
 %\includeonly{packaging/packaging}
@@ -28,10 +28,16 @@ D\'epartement des Mat\'eriaux Organiques, \\
 23 rue du Loess, BP43, \\ F-67034 Strasbourg Cedex 2, France\\[0.25cm]{\textrm{\today}}}
 
 \beforepreface
-
 \setcounter{page}{1}            % Je recommence la numerotation a un pour pas
                                 % decaler l'alternance droite/gauche et que
                                 % les pages impaires soient bien a droite.
+
+\def\greats#1{\gdef\greatings@text{#1}}
+\greats{\include{greats}}
+
+\greatings@text\vfill
+\cleardoublepage
+
 %\setcounter{tocdepth}{4}
 
 % Mise en forme TOC/TOF/LOT
