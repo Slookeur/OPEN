@@ -509,7 +509,7 @@ in this case "\texttt{\textbackslash{newcommand}\{\textbackslash{Ctrl}\}\{<kbd>C
       var texText = mathElements[i].firstChild;
       if (mathElements[i].tagName == "SPAN") {
        katex.render(texText.data, mathElements[i], {
-        displayMode: mathElements[i].classList.contains('display'),
+        displayMode: mathElements[i].classList.contains({\textquotesingle}display{\textquotesingle}),
         throwOnError: false,
         macros: macros,
         fleqn: false
@@ -559,9 +559,9 @@ Example repository to create the documentation:
 \fprompt{~/Program-doc} \bftt{vi} Gemfile
 source "\magenta{https://rubygems.org}"
 
-\var{gem} '\magenta{jekyll-rtd-theme}'
-\var{gem} '\magenta{github-pages}', \magenta{group}: :\magenta{jekyll\_plugins}
-\var{gem} '\magenta{jekyll-scholar}', \magenta{group}: :\magenta{jekyll\_plugins}
+\var{gem} {\textquotesingle}\magenta{jekyll-rtd-theme}{\textquotesingle}
+\var{gem} {\textquotesingle}\magenta{github-pages}{\textquotesingle}, \magenta{group}: :\magenta{jekyll\_plugins}
+\var{gem} {\textquotesingle}\magenta{jekyll-scholar}{\textquotesingle}, \magenta{group}: :\magenta{jekyll\_plugins}
 group :\magenta{jekyll\_plugins} \bbtt{do}
   \var{gem} "\magenta{jekyll}", "\magenta{~> 3.9.0}"
   \var{gem} "\magenta{jekyll-feed}", "\magenta{~> 0.12}"

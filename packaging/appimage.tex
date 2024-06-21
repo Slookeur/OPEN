@@ -20,13 +20,9 @@ Give a look to the following tutorials:
 \item \href{https://docs.appimage.org/packaging-guide/converting-binary-packages/pkg2appimage.html}{https://docs.appimage.org/packaging-guide/converting-binary-packages/pkg2appimage.html}
 \end{itemize}
 \vspace{0.25cm}
-To create an appimage of your program, you can work using either using:
-\vspace{0.25cm}
-\begin{itemize}
-
-\item \abuild\ that you can install using:
+To create an appimage of your program, install \abuild:
 {\notsoscript{
-\begin{scripti}
+\begin{script}
 \bftt{wget} \dgtt{-O} appimage-builder-x86\_64.AppImage \textbackslash
 https://github.com/AppImageCrafters/appimage-builder/releases/download/v1.1.0/appimage-builder-1.1.0-x86\_64.AppImage
 
@@ -35,23 +31,12 @@ https://github.com/AppImageCrafters/appimage-builder/releases/download/v1.1.0/ap
 
 # install in PATH to make it available as command (optional)
 \rtt{sudo} \bftt{mv} appimage-builder-x86\_64.AppImage /usr/local/bin/appimage-builder
-\end{scripti}
+\end{script}
 }}
-\item \pbuild\ that you can install using:
-{\notsoscript{
-\begin{scripti}
-\bftt{wget} -c \$(wget -q https://api.github.com/repos/AppImageCommunity/pkg2appimage/releases \textbackslash
--O - | grep "pkg2appimage-.*-x86\_64.AppImage" | grep browser\_download\_url | head -n 1 | cut -d '"' -f 4) \textbackslash
-
-# make executable
-\bftt{chmod} \dgtt{+x} ./pkg2appimage-*.AppImage
-
-# install in PATH to make it available as command (optional)
-\rtt{sudo} \bftt{mv} pkg2appimage-*.AppImage /usr/local/bin/pkg2appimage
-\end{scripti}
-}}
-\end{itemize}
-
+For RedHat based Linux install \bftt{apt}:
+\begin{script}
+\fprompt{~} sudo dnf install apt
+\end{script}
 \newpage
 \subsection{\abuild}
 
@@ -128,10 +113,16 @@ Several methods are available to let \abuild\ know how to retreive your program'
   \yml{apt}
     \yml{arch} amd64
     \yml{sources}
-      \bbtt{-} \yml{sourceline} \magenta{'deb [arch=amd64, signed-by=/usr/share/keyrings/debian-archive-bookworm-automatic.gpg] 
-                          http://deb.debian.org/debian bookworm-backports main'}
-      \bbtt{-} \yml{sourceline} \magenta{'deb [arch=amd64, signed-by=/usr/share/keyrings/debian-archive-bookworm-automatic.gpg] 
-                          http://deb.debian.org/debian bookworm main'}
+      \comm{One sourceline instruction for each repository to use to search for packages: }
+      \comm{In this example official Debian repositories: }
+      \comm{  - bookworkm: the official Debian 12 main repository}
+      \comm{  - bookworkm-backports: the official Debian 12 backports main repository}
+      \comm{Each repository requires to GPG signed, for some reasons the script main fails,}
+      \comm{and it is declare the GPG key to use using the 'signed-by=/file-path/key-file.gpg' option:}
+      \bbtt{-} \yml{sourceline} \magenta{{\textquotesingle}deb [arch=amd64, signed-by=/usr/share/keyrings/debian-archive-bookworm-automatic.gpg] 
+                          http://deb.debian.org/debian bookworm main{\textquotesingle}}
+      \bbtt{-} \yml{sourceline} \magenta{{\textquotesingle}deb [arch=amd64, signed-by=/usr/share/keyrings/debian-archive-bookworm-automatic.gpg] 
+                          http://deb.debian.org/debian bookworm-backports main{\textquotesingle}}
     \comm{Package and dependencies to be included:}
     \yml{include}
       \bbtt{-} program
@@ -151,74 +142,18 @@ Several methods are available to let \abuild\ know how to retreive your program'
 \end{scripti}
 }}
 \end{itemize}
-The \yml{apt} section describes packages to be downloaded using the \bftt{apt} command, therefore this recipe file is for Debian based Linux. 
-
-
+\vspace{-0.125cm}
+The \yml{apt} section describes packages to download using the \bftt{apt} command, if you are not using a Debian based Linux. \\
+Repositories must be GPG signed, however \abuild\ has issues to download and install keys during the process. 
+It is safer to install the key(s) before hand manualy and then declare the key to use in the recipe file using the \magenta{\texttt{signed-by=/file-path/key.gpg}} instruction. 
 
 \subsubsection*{Build the appimage using \abuild\ and the recipe}
 
+To build the appimpage use:
 {\footnotesize{
 \begin{script}
 \fprompt{~/program-1.2.12} \abuild \dgtt{--recipe} \rtt{program.yml}
 \end{script}
 }}
-
-\newpage
-\subsection{\pbuild}
-
-{\em{Note: same issue as before, only the local build is wokring so far, no way to use the on-line repositories because of the GPG key issue.}}
-
-\begin{itemize}
-\item Prepare you \pbuild\ recipe, in a file named "\texttt{prog.yml}"
-{\notsoscript{
-\begin{scripti}
-\yml{app} program
-\yml{binpatch} true
-
-\yml{ingredients}
-  \yml{dist} bookworm-backports
-\comm{Either retreive the package from an official Debian repository ...}
-  \yml{sources}
-    \bbtt{-} \yml{sourceline} \magenta{'deb [arch=amd64, signed-by=/usr/share/keyrings/debian-archive-bookworm-automatic.gpg]
-                                            http://deb.debian.org/debian bookworm-backports main'}
-    \bbtt{-} \yml{sourceline} \magenta{'deb [arch=amd64, signed-by=/usr/share/keyrings/debian-archive-bookworm-automatic.gpg]
-                                            http://deb.debian.org/debian bookworm main'}
-
-    \bbtt{-} deb http//ftp.fr.debian.org/debian/ bookworm-backports main 
-\comm{... or select local .deb files using complete file path}
-  \yml{debs}
-    \bbtt{-} /home/user/files/git-files/program/program_1.2.12-1_amd64.deb
-    \bbtt{-} /home/user/files/git-files/program/prog-data_1.2.12-1_all.deb
-  \yml{packages}
-    \bbtt{-} program
-    \bbtt{-} prgram-data
-    \bbtt{-} program
-    \bbtt{-} program-data
-    \bbtt{-} libgtk-3-0
-    \bbtt{-} libxml2
-    \bbtt{-} libpangoft2-1.0-0
-    \bbtt{-} libglu1-mesa
-    \bbtt{-} libepoxy0
-    \bbtt{-} libavutil57
-    \bbtt{-} libavcodec59
-    \bbtt{-} libavformat59
-    \bbtt{-} libswscale6
-  \yml{script}
-    \bbtt{-} ls ../program_*deb|sed 's/..\/program_//1' | cut -d "-" -f 1 > ../VERSION
-    \bbtt{-} cp usr/share/pixmaps/program.svg .
-\end{scripti}
-}}
-\item Put the "\texttt{prog.yml}" file in a "\texttt{recipes}" folder
-{\footnotesize{
-\begin{scripti}
-\fprompt{~/program-1.2.12} \bftt{mkdir} recipes
-\fprompt{~/program-1.2.12} \bftt{mv} \rtt{prog.yml} recipes/
-\end{scripti}
-}}
-\item Build the appimage using \pbuild\ and the recipe
-{\footnotesize{
-\begin{scripti}
-\fprompt{~/program-1.2.12} \pbuild \rtt{recipes/prog.yml}
-\end{scripti}
-}}
-\end{itemize}
+\\[-0.5cm]
+\abuild\ will download and install all required packages in a new "\texttt{AppDir}" directory, and will create an appimage in the active directory with the name "\rtt{program}\texttt{-}\btt{version}\texttt{-}\gtt{arch}\texttt{.AppImage}" where the values for \rtt{program}, \btt{version} and \gtt{arch} come from the corresponding fields in the recipe file. 

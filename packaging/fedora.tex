@@ -212,11 +212,11 @@ This section prepare everything required to build the package, not only the prog
 \begin{script}
 \dgtt{\%prep}
 \comm{To sign the RPM package with a GPG key uncomment the next line:}
-\comm{\%\%\{gpgverify\} --keyring='\%\%\{SOURCE2\}' --signature='\%\%\{SOURCE1\}' --data='\%\%\{SOURCE0\}'}
+\comm{\%\%\{gpgverify\} --keyring={\textquotesingle}\%\%\{SOURCE2\}{\textquotesingle} --signature={\textquotesingle}\%\%\{SOURCE1\}{\textquotesingle} --data={\textquotesingle}\%\%\{SOURCE0\}{\textquotesingle}}
 
 \comm{Preparing the build.}
 \comm{The \bftt{autosetup} instruction automates the setup process.}
-\comm{The '-n' option specifies the name of the folder created}
+\comm{The "-n" option specifies the name of the folder created}
 \comm{by extracting the GNU tarball:}
 \bftt{\%autosetup} \rtt{-n} \var{\%\{upname\}}-\var{\%\{version\}}
 \comm{Note that \bftt{autosetup} is independent of the build system.}
@@ -332,7 +332,7 @@ The \bftt{files} section describes the directory created, and the files installe
 \bftt{\%license} COPYING
 \comm{The binary, executable command installed:}
 \var{\%\{\_bindir\}}/\var{\%\{name\}}
-\comm{The package home directory, usually '/usr/share/prog'}
+\comm{The package home directory, usually "/usr/share/prog"}
 \comm{that contains the data required by the program.}
 \comm{Note there is no need to specify all files.}
 \comm{The name of the directory to be removed is enough:}
