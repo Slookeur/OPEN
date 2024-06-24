@@ -56,25 +56,35 @@ D\'epartement des Mat\'eriaux Organiques, \\
 \pagebreak                      % Je change de page.
 %{\small \printindex}
 
-\chapter{Introduction}
+\chapter*{Introduction}
+\addcontentsline{toc}{chapter}{Introduction}
+\chaptermark{Introduction}
+\markboth{Introduction}{Introduction} 
 
-\section{Purpose}
+\section*{Purpose}
+\addcontentsline{toc}{section}{Purpose}
 
 The purpose of this tutorial is to introduce the essential steps required to publish an open source software. 
 It is a both a personal review of the process and a collection of tips, intended to help the programmer navigates from its source code up to free software distribution. \\
 It is not, and does not aim to be comprehensive, but to be a proper recollection of my own experiences, so that these could help others. 
 
-\section{Prerequisites}
+\section*{Prerequisites}
+\addcontentsline{toc}{section}{Prerequisites}
+
 
 In the following I will consider that the reader is familiar with using the command line. \\
 To learn more about the command line and Linux check out my \href{https://www.ipcms.fr/wp-content/uploads/2021/11/linux.pdf}{Linux tutorial}. \\
 To learn more about scripting and advanced command line use check out my \href{https://www.ipcms.fr/wp-content/uploads/2021/05/bash.pdf}{Bash tutorial}. 
 
-\section{Target readers}
+\section*{Target readers}
+\addcontentsline{toc}{section}{Target readers}
 
 Any one who want to publish an open source program, in particular if that person is interested in having its code distributed within the Linux open source community. 
 
-\section{Software build}
+\newpage
+
+\section*{Software build}
+\addcontentsline{toc}{section}{Software build}
 
 Starting from the next chapter I will consider that you already have a piece of code written and ready to be used, even ready to be distributed. 
 The programming language does not matter, I will simply focus on what comes next. \\[0.25cm]
@@ -105,6 +115,18 @@ the build automation process, that is the automating of the creation of a softwa
 \include{hosting/hosting}
 \include{packaging/packaging}
 
+\chapter*{Conclusion}
+\addcontentsline{toc}{chapter}{Conclusion}
+\chaptermark{Conclusion}
+\markboth{Conclusion}{Conclusion} 
+
+I have been a Linux user for almost 25 year, and a developer for about the same period. \\ 
+Back in my beginner's days what really impressed me the most about the Linux ecosystem was the extremely convenient 
+way to install softwares: using on-line repositories and automated procedures. \\
+It was confidential then, but nowadays thanks to massive usage of smartphones, this has been widely popularised by the words "app store" or "magasin d'applications" (in French). 
+For years, and even as impressed as I was by the whole packaging process, I sadly though that all this was out of my league ... until I decided to give it a try.\\[0.25cm]
+I hope that this manual helped you understand that this is not out of your league !
+
 \appendix
 
 \include{appendix/appendix}
@@ -112,8 +134,8 @@ the build automation process, that is the automating of the creation of a softwa
 \normalem
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Biblio %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\bibliographystyle{these}
-\bibliography{full-biblio}
+%\bibliographystyle{these}
+%\bibliography{full-biblio}
 
 % Colophon
 \colophon{This document has been prepared using the Linux operating system and free softwares:
