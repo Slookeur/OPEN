@@ -108,6 +108,8 @@ and rename this file as \bftt{configure.ac} (you can also remove the empty \bftt
 
 \comm{Check for compiler(s) - see [Sec. \ref{ccomp}].}
 
+\comm{Optional: check for operating system(s) - see [Sec. \ref{copsy}].}
+
 \comm{Check for libraries - see [Sec. \ref{clibs}].}
 
 \comm{Using the instruction AC\_CONFIG\_FILES and AC\_OUTPUT - see [Sec. \ref{cfinal}].}
@@ -182,11 +184,11 @@ to make sure that this command is available on the target system, and therefore 
 \dnl{This will check that \bftt{program} is installed.}
 \dnl{It will also set the \bftt{variable} to the path of the \bftt{program} executable.}
 \dnl{\tabul AC\_CHECK\_PROG ([variable], [program], [text-if-found], [text-if-not-found])}
-\confb{AC\_CHECK\_PROG}{[PKG\_CONFIG], [pkg-config], [yes], [no])}
+\confb{AC\_CHECK\_PROG}{[\rtt{PKG\_CONFIG}], [pkg-config], [yes], [no])}
 \dnl{Checking for utilities need for Freedesktop Linux integration, see [Sec. \ref{rpmpost}]:}
-\confb{AC\_CHECK\_PROG}{[UP\_MIME], [update-mime-database], [yes], [no]}
-\confb{AC\_CHECK\_PROG}{[UP\_DESKTOP], [update-desktop-database], [yes], [no]}
-\confb{AC\_CHECK\_PROG}{[UP\_APPSTREAM], [appstream-util], [yes], [no]}
+\confb{AC\_CHECK\_PROG}{[\rtt{PUP\_MIME}], [update-mime-database], [yes], [no]}
+\confb{AC\_CHECK\_PROG}{[\rtt{PUP\_DESKTOP}], [update-desktop-database], [yes], [no]}
+\confb{AC\_CHECK\_PROG}{[\rtt{PUP\_APPSTREAM}], [appstream-util], [yes], [no]}
 \end{script}
 }}
 \vspace{-1cm}
@@ -263,6 +265,58 @@ The following examples illustrate how to check if:
 }}
 \end{itemize}
 
+\clearpage
+
+\subsubsection{Checking for the target Operating System}
+\label{copsy}
+Finally it might be required to test for the target operating system:
+
+{\footnotesize{
+\begin{script}
+\dnl{Checking for the target operating system}
+
+\comm{AC_CANONICAL_HOST is needed to access the '\$host_os' variable}
+\confa{AC_CANONICAL_HOST}
+
+build_linux=no
+build_windows=no
+build_mac=no
+
+\comm{Detect the target system using the \$host_os variable}
+case "\magenta{\${host_os}}" in
+    linux*)
+        build_linux=yes
+        echo "\magenta{Building Linux application}"
+        ;;
+    cygwin*|mingw*)
+        build_windows=yes
+        echo "\magenta{Building Windows application}"
+        ;;
+    darwin*)
+        build_mac=yes
+        echo "\magenta{Building macOS application}"
+        ;;
+    *)
+        \confb{AC_MSG_ERROR}{["\magenta{OS \$host_os is not supported"}]}
+        ;;
+esac
+
+\comm{Pass the conditionals to automake}
+\confb{AM_CONDITIONAL}{[\rtt{LINUX}], [test "\magenta{\$build_linux}" = "\magenta{yes}"]}
+\confb{AM_CONDITIONAL}{[\rtt{WINDOWS}], [test "\magenta{\$build_windows}" = "\magenta{yes}"]}
+\confb{AM_CONDITIONAL}{[\rtt{OSX}], [test "\magenta{\$build_mac}" = "\magenta{yes}"]}
+
+if test "\magenta{\$build_windows}" = "\magenta{yes}"; then
+  \confb{AC_CHECK_TOOL}{[\rtt{WINDRES}], [windres], [no]}
+  if test "\magenta{\$WINDRES}" = no; then
+    \confb{AC_MSG_ERROR}{\cstr{\magenta{*** Could not find an implementation of windres in your PATH.}}}
+  fi
+fi
+\end{script}
+}}
+
+\clearpage
+
 \subsubsection{Checking for libraries}
 \label{clibs}
 
@@ -273,7 +327,7 @@ To check the libraries installed on your system, and handled by \bftt{pkg-config
 \begin{script}
 \fprompt{~} pkg-config --list-all
 \end{script}
-\clearpage
+\\[-0.5cm]
 \noindent With the list of libraries installed and the associated keywords, it is easy to prepare the testing:
 {\footnotesize{
 \begin{script}
@@ -288,6 +342,10 @@ To check the libraries installed on your system, and handled by \bftt{pkg-config
 
 \dnl{Checking for gtk+-3.0, version must be >= 3.16:}
 \confb{PKG\_CHECK\_MODULES}{\rtt{GTK}, \cstr{\bftt{gtk+-3.0} >= 3.16}}
+\dnl{GTK3 for OSX requires the package gtk-mac-integration}
+if test "\magenta{\$build_mac}" = "\magenta{yes}"; then
+  \confb{PKG_CHECK_MODULES}{\rtt{INTEGRATION}, \cstr{\bftt{gtk-mac-integration}}}
+fi
 \dnl{PKG\_CHECK\_MODULES(GTK, [gtk4 >= 4.60])}
 
 \dnl{Checking for libxml-2.0, version must be > 2.4.0:}
@@ -303,7 +361,7 @@ To check the libraries installed on your system, and handled by \bftt{pkg-config
 \confb{PKG\_CHECK\_MODULES}{\rtt{EPOXY}, \cstr{\bftt{epoxy}}}
 \end{script}
 }}
-\\
+\\[-0.25cm]
 \noindent As you can understand from this example the testing could actually be performed on a single line for all libraries. 
 However I would recommend to split the test in as many libraries as required. \\[0.25cm]
 When running the \bftt{configure} script to perform the testing the standard output is:
@@ -312,52 +370,9 @@ When running the \bftt{configure} script to perform the testing the standard out
 checking for \rtt{Name}... \cstr{\btt{yes} or \btt{no}}
 \end{script}
 }}
-\\
+\\[-0.5cm]
 \noindent Separate checking allows to obtain direct information on the issue without opening the \bftt{config.log} (very detailed output of the configure process) 
 file that contains more details about the process. 
-
-\clearpage
-\subsubsection{Checking for MS Windows}
-
-\red{It is unlikely that this section will remain in the final document} \\[0.25cm]
-Finally it might be required to test for the operating system:
-
-{\footnotesize{
-\begin{script}
-\dnl{Checking for MS Windows}
-
-case \${host} in
-  *mingw* | pw32* | cygwin*)
-    platform\_win32=yes
-    echo "Building win32 application"
-    ;;
-  *)
-    platform\_win32=no
-    ;;
-esac
-\confb{AM\_CONDITIONAL}{PLATFORM\_WIN32, test x"\${platform\_win32}" = "xyes"}
-
-case \${host} in
-  *mingw*)
-    native\_win32=yes
-    echo "Building native win32 application"
-    ;;
-  *)
-    native\_win32=no
-    ;;
-esac
-\confb{AM\_CONDITIONAL}{NATIVE\_WIN32, test x"\${native\_win32}" = "xyes"}
-
-if test "\${native\_win32} = "yes"; then
-  \confb{AC\_CHECK\_TOOL}{WINDRES, windres, no}
-  if test "\${WINDRES}" = no; then
-    \confb{AC\_MSG\_ERROR}{\cstr{*** Could not find an implementation of windres in your PATH.}}
-  fi
-fi
-\end{script}
-}}
-
-\clearpage
 
 \subsubsection{Finalization}
 \label{cfinal}
