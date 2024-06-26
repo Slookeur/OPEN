@@ -97,6 +97,8 @@ m4\_define(\bftt{project\_url}, \red{https://www.program.com})
 \dgtt{prog\_pkgdatadir} = \var{\$(DESTDIR)\$(pkgdatadir)}
 \dgtt{prog\_desktopdir} = \var{\$(prog\_pkgdatadir)}/applications
 \dgtt{prog\_metadir} = \var{\$(prog\_pkgdatadir)}/metainfo
+\dgtt{prog\_mimedir} = \var{\$(prog\_pkgdatadir)}/mime/packages
+\dgtt{prog\_iconsdir} = \var{\$(prog\_pkgdatadir)}/pixmaps
 \dgtt{SUBDIRS} = src
 \dgtt{prog\_docdir} = \var{\$(docdir)}
 \dgtt{prog\_doc\_DATA} = README.md AUTHORS ChangeLog
@@ -147,7 +149,7 @@ m4\_define(\bftt{project\_url}, \red{https://www.program.com})
 \tabul desktop-file-install --vendor="" \textbackslash
 \tabul \tabul --dir=\var{\$(prog\_desktopdir)} -m 644 \textbackslash
 \tabul \tabul \var{\$(prog\_desktopdir)}/program.desktop
-\tabul touch --no-create \var{\$(prog\_iconsdir)}
+\tabul touch -c \var{\$(prog\_iconsdir)}
 \tabul if [ -u `which gtk-update-icon-cache` ]; then \textbackslash
 \tabul \tabul gtk-update-icon-cache -q \var{\$(prog\_iconsdir)}; \textbackslash
 \tabul fi
@@ -168,7 +170,7 @@ m4\_define(\bftt{project\_url}, \red{https://www.program.com})
 \tabul -rm -rf \var{\$(prog\_iconsdir)}/program-workspace.svg
 \tabul -rm -f \var{\$(prog\_desktopdir)}/program.desktop
 \tabul -rm -f \var{\$(prog\_metadir)}/com.program.www.appdata.xml
-\tabul touch --no-create \var{\$(prog\_iconsdir)}
+\tabul touch -c \var{\$(prog\_iconsdir)}
 \tabul if [ -u `which gtk-update-icon-cache` ]; then \textbackslash
 \tabul \tabul gtk-update-icon-cache -q \var{\$(prog\_iconsdir)}; \textbackslash
 \tabul fi

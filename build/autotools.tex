@@ -644,7 +644,7 @@ Variables are defined using the syntax\quad"\bftt{variable\_name \rtt{=}}"\quad 
 \tabul desktop-file-install --vendor="" \textbackslash
 \tabul \tabul --dir=\var{\$(prog\_desktopdir)} -m 644 \textbackslash
 \tabul \tabul \var{\$(prog\_desktopdir)}/program.desktop
-\tabul touch --no-create \var{\$(prog\_iconsdir)}
+\tabul touch -c \var{\$(prog\_iconsdir)}
 \tabul if [ -u `which gtk-update-icon-cache` ]; then \textbackslash
 \tabul \tabul gtk-update-icon-cache -q \var{\$(prog\_iconsdir)}; \textbackslash
 \tabul fi
@@ -681,7 +681,7 @@ Variables are defined using the syntax\quad"\bftt{variable\_name \rtt{=}}"\quad 
 \tabul -rm -f \var{\$(prog\_desktopdir)}/program.desktop
 \tabul -rm -f \var{\$(prog\_metadir)}/com.program.www.appdata.xml
 \tabul -rm -f \var{\$(prog\_mimedir)}/packages/program-mime.xml
-\tabul touch --no-create \var{\$(prog\_iconsdir)}
+\tabul touch -c \var{\$(prog\_iconsdir)}
 \tabul if [ -u `which gtk-update-icon-cache` ]; then \textbackslash
 \tabul   gtk-update-icon-cache -q \var{\$(prog\_iconsdir)}; \textbackslash
 \tabul fi
