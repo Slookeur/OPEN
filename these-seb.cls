@@ -83,8 +83,8 @@
   \begin{center}    
     \bigskip
     \vfill
-    {\large{{\bf{Linux}}\\
-	  \href{https://www.linuxfoundation.org/}{https://www.linuxfoundation.org/}}
+	  {\large{{\bf{Sources of this document available at:}}\\[0.25cm]
+	  \href{https://github.com/Slookeur/OPEN}{https://github.com/Slookeur/OPEN}}
 } \\
     \bigskip
     \vfill
