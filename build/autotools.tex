@@ -162,11 +162,11 @@ m4\_define(\bftt{project\_url}, \red{https://www.program.com})
 \dnl{\tabul AC\_DEFINE([VAR\_NAME], [VALUE], [String])}
 \dnl{Then replace all instances of VAR\_NAME in the output file(s) by VALUE}
 \dnl{\tabul AC\_SUBST(VAR\_NAME, [VALUE])}
-\confb{AC\_DEFINE}{MAJOR\_VERSION, \bftt{major\_version}, \cstr{Program major version}}
+\cact{AC\_DEFINE}{MAJOR\_VERSION}{\bftt{major\_version}}{Program major version}
 \confb{AC\_SUBST}{MAJOR\_VERSION, \bftt{major\_version}}
-\confb{AC\_DEFINE}{MINOR\_VERSION, \bftt{minor\_version}, \cstr{Program minor version}}
+\cact{AC\_DEFINE}{MINOR\_VERSION}{\bftt{minor\_version}}{Program minor version}
 \confb{AC\_SUBST}{MINOR\_VERSION, \bftt{minor\_version}}
-\confb{AC\_DEFINE}{PATCH\_VERSION, \bftt{patch\_version}, \cstr{Program patch version}}
+\cact{AC\_DEFINE}{PATCH\_VERSION}{\bftt{patch\_version}}{Program patch version}
 \confb{AC\_SUBST}{PATCH\_VERSION, \bftt{patch\_version}}
 \end{script}
 }}
@@ -184,60 +184,52 @@ to make sure that this command is available on the target system, and therefore 
 \dnl{This will check that \bftt{program} is installed.}
 \dnl{It will also set the \bftt{variable} to the path of the \bftt{program} executable.}
 \dnl{\tabul AC\_CHECK\_PROG ([variable], [program], [text-if-found], [text-if-not-found])}
-\confb{AC\_CHECK\_PROG}{[\rtt{PKG\_CONFIG}], [pkg-config], [yes], [no])}
+\cacf{AC\_CHECK\_PROG}{PKG\_CONFIG}{pkg-config}{yes}{no}
 \dnl{Checking for utilities need for Freedesktop Linux integration, see [Sec. \ref{rpmpost}]:}
-\confb{AC\_CHECK\_PROG}{[\rtt{PUP\_MIME}], [update-mime-database], [yes], [no]}
-\confb{AC\_CHECK\_PROG}{[\rtt{PUP\_DESKTOP}], [update-desktop-database], [yes], [no]}
-\confb{AC\_CHECK\_PROG}{[\rtt{PUP\_APPSTREAM}], [appstream-util], [yes], [no]}
+\cacf{AC\_CHECK\_PROG}{UP\_MIME}{update-mime-database}{yes}{no}
+\cacf{AC\_CHECK\_PROG}{UP\_DESKTOP}{update-desktop-database}{yes}{no}
+\cacf{AC\_CHECK\_PROG}{UP\_APPSTREAM}{appstream-util}{yes}{no}
 \end{script}
 }}
 \vspace{-1cm}
 \subsubsection{Checking for compiler(s)}
 \label{ccomp}
 
-The following examples illustrate how to check if: 
+The following examples illustrate: 
 \begin{itemize}
-\item User defined compilers flags are suitable to build the program:
+\item The macro used to check if compilers flags are suitable to build the program:
 \vspace{-0.25cm}
 {\footnotesize{
 \begin{scripti}
 \dnl{Compiler(s) flags checking}
-\dnl{For some reason the AX\_CHECK\_COMPILER\_FLAGS is broken}
-\dnl{It is required to use this piece of code to define a proper test function:}
-\confb{AC\_DEFUN}{[AX\_CHECK\_COMPILER\_FLAGS],
-\tabul [AC\_PREREQ(\red{2.59}) \dnl{for \_AC\_LANG\_PREFIX}
-\tabul AC\_MSG\_CHECKING([whether \_AC\_LANG compiler accepts \$1])
-\tabul \confb{AS\_LITERAL\_IF}{[\$1],
-\tabul\tabul [AC\_CACHE\_VAL(AS\_TR\_SH(ax\_cv\_[]\_AC\_LANG\_ABBREV[]\_flags\_\$1), [
-\tabul\tabul\tabul ax\_save\_FLAGS=\$[]\_AC\_LANG\_PREFIX[]FLAGS
-\tabul\tabul\tabul \_AC\_LANG\_PREFIX[]FLAGS="\$1"
-\tabul\tabul\tabul C\_COMPILE\_IFELSE([AC\_LANG\_PROGRAM()],
-\tabul\tabul\tabul AS\_TR\_SH(ax\_cv\_[]\_AC\_LANG\_ABBREV[]\_flags\_\$1)=yes,
-\tabul\tabul\tabul AS\_TR\_SH(ax\_cv\_[]\_AC\_LANG\_ABBREV[]\_flags\_\$1)=no)
-\tabul\tabul \_AC\_LANG\_PREFIX[]FLAGS=\$ax\_save\_FLAGS])],
-\tabul\tabul [ax\_save\_FLAGS=\${[]\_AC\_LANG\_PREFIX[]FLAGS}
-\tabul\tabul \_AC\_LANG\_PREFIX[]FLAGS="\$1"
-\tabul\tabul AC\_COMPILE\_IFELSE([AC\_LANG\_PROGRAM()],
-\tabul\tabul\tabul eval AS\_TR\_SH(ax\_cv\_[]\_AC\_LANG\_ABBREV[]\_flags\_\$1)=yes,
-\tabul\tabul\tabul eval AS\_TR\_SH(ax\_cv\_[]\_AC\_LANG\_ABBREV[]\_flags\_\$1)=no)
-\tabul\tabul \_AC\_LANG\_PREFIX[]FLAGS=\$ax\_save\_FLAGS]}
-\tabul eval ax\_check\_compiler\_flags=\${AS\_TR\_SH}(ax\_cv\_[]\_AC\_LANG\_ABBREV[]\_flags\_\$1)
-\tabul AC\_MSG\_RESULT(\$ax\_check\_compiler\_flags)
-\tabul if test "x\$ax\_check\_compiler\_flags" = xyes; then
-\tabul\tabul m4\_default([\$2], :)
-\tabul else
-\tabul\tabul m4\_default([\$3], :)
-\tabul fi
-]}
+\dnl{Definig the macro AX\_CHECK\_COMPILER\_FLAG:}
+\confb{AC\_DEFUN}{\cstr{AX\_CHECK\_COMPILER\_FLAG},
+\tabul \cstr{\confb{AC\_PREREQ}{\rtt{2.64}} dnl for \_AC\_LANG\_PREFIX and AS\_VAR\_IF
+\tabul \cacb{AS\_VAR\_PUSHDEF}{CACHEVAR}{ax\_cv\_check\_[]\_AC\_LANG\_ABBREV[]flags\_\$4\_\$1}
+\tabul \confb{AC\_CACHE\_CHECK}{\cstr{whether \_AC\_LANG compiler accepts \$1}, CACHEVAR, \cstr{
+\tabul \tabul ax\_check\_save\_flags=\$[]\_AC\_LANG\_PREFIX[]FLAGS
+\tabul \tabul \_AC\_LANG\_PREFIX[]FLAGS="\$[]\_AC\_LANG\_PREFIX[]FLAGS \$4 \$1"
+\tabul \tabul \confb{AC\_COMPILE\_IFELSE}{\cstr{m4\_default([\$5],[AC\_LANG\_PROGRAM()]},
+\tabul \tabul \tabul \cstr{\confb{AS\_VAR\_SET}{CACHEVAR,\cstr{yes}}},
+\tabul \tabul \tabul \cstr{\confb{AS\_VAR\_SET}{CACHEVAR,\cstr{no}}}}
+\tabul \tabul \_AC\_LANG\_PREFIX[]FLAGS=\$ax\_check\_save\_flags}}
+\tabul \confb{AS\_VAR\_IF}{CACHEVAR,yes,
+\tabul \tabul [m4\_default([\$2], :)],
+\tabul \tabul [m4\_default([\$3], :)]}
+\tabul \confb{AS\_VAR\_POPDEF}{[CACHEVAR]}
+}}\dnl{AX\_CHECK\_COMPILER\_FLAG}
 \end{scripti}
-}}
-\item Required compiler(s) to build the program can be found in the system:
+}}\\[-0.75cm]
+\noindent this macro is included in the \bftt{autoconf-archive} package, providing that this package is installed you can simply 
+call \texttt{AX\_CHECK\_COMPILER\_FLAG} (see aftewards) without inserting the macro in your file \bftt{configure.ac}.
+\newpage
+\item The instructions checking for compiler(s) required to build the program:
 {\footnotesize{
 \begin{scripti}
 \dnl{Searching for a working C compiler:}
 \confa{AC\_PROG\_CC}
 \dnl{Checking for C FLAGS, provided on the configure line, ex: CFLAGS="-O3"}
-\confb{AX\_CHECK\_COMPILER\_FLAGS}{\cstr{\red{\${CFLAGS}}}}
+\confb{AX\_CHECK\_COMPILE\_FLAG}{\cstr{\red{\${CFLAGS}}}}
 
 \dnl{Checking for a working Fortran 90 compiler}
 \dnl{Ensuring C and F90 function names compatibility:}
@@ -254,7 +246,7 @@ The following examples illustrate how to check if:
 \confb{AC\_FC\_SRCEXT}{F90, FCFLAGS\_F90="\${FCFLAGS\_F90} \${FCFLAGS}", 
                 AC\_MSG\_ERROR(\cstr{Err. comp. .F90})}
 \dnl{Checking for Fortran 90 FLAGS, provided on the configure line, ex: FCFLAGS="-O3"}
-\confb{AX\_CHECK\_COMPILER\_FLAGS}{\cstr{\red{\${FCFLAGS}}}}
+\confb{AX\_CHECK\_COMPILE\_FLAG}{\cstr{\red{\${FCFLAGS}}}}
 \dnl{Find required linker Fortran flags:}
 \confa{AC\_FC\_LIBRARY\_LDFLAGS}
 \dnl{Ensure that Free form Fortran is allowed in the code:}
@@ -275,41 +267,41 @@ Finally it might be required to test for the target operating system:
 \begin{script}
 \dnl{Checking for the target operating system}
 
-\comm{AC_CANONICAL_HOST is needed to access the '\$host_os' variable}
-\confa{AC_CANONICAL_HOST}
+\comm{AC\_CANONICAL\_HOST is needed to access the '\$host\_os' variable}
+\confa{AC\_CANONICAL\_HOST}
 
-build_linux=no
-build_windows=no
-build_mac=no
+build\_linux=no
+build\_windows=no
+build\_mac=no
 
-\comm{Detect the target system using the \$host_os variable}
-case "\magenta{\${host_os}}" in
+\comm{Detect the target system using the \$host\_os variable}
+case "\magenta{\${host\_os}}" in
     linux*)
-        build_linux=yes
+        build\_linux=yes
         echo "\magenta{Building Linux application}"
         ;;
     cygwin*|mingw*)
-        build_windows=yes
+        build\_windows=yes
         echo "\magenta{Building Windows application}"
         ;;
     darwin*)
-        build_mac=yes
+        build\_mac=yes
         echo "\magenta{Building macOS application}"
         ;;
     *)
-        \confb{AC_MSG_ERROR}{["\magenta{OS \$host_os is not supported"}]}
+        \confb{AC\_MSG\_ERROR}{["\magenta{OS \$host\_os is not supported"}]}
         ;;
 esac
 
 \comm{Pass the conditionals to automake}
-\confb{AM_CONDITIONAL}{[\rtt{LINUX}], [test "\magenta{\$build_linux}" = "\magenta{yes}"]}
-\confb{AM_CONDITIONAL}{[\rtt{WINDOWS}], [test "\magenta{\$build_windows}" = "\magenta{yes}"]}
-\confb{AM_CONDITIONAL}{[\rtt{OSX}], [test "\magenta{\$build_mac}" = "\magenta{yes}"]}
+\cacb{AM\_CONDITIONAL}{LINUX}{test "\magenta{\$build\_linux}" = "\magenta{yes}"}
+\cacb{AM\_CONDITIONAL}{WINDOWS}{test "\magenta{\$build\_windows}" = "\magenta{yes}"}
+\cacb{AM\_CONDITIONAL}{OSX}{test "\magenta{\$build\_mac}" = "\magenta{yes}"}
 
-if test "\magenta{\$build_windows}" = "\magenta{yes}"; then
-  \confb{AC_CHECK_TOOL}{[\rtt{WINDRES}], [windres], [no]}
+if test "\magenta{\$build\_windows}" = "\magenta{yes}"; then
+  \cacb{AC\_CHECK\_TOOL}{WINDRES}{windres}{no}
   if test "\magenta{\$WINDRES}" = no; then
-    \confb{AC_MSG_ERROR}{\cstr{\magenta{*** Could not find an implementation of windres in your PATH.}}}
+    \confb{AC\_MSG\_ERROR}{\cstr{\magenta{*** Could not find an implementation of windres in your PATH.}}}
   fi
 fi
 \end{script}
@@ -332,33 +324,27 @@ To check the libraries installed on your system, and handled by \bftt{pkg-config
 {\footnotesize{
 \begin{script}
 \dnl{To check if a library is present use the command:}
-\dnl{\tabul PKG\_CHECK\_MODULES(\rtt{Name}, [\bftt{keyword} optionally version required])}
+\dnl{\tabul PKG\_CHECK\_MODULES([\rtt{Name}], [\bftt{keyword} optionally version required])}
 \dnl{It calls \bftt{pkg-config} to check for the libraries mentioned using \bftt{keyword}}
 \dnl{\rtt{Name} is a keyword used to construct variables related to designated library.}
 \dnl{Ex:}
-\dnl{\tabul PKG\_CHECK\_MODULES(GTK, [gtk4 >= 4.60])}
-\dnl{\tabul Will create a GTK\_LIBS variable to store the GTK linker flags}
+\dnl{\tabul PKG\_CHECK\_MODULES([LGTK], [gtk4 >= 4.60])}
+\dnl{\tabul Will create a LGTK\_LIBS variable to store the gtk4 linker flags}
 \dnl{\tabul You can then re-use theses variables later on, in particular in \bftt{Makefile.am}}
 
-\dnl{Checking for gtk+-3.0, version must be >= 3.16:}
-\confb{PKG\_CHECK\_MODULES}{\rtt{GTK}, \cstr{\bftt{gtk+-3.0} >= 3.16}}
-\dnl{GTK3 for OSX requires the package gtk-mac-integration}
-if test "\magenta{\$build_mac}" = "\magenta{yes}"; then
-  \confb{PKG_CHECK_MODULES}{\rtt{INTEGRATION}, \cstr{\bftt{gtk-mac-integration}}}
-fi
-\dnl{PKG\_CHECK\_MODULES(GTK, [gtk4 >= 4.60])}
-
 \dnl{Checking for libxml-2.0, version must be > 2.4.0:}
-\confb{PKG\_CHECK\_MODULES}{\rtt{LIBXML2}, \cstr{\bftt{libxml-2.0} >= 2.4.0}}
+\cacb{PKG\_CHECK\_MODULES}{LIBXML2}{\bftt{libxml-2.0 >= 2.4.0}}
 
-\dnl{Checking for libavcodec, and other FFMPEG based libraries, no version requirement:}
-\confb{PKG\_CHECK\_MODULES}{\rtt{FFMPEG}, \cstr{\bftt{libavcodec libavformat libavutil libswscale}}}
-
-\dnl{Checking for glu, no version requirement:}
-\confb{PKG\_CHECK\_MODULES}{\rtt{GLU}, \cstr{\bftt{glu}}}
+\dnl{Checking for glu, no version requirement, only Linux and macOS:}
+if test "\magenta{\$build\_windows}" = "\magenta{no}"; then
+  \cacb{PKG\_CHECK\_MODULES}{GLU}{\bftt{glu}}
+fi
 
 \dnl{Checking for epoxy, no version requirement:}
-\confb{PKG\_CHECK\_MODULES}{\rtt{EPOXY}, \cstr{\bftt{epoxy}}}
+\cacb{PKG\_CHECK\_MODULES}{EPOXY}{\bftt{epoxy}}
+
+\dnl{Checking for libavcodec, and other FFMPEG based libraries, no version requirement:}
+\cacb{PKG\_CHECK\_MODULES}{FFMPEG}{\bftt{libavcodec libavformat libavutil libswscale}}
 \end{script}
 }}
 \\[-0.25cm]
@@ -372,12 +358,86 @@ checking for \rtt{Name}... \cstr{\btt{yes} or \btt{no}}
 }}
 \\[-0.5cm]
 \noindent Separate checking allows to obtain direct information on the issue without opening the \bftt{config.log} (very detailed output of the configure process) 
-file that contains more details about the process. 
+file that contains more details about the process.
+\newpage
+
+\subsubsection{Creating additional \bftt{configure} options}
+
+To create new flag(s) for the \bftt{configure} script command line to test for specific option(s). 
+
+{\footnotesize{
+\begin{script}
+\comm{To create a configure option ot determine the GTK version to use:}
+
+\dnl{1) Displaying an information message at the configure stage:}
+\confb{AC\_MSG\_CHECKING}{\cstr{the GTK version to use}}
+
+\dnl{2) Test for the presence of the appropriate argument, the synthax is:}
+\dnl{AC\_ARG\_WITH([option\_name], [Help message], [if flag], [if no flag])}
+\dnl{In the following:}
+\dnl{  - To use GTK4: ./configure --with-gtk=4}
+\dnl{  - To use GTK3: ./configure  (or ./configure --with-gtk=3)}
+\confb{AC\_ARG\_WITH}{\cstr{gtk},
+  \cstr{\confb{AS\_HELP\_STRING}{[\magenta{--with-gtk=3|4}], [\magenta{the GTK version to use (default: 3)}]}},
+  \cstr{case "\magenta{\$with\_gtk}" in
+       \rtt{3}|\rtt{4}) ;;
+       *) \confb{AC\_MSG\_ERROR}{[\magenta{invalid GTK version specified}]} ;;
+         esac},
+  \cstr{with\_gtk=3}}
+
+\dnl{3) Result in information message at the configure stage:}
+\confb{AC\_MSG\_RESULT}{\cstr{\magenta{\$with\_gtk}}}
+
+\dnl{4) optional: create a GTK3 variable if using GTK version 3, see \bftt{src/Makefile.am}}
+\cacb{AM\_CONDITIONAL}{GTK3}{test "\magenta{\$with\_gtk}" == "3"}
+
+\dnl{5) Prepare the PKG\_CONFIG test for the GTK version specified by the optional flag:}
+case "\magenta{\$with\_gtk}" in
+  \rtt{3}) gtk\_version="\magenta{gtk+-3.0}"
+     gtk\_version\_number="\magenta{3.16}"
+     ;;
+  \rtt{4}) gtk\_version="\magenta{gtk4}"
+     gtk\_version\_number="\magenta{4.6}"
+     ;;
+esac
+
+\dnl{5) Testing for the proper library version following the option on the configure line:}
+\cacb{PKG\_CHECK\_MODULES}{LGTK}{\magenta{\$gtk\_version} \bftt{>=} \magenta{\$gtk\_version\_number}}
+if test "\magenta{\$with\_gtk}" = "\magenta{3}"; then
+  if test "\magenta{\$build\_mac}" = "\magenta{yes}"; then
+    \cacb{PKG\_CHECK\_MODULES}{INTEGRATION}{\bftt{gtk-mac-integration}}
+  fi
+fi
+\end{script}
+}}
+
+\newpage
+
+{\footnotesize{
+\begin{script}
+\dnl{To create a configure to disable OpenMP}
+\dnl{if not disable (default) then determine the appropriate compiler flags:}
+
+\confb{AC\_MSG\_CHECKING}{\cstr{the OpenMP specification and flags}}
+\confb{AC\_ARG\_ENABLE}{\cstr{--disable-openmp},
+  \cstr{\cacb{AS\_HELP\_STRING}{--disable-openmp}{disable OpenMP (default: no)}},
+  \cstr{with\_opemp="\magenta{no}"}, {with\_openmp="\magenta{yes}"}}
+\confb{AC\_MSG\_RESULT}{\cstr{\$with\_openmp}}
+if test "\magenta{\$with\_openmp}" = "\magenta{yes}"; then
+  \confb{AC\_MSG\_RESULT}{\cstr{\$with\_openmp}}
+  \confa{AC\_OPENMP}
+  \confb{AC\_SUBST}{\cstr{OPENMP\_CFLAGS}}
+\dnl{optional: create an OPENMP variable to be used in \bftt{src/Makefile.am}}
+  \cacb{AM\_CONDITIONAL}{OPENMP}{test "\magenta{\${OPENMP\_CFLAGS}}" != ""}
+fi
+\end{script}
+}}
 
 \subsubsection{Finalization}
 \label{cfinal}
 
 The \bftt{configure.ac} always end with a mandatory \bftt{AC\_OUTPUT} instruction:
+\vspace{-1cm}
 {\footnotesize{
 \begin{script}
 \dnl{Where to look for \bftt{Makefile.am} file(s) and generate \bftt{Makefile}(s)}
@@ -672,12 +732,11 @@ Variables are defined using the syntax\quad"\bftt{variable\_name \rtt{=}}"\quad 
 \tabul -rmdir \var{\$(prog\_pkgdatadir)}/data
 \tabul -rm -rf \var{\$(prog\_pkgdatadir)}/pixmaps/*
 \tabul -rmdir \var{\$(prog\_pkgdatadir)}/pixmaps
-\tabul -rm -rf \var{\$(prog\_pkgdatadir)}/pixmaps/*
 \tabul -rmdir \var{\$(prog\_pkgdatadir)}
 \tabul -rmdir \var{\$(prog\_docdir)}
-\tabul -rm -rf \var{\$(prog\_iconsdir)}/program.svg
-\tabul -rm -rf \var{\$(prog\_iconsdir)}/program-project.svg
-\tabul -rm -rf \var{\$(prog\_iconsdir)}/program-workspace.svg
+\tabul -rm -f \var{\$(prog\_iconsdir)}/program.svg
+\tabul -rm -f \var{\$(prog\_iconsdir)}/program-project.svg
+\tabul -rm -f \var{\$(prog\_iconsdir)}/program-workspace.svg
 \tabul -rm -f \var{\$(prog\_desktopdir)}/program.desktop
 \tabul -rm -f \var{\$(prog\_metadir)}/com.program.www.appdata.xml
 \tabul -rm -f \var{\$(prog\_mimedir)}/packages/program-mime.xml
@@ -708,7 +767,7 @@ These files ("\bftt{*.xml}", "\bftt{*.desktop}", "\bftt{*.svg}") are required to
 \subsubsection{\bftt{src/Makefile.am}}
 \label{srcmake}
 
-\vspace{-0.5cm}
+\vspace{-1cm}
 {\scriptsize{
 \begin{script}
 \comm{Setup the name of the program to be generated, using:}
@@ -719,42 +778,45 @@ These files ("\bftt{*.xml}", "\bftt{*.desktop}", "\bftt{*.svg}") are required to
 \comm{Other architecture dependent file(s) can be installed using the \btt{install-exec-local:} target.}
 
 \comm{In the following you need to specify the flags used during the compilation process.}
-\comm{To do that simply use the variables that will created by the \bftt{configure} script.}
+\comm{To do that simply use the variables that will be created by the \bftt{configure} script.}
 \comm{Appropriate variables are created for each library searched for by a \rtt{Name} specified in the \bftt{configure.ac}}
 \comm{Variables are constructed using the \rtt{Name\_} prefix, as in the example:}
-\comm{\tabul - In \bftt{configure.ac}: PKG\_CHECK\_MODULES(\rtt{GTK}, [gtk+-3.0 >= 3.16])}
-\comm{\tabul - Creates and setup the following variables to store flags: GTK\_LIBS, GTK\_CFLAGS}
-
+\comm{\tabul - In \bftt{configure.ac}: PKG\_CHECK\_MODULES(\rtt{LGTK}, [gtk+-3.0 >= 3.16])}
+\comm{\tabul - Creates and setup the following variables to store flags: \rtt{LGTK\_}LIBS, \rtt{LGTK\_}CFLAGS}
 \comm{It is mandatory to declare to the linker the libraries to link the program with, using:}
 \comm{\tabul \bftt{name}\_LDADD = \$(lib1\_LIBS) \$(lib2\_LIBS)  ...}
 \comm{Where \bftt{lib1}, \bftt{lib2}, etc, match a \rtt{Name} specified in the \bftt{configure.ac}:}
-\dgtt{prog\_LDADD} = \var{\$(GTK\_LIBS) \$(LIBXML2\_LIBS) \$(PANGOFT2\_LIBS) \$(FFMPEG\_LIBS) \$(GLU\_LIBS) \$(EPOXY\_LIBS)}
+\dgtt{prog\_LDADD} = \var{\$(LGTK\_LIBS) \$(LIBXML2\_LIBS) \$(PANGOFT2\_LIBS) \$(FFMPEG\_LIBS) \$(GLU\_LIBS) \$(EPOXY\_LIBS)}
 
 \comm{Create a variable to store the CFLAGS for all the required libraries:}
-\dgtt{LIB\_CFLAGS} = \var{\$(GTK\_CFLAGS) \$(LIBXML2\_CFLAGS) \$(PANGOFT2\_CFLAGS) \$(FFMPEG\_CFLAGS) \$(GLU\_CFLAGS) \$(EPOXY\_CFLAGS)}
+\dgtt{LIB\_CFLAGS} = \var{\$(LGTK\_CFLAGS) \$(LIBXML2\_CFLAGS) \$(PANGOFT2\_CFLAGS) \$(FFMPEG\_CFLAGS) \$(GLU\_CFLAGS) \$(EPOXY\_CFLAGS)}
 
-\comm{You can use custom flags as well, example with OpenMP:}
-\dgtt{OpenMP\_FLAGS} = -DOPENMP -fopenmp
-\comm{In this case to build an OpenMP version of the program:}
-\comm{\tabul- Use a custom flag 'OPENMP', that activates some parts of the code.}
-\comm{\tabul- Use the '-fopenmp' standard flag to activate OpenMP during compilation time.}
+\comm{OPENMP is defined at configure stage in OpenMP is avaiable}
+if OPENMP
+  \dgtt{OpenMP\_FLAGS} = -DOPENMP \var{\$(OPENMP\_CFLAGS)}
+else
+  \dgtt{OpenMP\_FLAGS} = 
+endif
+\comm{GTK3 is defined, or not, at the configure stage}
+\comm{The following implies that code parts for GTK3/4 are separated by preprocessor instructions GTK3 or GTK4}
+if GTK3
+  \dgtt{GTK\_VERSION}=\var{-DGTK3}
+else
+  \dgtt{GTK\_VERSION}=\var{-DGTK4}
+endif
 
 \comm{You can add custom compilation flags to the one already provided by the configure script:}
 
 \comm{Use \bftt{AM\_LDFLAGS} to define additional linker flags:}
 \dgtt{AM\_LDFLAGS} = \var{\$(OpenMP\_FLAGS)}
-
 \comm{Use \bftt{AM\_CPPFLAGS} to define additional preprocessor flags:}
-\dgtt{AM\_CPPFLAGS} = \var{\$(OpenMP\_FLAGS)}
-
+\dgtt{AM\_CPPFLAGS} = \var{\$(GTK\_VERSION)} \var{\$(OpenMP\_FLAGS)}
 \comm{Use \bftt{AM\_FFLAGS} to define additional Fortran 90 flags:}
 \dgtt{AM\_FFLAGS} = \var{\$(OpenMP\_FLAGS)}
-
 \comm{Use \bftt{AM\_CFLAGS} to define additional C flags, in particular library flags:}
-\dgtt{AM\_CFLAGS} = -DGDK\_DISABLE\_DEPRECATED \var{\$(OpenMP\_CFLAGS) \bftt{\$(LIB\_CFLAGS)}}
+\dgtt{AM\_CFLAGS} = \var{\$(LIB\_CFLAGS)}
 
 \comm{Then declare the sources to build the program:}
-
 \comm{Fortran source file(s)}
 \dgtt{prog\_fortran\_files} = file-1.f90 file-2.f90
 \comm{Fortran source module(s)}

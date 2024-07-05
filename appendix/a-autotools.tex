@@ -2,11 +2,10 @@
 
 \subsection{The file: \bftt{configure.ac}}
 \label{configall}
-
+\vspace{-0.5cm}
 {\tiny{
 \begin{script}
 \confb{AC\_PREREQ}{\red{2.59}}
-
 m4\_define(\bftt{major\_version}, \red{1})
 m4\_define(\bftt{minor\_version}, \red{2})
 m4\_define(\bftt{patch\_version}, \red{12})
@@ -14,51 +13,37 @@ m4\_define(\bftt{version}, \bftt{major\_version}\rtt{.}\bftt{minor\_version}\rtt
 m4\_define(\bftt{bug\_email}, \red{\email})
 m4\_define(\bftt{tar\_name}, \red{program})
 m4\_define(\bftt{project\_url}, \red{https://www.program.com})
-
 \confb{AC\_INIT}{\cstr{\bftt{prog}}, \cstr{\bftt{version}}, \cstr{\bftt{bug\_email}}, \cstr{\bftt{tar\_name}}, \cstr{\bftt{project\_url}}}
 \confa{AM\_INIT\_AUTOMAKE}
-
-\confb{AC\_DEFINE}{MAJOR\_VERSION, \bftt{major\_version}, \cstr{Program major version}}
+\cact{AC\_DEFINE}{MAJOR\_VERSION}{\bftt{major\_version}}{Program major version}
 \confb{AC\_SUBST}{MAJOR\_VERSION, \bftt{major\_version}}
-\confb{AC\_DEFINE}{MINOR\_VERSION, \bftt{minor\_version}, \cstr{Program minor version}}
+\cact{AC\_DEFINE}{MINOR\_VERSION}{\bftt{minor\_version}}{Program minor version}
 \confb{AC\_SUBST}{MINOR\_VERSION, \bftt{minor\_version}}
-\confb{AC\_DEFINE}{PATCH\_VERSION, \bftt{patch\_version}, \cstr{Program patch version}}
+\cact{AC\_DEFINE}{PATCH\_VERSION}{\bftt{patch\_version}}{Program patch version}
 \confb{AC\_SUBST}{PATCH\_VERSION, \bftt{patch\_version}}
+\cacf{AC\_CHECK\_PROG}{PKG\_CONFIG}{pkg-config}{yes}{no}
+\cacf{AC\_CHECK\_PROG}{UP\_MIME}{update-mime-database}{yes}{no}
+\cacf{AC\_CHECK\_PROG}{UP\_DESKTOP}{update-desktop-database}{yes}{no}
+\cacf{AC\_CHECK\_PROG}{UP\_APPSTREAM}{appstream-util}{yes}{no}
 
-\confb{AC\_CHECK\_PROG}{[\rtt{PKG\_CONFIG}], [pkg-config], [yes], [no])}
-\confb{AC\_CHECK\_PROG}{[\rtt{UP\_MIME}], [update-mime-database], [yes], [no]}
-\confb{AC\_CHECK\_PROG}{[\rtt{UP\_DESKTOP}], [update-desktop-database], [yes], [no]}
-\confb{AC\_CHECK\_PROG}{[\rtt{UP\_APPSTREAM}], [appstream-util], [yes], [no]}   
-
-\confb{AC\_DEFUN}{[AX\_CHECK\_COMPILER\_FLAGS],
-\tabul [AC\_PREREQ(\red{2.59}) \dnl{for \_AC\_LANG\_PREFIX}
-\tabul AC\_MSG\_CHECKING([whether \_AC\_LANG compiler accepts \$1])
-\tabul \confb{AS\_LITERAL\_IF}{[\$1],
-\tabul\tabul [AC\_CACHE\_VAL(AS\_TR\_SH(ax\_cv\_[]\_AC\_LANG\_ABBREV[]\_flags\_\$1), [
-\tabul\tabul\tabul ax\_save\_FLAGS=\$[]\_AC\_LANG\_PREFIX[]FLAGS
-\tabul\tabul\tabul \_AC\_LANG\_PREFIX[]FLAGS="\$1"
-\tabul\tabul\tabul C\_COMPILE\_IFELSE([AC\_LANG\_PROGRAM()],
-\tabul\tabul\tabul AS\_TR\_SH(ax\_cv\_[]\_AC\_LANG\_ABBREV[]\_flags\_\$1)=yes,
-\tabul\tabul\tabul AS\_TR\_SH(ax\_cv\_[]\_AC\_LANG\_ABBREV[]\_flags\_\$1)=no)
-\tabul\tabul \_AC\_LANG\_PREFIX[]FLAGS=\$ax\_save\_FLAGS])],
-\tabul\tabul [ax\_save\_FLAGS=\${[]\_AC\_LANG\_PREFIX[]FLAGS}
-\tabul\tabul \_AC\_LANG\_PREFIX[]FLAGS="\$1"
-\tabul\tabul AC\_COMPILE\_IFELSE([AC\_LANG\_PROGRAM()],
-\tabul\tabul\tabul eval AS\_TR\_SH(ax\_cv\_[]\_AC\_LANG\_ABBREV[]\_flags\_\$1)=yes,
-\tabul\tabul\tabul eval AS\_TR\_SH(ax\_cv\_[]\_AC\_LANG\_ABBREV[]\_flags\_\$1)=no)
-\tabul\tabul \_AC\_LANG\_PREFIX[]FLAGS=\$ax\_save\_FLAGS]}
-\tabul eval ax\_check\_compiler\_flags=\${AS\_TR\_SH}(ax\_cv\_[]\_AC\_LANG\_ABBREV[]\_flags\_\$1)
-\tabul AC\_MSG\_RESULT(\$ax\_check\_compiler\_flags)
-\tabul if test "x\$ax\_check\_compiler\_flags" = xyes; then
-\tabul\tabul m4\_default([\$2], :)
-\tabul else
-\tabul\tabul m4\_default([\$3], :)
-\tabul fi
-]}
-
+\dnl{Definig the macro AX\_CHECK\_COMPILER\_FLAG:}
+\confb{AC\_DEFUN}{\cstr{AX\_CHECK\_COMPILER\_FLAG},
+\tabul \cstr{\confb{AC\_PREREQ}{\rtt{2.64}} dnl for \_AC\_LANG\_PREFIX and AS\_VAR\_IF
+\tabul \cacb{AS\_VAR\_PUSHDEF}{CACHEVAR}{ax\_cv\_check\_[]\_AC\_LANG\_ABBREV[]flags\_\$4\_\$1}
+\tabul \confb{AC\_CACHE\_CHECK}{\cstr{whether \_AC\_LANG compiler accepts \$1}, CACHEVAR, \cstr{
+\tabul \tabul ax\_check\_save\_flags=\$[]\_AC\_LANG\_PREFIX[]FLAGS
+\tabul \tabul \_AC\_LANG\_PREFIX[]FLAGS="\$[]\_AC\_LANG\_PREFIX[]FLAGS \$4 \$1"
+\tabul \tabul \confb{AC\_COMPILE\_IFELSE}{\cstr{m4\_default([\$5],[AC\_LANG\_PROGRAM()]},
+\tabul \tabul \tabul \cstr{\confb{AS\_VAR\_SET}{CACHEVAR,\cstr{yes}}},
+\tabul \tabul \tabul \cstr{\confb{AS\_VAR\_SET}{CACHEVAR,\cstr{no}}}}
+\tabul \tabul \_AC\_LANG\_PREFIX[]FLAGS=\$ax\_check\_save\_flags}}
+\tabul \confb{AS\_VAR\_IF}{CACHEVAR,yes,
+\tabul \tabul [m4\_default([\$2], :)],
+\tabul \tabul [m4\_default([\$3], :)]}
+\tabul \confb{AS\_VAR\_POPDEF}{[CACHEVAR]}
+}}\dnl{AX\_CHECK\_COMPILER\_FLAG}
 \confa{AC\_PROG\_CC}
-\confb{AX\_CHECK\_COMPILER\_FLAGS}{\cstr{\red{\${CFLAGS}}}}
-
+\confb{AX\_CHECK\_COMPILE\_FLAG}{\cstr{\red{\${CFLAGS}}}}
 \confa{AC\_FC\_WRAPPERS}
 \confb{AC\_LANG\_PUSH}{\cstr{Fortran}}
 \confb{AC\_PROG\_FC}{\cstr{xlf95 fort ifort ifc f95 g95 pgf95 lf95 xlf90 f90 pgf90 gfortran}, 
@@ -67,16 +52,34 @@ m4\_define(\bftt{project\_url}, \red{https://www.program.com})
                 AC\_MSG\_ERROR(\cstr{Err. comp. .f90})}
 \confb{AC\_FC\_SRCEXT}{F90, FCFLAGS\_F90="\${FCFLAGS\_F90} \${FCFLAGS}", 
                 AC\_MSG\_ERROR(\cstr{Err. comp. .F90})}
-\confb{AX\_CHECK\_COMPILER\_FLAGS}{\cstr{\red{\${FCFLAGS}}}}
+\confb{AX\_CHECK\_COMPILE\_FLAG}{\cstr{\red{\${FCFLAGS}}}}
 \confa{AC\_FC\_LIBRARY\_LDFLAGS}
 \confa{AC\_FC\_FREEFORM}
 \confb{AC\_LANG\_POP}{\cstr{Fortran}}
 
-\confb{PKG\_CHECK\_MODULES}{\rtt{GTK}, \cstr{\bftt{gtk+-3.0} >= 3.16}}
-\confb{PKG\_CHECK\_MODULES}{\rtt{LIBXML2}, \cstr{\bftt{libxml-2.0} >= 2.4.0}}
-\confb{PKG\_CHECK\_MODULES}{\rtt{FFMPEG}, \cstr{\bftt{libavcodec libavformat libavutil libswscale}}}
-\confb{PKG\_CHECK\_MODULES}{\rtt{GLU}, \cstr{\bftt{glu}}}
-\confb{PKG\_CHECK\_MODULES}{\rtt{EPOXY}, \cstr{\bftt{epoxy}}}
+\cacb{PKG\_CHECK\_MODULES}{LIBXML2}{\bftt{libxml-2.0 >= 2.4.0}}
+\cacb{PKG\_CHECK\_MODULES}{GLU}{\bftt{glu}}
+\cacb{PKG\_CHECK\_MODULES}{EPOXY}{\bftt{epoxy}}
+\cacb{PKG\_CHECK\_MODULES}{FFMPEG}{\bftt{libavcodec libavformat libavutil libswscale}}
+\confb{AC\_MSG\_CHECKING}{\cstr{the GTK version to use}}
+\confb{AC\_ARG\_WITH}{\cstr{gtk},
+  \cstr{\confb{AS\_HELP\_STRING}{[\magenta{--with-gtk=3|4}], [\magenta{the GTK version to use (default: 3)}]}},
+  \cstr{case "\magenta{\$with\_gtk}" in
+       \rtt{3}|\rtt{4}) ;;
+       *) \confb{AC\_MSG\_ERROR}{[\magenta{invalid GTK version specified}]} ;;
+         esac},
+  \cstr{with\_gtk=3}}
+\confb{AC\_MSG\_RESULT}{\cstr{\magenta{\$with\_gtk}}}
+\cacb{AM\_CONDITIONAL}{GTK3}{test "\magenta{\$with\_gtk}" == "\magenta{3}"}
+case "\magenta{\$with\_gtk}" in
+  \rtt{3}) gtk\_version="\magenta{gtk+-3.0}"
+     gtk\_version\_number="\magenta{3.16}"
+     ;;
+  \rtt{4}) gtk\_version="\magenta{gtk4}"
+     gtk\_version\_number="\magenta{4.6}"
+     ;;
+esac
+\cacb{PKG\_CHECK\_MODULES}{LGTK}{\magenta{\$gtk\_version} \bftt{>=} \magenta{\$gtk\_version\_number}}
 
 \confb{AC\_CONFIG\_FILES}{\cstr{
   \red{Makefile
@@ -89,6 +92,7 @@ m4\_define(\bftt{project\_url}, \red{https://www.program.com})
 \vspace{-1.5cm}
 \subsection{The file: \bftt{Makefile.am}}
 \label{makeall}
+\vspace{-0.5cm}
 {\tiny{
 \begin{script}
 \dgtt{prog\_datadir} = \var{\$(DESTDIR)\$(datadir)}
@@ -188,15 +192,20 @@ m4\_define(\bftt{project\_url}, \red{https://www.program.com})
 \begin{script}
 \bad{bin\_PROGRAMS} = prog
 
-\dgtt{prog\_LDADD} = \var{\$(GTK\_LIBS) \$(LIBXML2\_LIBS) \$(PANGOFT2\_LIBS) \$(FFMPEG\_LIBS) \$(GLU\_LIBS) \$(EPOXY\_LIBS)}
+\dgtt{prog\_LDADD} = \var{\$(LGTK\_LIBS) \$(LIBXML2\_LIBS) \$(PANGOFT2\_LIBS) \$(FFMPEG\_LIBS) \$(GLU\_LIBS) \$(EPOXY\_LIBS)}
 
-\dgtt{LIB\_CFLAGS} = \var{\$(GTK\_CFLAGS) \$(LIBXML2\_CFLAGS) \$(PANGOFT2\_CFLAGS) \$(FFMPEG\_CFLAGS) \$(GLU\_CFLAGS) \$(EPOXY\_CFLAGS)}
+\dgtt{LIB\_CFLAGS} = \var{\$(LGTK\_CFLAGS) \$(LIBXML2\_CFLAGS) \$(PANGOFT2\_CFLAGS) \$(FFMPEG\_CFLAGS) \$(GLU\_CFLAGS) \$(EPOXY\_CFLAGS)}
 
-\dgtt{OpenMP\_FLAGS} = -DOPENMP -fopenmp
-\dgtt{AM\_LDFLAGS} = \var{\$(OpenMP\_FLAGS)}
-\dgtt{AM\_CPPFLAGS} = \var{\$(OpenMP\_FLAGS)}
-\dgtt{AM\_FFLAGS} = \var{\$(OpenMP\_FLAGS)}
-\dgtt{AM\_CFLAGS} = -DGDK\_DISABLE\_DEPRECATED \var{\$(OpenMP\_CFLAGS) \$(LIB\_CFLAGS)}
+if GTK3
+  \dgtt{GTK\_VERSION}=\var{-DGTK3}
+else
+  \dgtt{GTK\_VERSION}=\var{-DGTK4}
+endif
+
+\dgtt{AM\_LDFLAGS} = 
+\dgtt{AM\_CPPFLAGS} = \var{\$(GTK\_VERSION)}
+\dgtt{AM\_FFLAGS} = 
+\dgtt{AM\_CFLAGS} = \var{\$(LIB\_CFLAGS)}
 
 \dgtt{prog\_fortran\_files} = file-1.f90 file-2.f90
 \dgtt{prog\_fortran\_modules} = mod.f90

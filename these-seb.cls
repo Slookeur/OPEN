@@ -83,7 +83,7 @@
   \begin{center}    
     \bigskip
     \vfill
-	  {\large{{\bf{Sources of this document available at:}}\\[0.25cm]
+	  {\large{{\bf{Sources of this document will be available at:}}\\[0.25cm]
 	  \href{https://github.com/Slookeur/OPEN}{https://github.com/Slookeur/OPEN}}
 } \\
     \bigskip
