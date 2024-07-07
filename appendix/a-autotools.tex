@@ -26,8 +26,8 @@ m4\_define(\bftt{project\_url}, \red{https://www.program.com})
 \cacf{AC\_CHECK\_PROG}{UP\_DESKTOP}{update-desktop-database}{yes}{no}
 \cacf{AC\_CHECK\_PROG}{UP\_APPSTREAM}{appstream-util}{yes}{no}
 
-\dnl{Definig the macro AX\_CHECK\_COMPILER\_FLAG:}
-\confb{AC\_DEFUN}{\cstr{AX\_CHECK\_COMPILER\_FLAG},
+\dnl{Definig the macro AX\_CHECK\_COMPILE\_FLAG:}
+\confb{AC\_DEFUN}{\cstr{AX\_CHECK\_COMPILE\_FLAG},
 \tabul \cstr{\confb{AC\_PREREQ}{\rtt{2.64}} dnl for \_AC\_LANG\_PREFIX and AS\_VAR\_IF
 \tabul \cacb{AS\_VAR\_PUSHDEF}{CACHEVAR}{ax\_cv\_check\_[]\_AC\_LANG\_ABBREV[]flags\_\$4\_\$1}
 \tabul \confb{AC\_CACHE\_CHECK}{\cstr{whether \_AC\_LANG compiler accepts \$1}, CACHEVAR, \cstr{
@@ -41,7 +41,7 @@ m4\_define(\bftt{project\_url}, \red{https://www.program.com})
 \tabul \tabul [m4\_default([\$2], :)],
 \tabul \tabul [m4\_default([\$3], :)]}
 \tabul \confb{AS\_VAR\_POPDEF}{[CACHEVAR]}
-}}\dnl{AX\_CHECK\_COMPILER\_FLAG}
+}}\dnl{AX\_CHECK\_COMPILE\_FLAG}
 \confa{AC\_PROG\_CC}
 \confb{AX\_CHECK\_COMPILE\_FLAG}{\cstr{\red{\${CFLAGS}}}}
 \confa{AC\_FC\_WRAPPERS}
