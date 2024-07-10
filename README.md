@@ -4,14 +4,24 @@ This repository contains the files to build the PDF of my manual
 
 ## Build instructions
 
+###Install the necessary packages:
+
+####Fedora:
+
 ```
-Install the necessary packages:
+sudo dnf -y install texlive-scheme-basic ghostscript-tools-dvipdf 'tex(tabls.sty)' \
+                    'tex(multirow.sty)' 'tex(fancybox.sty)'  'tex(minifp.sty)'  \
+                    'tex(keystroke.sty)' 'tex(ulem.sty)' 'tex(hypernat.sty)' 'tex(lettrine.sty)'  
+```
 
-#Fedora:
-sudo dnf -y install texlive-scheme-basic ghostscript-tools-dvipdf 'tex(tabls.sty)' 'tex(multirow.sty)' 'tex(fancybox.sty)'  \
-'tex(minifp.sty)'  'tex(keystroke.sty)' 'tex(leystroke.sty)'  'tex(ulem.sty)' 'tex(hypernat.sty)'  \
-'tex(lettrine.sty)'  
+####Debian:
 
-#Build the pdf:
+```
+sudo apt install texlive texlive-latex-recommended texlive-plain-generic texlive-latex-extra
+```
+
+###Build the pdf:
+
+```
 ./build-open
 ```
