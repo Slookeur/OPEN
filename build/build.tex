@@ -21,11 +21,15 @@ Very often the content of this archive is based on the GNU automation build syst
 In the following I will provide an example of the preparation of basic GNU tarball, that represents the first step in distributing your software to the open source community.
 \item The \href{https://cmake.org/}{CMake} cross-platform open-source software for build automation, testing, packaging and installation of software by using a compiler-independent method. \\
 \href{https://cmake.org/}{CMake} is not a build system itself, it generates another system's build files and can invoke native building environments such as Make. 
+\item The modern \href{https://mesonbuild.com}{meson} build system written in Python. \\
+Meson is desinged to provide simple, out-of-the-box support for modern software development tools and practises.
 \end{itemize}
 
 \input{build/autotools}
 
 \input{build/cmake}
+
+\input{build/meson}
 
 \section{Conclusion}
 

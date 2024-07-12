@@ -1,0 +1,257 @@
+\section{Meson}
+\begin{center} \red{\Huge{<-{-} Work In Progress {-}->}} \end{center}
+\href{https://mesonbuild.com}{Meson} is an open source build system meant to be both extremely fast, and, even more importantly, as user friendly as possible. \\
+Most of the information bellow is adapted from the main documentation:
+\begin{center}\href{https://mesonbuild.com/Manual.html}{https://mesonbuild.com/Manual.html}\end{center}
+As for the other build systems, \href{https://en.wikipedia.org/wiki/Pkg-config}{pkg-config} will be used extensively thereafter, but in the case of meson it is not mandatory to call it directly. \\
+Before going further into this guide, and if you want to try to build and package your pogram using meson, you will have to install the following tools: 
+\begin{itemize}
+\item For Windows and OSX please refer to the corresponding websites.
+\item For Linux you can quite conveniently use the command line as follow:
+\begin{itemize}
+\item Red Hat based Linux (using the \bftt{dnf} command):
+\begin{scriptii}
+\fprompt{~} sudo \bftt{dnf} install meson
+\fprompt{~} sudo \bftt{dnf} install pkg-config gcc gcc-gfortran
+\end{scriptii}
+\item Debian based Linux (using the \bftt{apt} command):
+\begin{scriptii}
+\uprompt{~} sudo \bftt{apt} install meson
+\uprompt{~} sudo \bftt{apt} install pkg-config gcc gfortran
+\end{scriptii}
+\end{itemize}
+\end{itemize}
+To learn more about software installation on Linux check out my \href{https://www.ipcms.fr/wp-content/uploads/2021/11/linux.pdf}{Linux tutorial}. \\
+To learn more about scripting and the usage of the command line check out my \href{https://www.ipcms.fr/wp-content/uploads/2021/05/bash.pdf}{Bash tutorial}. 
+
+\subsection{Example project}
+
+Same as for the GNU autotools and CMake, see section~\ref{example_project} for more information. 
+
+\subsection{The file: \bftt{meson.build}}
+
+The file \bftt{meson.build} is a configuration file that defines: 
+\begin{itemize}
+\item The rules to configure your project
+\item The rules to build your project
+\item The rules to install your project
+\end{itemize}
+In the next pages I will browse briefly the differents parts of the file \bftt{meson.build}, however my approach will remain simple. 
+For detailed information check the \href{https://mesonbuild.com/Manual.html}{official user manual} \\[0.25cm]
+To start working on your meson package you will need first to create a directory to work in:
+\begin{script}
+\fprompt{~} mkdir program
+\fprompt{~} cd program
+\end{script}
+\\[-0.25cm]
+\noindent Then simply use a text editor to work on this file and insert instructions regarding configuration, building and installation of your program:
+\begin{script}
+\fprompt{~/program} \bftt{vi} \rtt{meson.build}
+\end{script}
+\\[-0.75cm]
+\noindent Note that in the \bftt{meson.build} file the following rules apply:
+\begin{itemize}
+\item Text strings must delimited by single quotes: \bftt{\textquotesingle}{\em{text here}}\bftt{\textquotesingle}
+\item Double quotes \bftt{"} are not allowed
+\end{itemize}
+
+\subsubsection*{Project description, version and programming languages}
+\label{meson_proj}
+Describe project information using the \confb{project}{} instruction:
+{\footnotesize{
+\begin{script}
+\confb{project}{\gtt{\mstr{\gtt{prog}}}, \mstr{c}, \mstr{fortran}, license : \mstr{AGPL-3.0-or-later}, version : \mstr{1.2.12}}
+\end{script} 
+}}
+\\[-0.5cm]
+\noindent Where \gtt{prog} is the project name, followed by programming languages, and other coma separated elements. \\[0.25cm]
+Project information must be defined using that command, and there is only one single \confb{project}{} instruction that can be found in the file \bftt{meson.build}. \\[0.25cm]
+It is possible to split the instruction on several lines clarity purposes. \\[0.25cm]
+From that single instruction meson prepare several built-in variables stored in the meson \href{https://mesonbuild.com/Reference-manual\_functions.html#project}{project data structure}. 
+These variables can be accessed using the following syntax:
+{\footnotesize{
+\begin{script}
+\comm{Define a variable to store the project name (prog):}
+project\_name = \dctt{meson.}project\_name()
+
+\comm{Define a variable to store the project license (AGPL-3.0-or-later):}
+project\_license = \dctt{meson.}project\_license()
+
+\comm{Define an array variable to store each part of the version information}
+\comm{the .split() instruction defines how parts are being separated, in this example by dots:}
+project\_version = \dctt{meson.}project\_version().\confb{split}{\mstr{.}}
+\comm{project\_version[0] = 1}
+\comm{project\_version[1] = 2}
+\comm{project\_version[2] = 12}
+\end{script} 
+}}
+\\[-0.25cm]
+\noindent To know more about meson variables and syntax:
+\begin{center}\href{https://mesonbuild.com/Syntax.html}{https://mesonbuild.com/Syntax.html}\end{center}
+\noindent To display the content of a variable in the configuration output, use the \confb{message}{} instruction with coma separated elements:
+\begin{script}
+\confb{message}{\mstr{My project name is}, project\_name}
+\end{script}
+\\[-0.75cm]
+\noindent To obtain in the output:
+\begin{script}
+\bftt{Message:} My project name is prog
+\end{script}
+\\[-1.5cm]
+
+\subsubsection*{Dependencies}
+\label{meson_deps}
+
+In this manual I will only focus on the \bftt{pkg-config} way of doing things, other possibilites are available and documented in the official meson documentation: 
+\begin{center}\href{https://mesonbuild.com/Dependencies.html}{https://mesonbuild.com/Dependencies.html}\end{center}
+Check for package(s) using the \confb{dependency}{} instruction, note that meson allows to directly use the \bftt{pkg-config} keyword as argument of this instruction:
+\begin{script}
+\comm{Checking for gtk+3.0:}
+\bftt{gtk =} \confb{dependency}{\mstr{gtk+-3.0}}
+
+\comm{Checking for libxml-2.0:}
+\bftt{xml =} \confb{dependency}{\mstr{libxml-2.0}}
+
+\comm{Checking for libavcodec, and other FFMPEG based libraries:}
+\bftt{avutil =} \confb{dependency}{\mstr{libavutil}}
+\bftt{avcodec =} \confb{dependency}{\mstr{libavcodec}}
+\bftt{avformat =} \confb{dependency}{\mstr{libavformat}}
+\bftt{swscale =} \confb{dependency}{\mstr{libswscale}}
+
+\comm{Declaration of a variable to store all FFMPEG dependencies:}
+\confm{ffmpeg}{avutil, avcodec, avformat, swscale}
+
+\comm{Checking for epoxy:}
+\bftt{epoxy =} \confb{dependency}{\mstr{epoxy}}
+
+\comm{Declaration of a variable to store, and easily re-use, all dependencies:}
+\confm{all\_deps}{gtk, xml, glu, epoxy, ffmpeg}
+
+\end{script}
+\\[-0.25cm]
+\noindent This allows to define variables, eg. \bftt{gtk}, to store the information regarding each depencies, using the keyword in pink, eg. \magenta{\texttt{gtk+-3.0}} associated to the \bftt{pkg-config} librairies (see Sec.~\ref{clibs}). 
+Note that keywords are considered as strings and must therefore be inserted between single quotes, eg. \texttt{\mstr{gtk+-3.0}}. \\
+You will also need to link the project to the required libraries, but only at the moment the build target is declared, see page~\pageref{build_rules_meson}. 
+
+
+\subsubsection*{Compiler options}
+
+\newpage
+\subsubsection*{Preprocessor variable definitions}
+
+To define compiler variables use the \confb{add\_project\_arguments}{} instruction:
+{\texttt{
+\begin{center} \confb{add\_project\_arguments}{FLAG, \bftt{language :}\ \mstr{target\_language}}\end{center}
+}}
+\noindent Where \texttt{FLAG} is the flag to pass to the compiler, and \magenta{\mstr{target\_language}} belong to the list of programming language used in the project and defined in the \confb{project}{} instruction (see Sec~\ref{meson_proj}), example:
+{\footnotesize{
+\begin{script}
+\confb{add\_project\_arguments}{\mstr{-DOPENMP}, \bftt{language :} \mstr{c}}
+\confb{add\_project\_arguments}{\mstr{-DOPENMP}, \bftt{language :} \mstr{fortran}}
+\confb{add\_project\_arguments}{\mstr{-DPACKAGE\_LOGO="pixmaps/logo.png"}, \bftt{language :} \mstr{c}}
+\end{script}
+}}\\[-0.5cm]
+\noindent For the GNU C compiler command line, the previous instructions would be translated in:
+\vspace{-0.25cm}
+\begin{script}
+\bftt{gcc} \dgtt{-D}OPENMP \dgtt{-D}PACKAGE\_LOGO=\magenta{"pixmaps/logo.png"}
+\end{script}
+\\[-0.75cm]
+\noindent And for the GNU Fortran compiler command line, it would be translated in:
+\vspace{-0.25cm}
+\begin{script}
+\bftt{gfortran} \dgtt{-D}OPENMP
+\end{script}
+\\[-0.5cm]
+\noindent Example of applications:
+\begin{itemize}
+\item Utilisation of OpenMP instructions: we check if OpenMP is available, 
+if yes we append the OpenMP information to the list of dependencies, 
+and we create new pre-processor flags to activate OpenMP instructions in both C and Fortran code:
+\begin{scripti}
+omp = \confb{dependency}{\mstr{openmp}, \bftt{required : }false}
+\bbtt{if} omp.found ()
+  \confm{all\_deps}{all\_deps, omp}
+  \confb{add\_project\_arguments}{\mstr{-DOPENMP}, \bftt{language : }\mstr{c}}
+  \confb{add\_project\_arguments}{\mstr{-DOPENMP}, \bftt{language : }\mstr{fortran}}
+\bbtt{else}
+  \confb{message}{\mstr{OpenMP not found}}
+\bbtt{endif}
+\end{scripti}
+\item Checking for the operating system (uisng the the built-int \href{https://mesonbuild.com/Reference-manual\_builtin\_host\_machine.html#host-machine-information-host\_machine-extends-build\_machine}{\bftt{host\_machine}} data structure) and creating preprocessor flag accordingly: 
+\begin{scripti}
+system = \confa{host\_machine}.system()
+\bbtt{if} system == \mstr{linux}
+  \confb{add\_project\_arguments}{\mstr{-DLINUX}, \bftt{language : }\mstr{c}}
+\bbtt{elif} system == \mstr{windows}
+  \confb{add\_project\_arguments}{\mstr{-DWINDOWS}, \bftt{language : }\mstr{c}}
+\bbtt{elif} system == \mstr{darwin}
+  \confb{add\_project\_arguments}{\mstr{-DOSX}, \bftt{language : }\mstr{c}}
+\bbtt{endif}
+\end{scripti}
+\end{itemize}
+
+\subsubsection*{Declaring the project sources}
+
+In meson you declare sources in list of file(s), that your refer to using a variable name. 
+This variable will contain the list of all files to be used to build the program. 
+Furthemore in meson it is not posssible to search for file(s) recursively, therefore all files to be used must be declared in the file \bftt{meson.build}:
+\begin{script}
+\confm{src\_c}{\mstr{src/main.c}, \mstr{src/gui.c}} 
+\confm{src\_f}{\mstr{src/file-1.f90}, \mstr{src/file-2.f90}}
+\confm{src\_all}{src\_c, src\_f}
+\end{script}
+\\[-0.5cm]
+\noindent \bftt{src\_c} is the name of a variable that will contain the list of files in C. \\[0.25cm]
+\bftt{src\_f} is the name of a variable that will contain the list of files in Fortran. \\[0.25cm]
+\bftt{src\_all} constructed using the previous variables is the list of all source file(s). \\[0.25cm]
+Note that the complete list of source file(s) must be provided in the file \bftt{meson.build}. 
+
+\subsubsection*{Declaring project headers include directories}
+
+In a meson project it is required to declare project headers (\texttt{".h"}) include directory(ies) before building instructions. 
+This is done using the \confb{include\_directories}{} instruction followed by a list of coma separated file paths. \\
+Save the result of these command in a variable that will be called when building the project: 
+\begin{script}
+\bftt{inc\_dir =} \confb{include\_directories}{\mstr{.}, \mstr{src}}
+\end{script}
+\\[-0.75cm]
+Equivalent to:
+\vspace{-0.125cm}
+\begin{script}
+\confm{all\_inc}{\mstr{.}, \mstr{src}}
+\bftt{inc\_dir =} \confb{include\_directories}{all\_inc}
+\end{script}
+\\[-0.75cm]
+\noindent \bftt{inc\_dir} contains the list of all file paths to search for include files. 
+
+\subsubsection*{Declaring the project building process}
+\label{build_rules_meson}
+
+In meson you declare the project building process using the \confb{executable}{} instruction. \\
+The \confb{executable}{} uses all information prepared up to this point: sources, include directories, dependencies. 
+\begin{script}
+\confb{executable}{\bftt{project\_name}, 
+             \bftt{sources :} src\_all, 
+             \bftt{include\_directories :} inc\_dir, 
+             \bftt{dependencies :} alldeps, 
+             \bftt{c\_args : } cc\_args, 
+             \bftt{fortran\_args: } fc\_args,
+             \bftt{install :} true}
+\end{script}
+\\[-0.5cm]
+\noindent Coma separeted elements, by order of appearence in this example are:
+\begin{itemize}
+\item The name of the binary to build
+\item The sources, using the keyword \bftt{source}
+\item The include directory(ies), using the keyword \bftt{include\_directories} 
+\item The dependencies, using the keyword \bftt{dependencies}
+\item User defined C compiler flags, using the keyword \bftt{c\_args}
+\item User defined Fortran compiler flags, using the keyword \bftt{fortran\_args}
+\item The installation option, using the keyword \bftt{install}
+\end{itemize}
+The syntax is similar in each case:
+\begin{center}\bftt{keyword :} \em{value}\end{center}
+
+
+\begin{center} \red{\Huge{<!-{-} Work In Progress {-}-!>}} \end{center}
