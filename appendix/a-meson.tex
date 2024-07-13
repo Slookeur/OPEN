@@ -1,0 +1,93 @@
+\section{The meson file(s)}
+
+\subsection{The file: \bftt{meson.build}}
+\label{mesonbuild}
+\vspace{-0.75cm}
+{\notsotiny{
+\begin{script}
+\confb{project}{\gtt{\mstr{\gtt{prog}}}, \mstr{c}, \mstr{fortran}, license : \mstr{AGPL-3.0-or-later}, version : \mstr{1.2.12}}
+
+\comm{Checking for libxml-2.0:}
+\bftt{xml =} \confb{dependency}{\mstr{libxml-2.0}}
+\comm{Checking for libavcodec, and other FFMPEG based libraries:}
+\bftt{avutil =} \confb{dependency}{\mstr{libavutil}}
+\bftt{avcodec =} \confb{dependency}{\mstr{libavcodec}}
+\bftt{avformat =} \confb{dependency}{\mstr{libavformat}}
+\bftt{swscale =} \confb{dependency}{\mstr{libswscale}}
+\comm{Declaration of a variable to store all FFMPEG dependencies:}
+\confm{ffmpeg}{avutil, avcodec, avformat, swscale}
+\comm{Checking for epoxy:}
+\bftt{epoxy =} \confb{dependency}{\mstr{epoxy}}
+
+gtk\_version = \confb{get\_option}{\mstr{gtk}}
+\bbtt{if} gtk\_version == 3
+  \comm{Default option: checking for gtk+3.0:}
+  \bftt{gtk =} \confb{dependency}{\mstr{gtk+-3.0}}
+  \confb{add\_project\_arguments}{\mstr{-DGTK3}, \bftt{language : }\mstr{c}}
+\bbtt{else}
+  \comm{Using -Dgtk=4 on the meson configuration command line}
+  \bftt{gtk =} \confb{dependency}{\mstr{gtk4}}
+  \confb{add\_project\_arguments}{\mstr{-DGTK4}, \bftt{language : }\mstr{c}}
+\bbtt{endif}
+
+\comm{Declaration of a variable to store, and easily re-use, all dependencies:}
+\confm{all\_deps}{gtk, xml, glu, epoxy, ffmpeg}
+
+use\_openmp = \confb{get\_option}{\mstr{openmp}}
+\bbtt{if} use\_openmp
+  \bftt{omp =} \confb{dependency}{\mstr{openmp}, \bftt{required : }false}
+  \bftt{if} omp.found ()
+    \confm{all\_deps}{all\_deps, omp}
+    \confb{add\_project\_arguments}{\mstr{-DOPENMP}, \bftt{language : }\mstr{c}}
+    \confb{add\_project\_arguments}{\mstr{-DOPENMP}, \bftt{language : }\mstr{fortran}}
+  \bbtt{else}
+    \confb{message}{\mstr{OpenMP not found: building serial version}}
+  \bbtt{endif}
+\bbtt{endif}
+
+system = \confa{host\_machine}.system()
+\bbtt{if} system == \mstr{linux}
+  \confb{add\_project\_arguments}{\mstr{-DLINUX}, \bftt{language : }\mstr{c}}
+\bbtt{elif} system == \mstr{windows}
+  \confb{add\_project\_arguments}{\mstr{-DWINDOWS}, \bftt{language : }\mstr{c}}
+\bbtt{elif} system == \mstr{darwin}
+  \confb{add\_project\_arguments}{\mstr{-DOSX}, \bftt{language : }\mstr{c}}
+\bbtt{endif}
+
+\comm{Sources}
+\confm{src\_c}{\mstr{src/main.c}, \mstr{src/gui.c}} 
+\confm{src\_f}{\mstr{src/file-1.f90}, \mstr{src/file-2.f90}}
+\confm{src\_all}{src\_c, src\_f}
+
+\comm{Header files include directories}
+\bftt{inc\_dir =} \confb{include\_directories}{\mstr{.}, \mstr{src}}
+
+\comm{Build rules}
+\bftt{project\_name = }\dctt{meson.}project\_name()
+\confb{executable}{\bftt{project\_name}, \bftt{sources :} src\_all, \bftt{include\_directories :} inc\_dir, \bftt{dependencies :} all\_deps, \bftt{install :} true}
+
+\comm{To install specific files:}
+\confb{install\_dat}{\mstr{metadata/program-mime.xml}, \bftt{install\_dir : }data\_dir / \mstr{mime/packages}}
+\confb{install\_dat}{\mstr{metadata/com.program.www.appdata.xml}, \bftt{install\_dir : }data\_dir / \mstr{metainfo}}
+\confb{install\_dat}{\mstr{metadata/program.desktop}, \bftt{install\_dir : }data\_dir / \mstr{applications}}
+\confb{install\_dat}{\mstr{ChangeLog}, \bftt{install\_dir : }data\_dir / \mstr{doc/prog}}
+\confb{install\_dat}{\mstr{COPYING}, \bftt{install\_dir : }data\_dir / \mstr{doc/prog}}
+
+\comm{To install a directory, including all its content, recursively:}
+\confb{install\_subdir}{\mstr{data}, \bftt{install\_dir : }data\_dir / \mstr{prog}}
+\confb{install\_subdir}{\mstr{pixmaps}, \bftt{install\_dir : }data\_dir / \mstr{prog}}
+
+\comm{Running the post installation script:}
+\bftt{project\_prefix = }\confb{get\_option}{\mstr{prefix}}
+\confa{meson}.\confb{add\_install\_script}{\mstr{post\_install.sh}, \bftt{project\_prefix}}
+\end{script}
+}}
+
+\subsection{The associated file: \bftt{meson.options} (or \bftt{meson\_options.txt})}
+
+{\scriptsize{
+\begin{script}
+\confb{option}{\mstr{gtk}, \bftt{type:} \mstr{integer}, \bftt{value:} 3, \bftt{description:} \mstr{Version of the GTK library}}
+\confb{option}{\mstr{openmp}, \bftt{type:} \mstr{boolean}, \bftt{value:} true, \bftt{description:} \mstr{Use OpenMP}}
+\end{script}
+}}

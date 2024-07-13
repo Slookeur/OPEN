@@ -200,12 +200,28 @@ if GTK3
   \dgtt{GTK\_VERSION}=\var{-DGTK3}
 else
   \dgtt{GTK\_VERSION}=\var{-DGTK4}
+endi
+
+if OPENMP
+  \dgtt{OpenMP\_FLAGS}=\var{-DOPENMP} \var{\$(OPENMP\_CFLAGS)}
+else
+  \dgtt{OpenMP\_FLAGS}= 
+endiff
+
+if LINUX
+  \dgtt{OS}=\var{-DOPENMP}
+else
+  if WINDOWS
+    \dgtt{OS}=\var{-DWINDOWS}
+  else
+    \dgtt{OS}=\var{-DOSX}
+  endif
 endif
 
-\dgtt{AM\_LDFLAGS} = 
-\dgtt{AM\_CPPFLAGS} = \var{\$(GTK\_VERSION)}
-\dgtt{AM\_FFLAGS} = 
-\dgtt{AM\_CFLAGS} = \var{\$(LIB\_CFLAGS)}
+\dgtt{AM\_LDFLAGS} = \var{\$(OpenMP\_FLAGS)}
+\dgtt{AM\_CPPFLAGS} = \var{\$(GTK\_VERSION)} \var{\$(OpenMP\_FLAGS)} \var{\$(OS)}
+\dgtt{AM\_FFLAGS} = \var{\$(OpenMP\_FLAGS)}
+\dgtt{AM\_CFLAGS} = \var{\$(LIB\_CFLAGS)} \var{\$(OpenMP\_FLAGS)}
 
 \dgtt{prog\_fortran\_files} = file-1.f90 file-2.f90
 \dgtt{prog\_fortran\_modules} = mod.f90

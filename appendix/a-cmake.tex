@@ -1,5 +1,87 @@
 \section{The CMake file(s)}
 
+\subsection{The file: \bftt{CMakeList.txt}}
+\label{cmakelist}
+\vspace{-0.75cm}
+{\notsotiny{
+\begin{script}
+\comm{CMake minimum configuration}
+\confa{cmake\_minimum\_required} (\bftt{VERSION} 3.10)
+
+\comm{Project version and details}
+\confb{project}{\gtt{prog} \bftt{VERSION} 1.2.12}
+\confb{project}{\gtt{prog} \bftt{DESCRIPTION} \magenta{"A tool box"}}
+\confb{project}{\gtt{prog} \bftt{HOMEPAGE\_URL} \magenta{"https://www.program.com"}}
+\confb{project}{\gtt{prog} \bftt{LANGUAGES} C Fortran}
+
+\comm{Checking for pkg-config}
+\confb{find\_package}{PkgConfig \bftt{REQUIRED}}
+\comm{Checking for gtk+3.0:}
+\confb{pkg\_check\_modules}{\magenta{GTK3} \bftt{REQUIRED} IMPORTED\_TARGET \dgtt{gtk3}}
+\comm{Checking for libxml-2.0:}
+\confb{pkg\_check\_modules}{\magenta{LIBXML2} \bftt{REQUIRED} IMPORTED\_TARGET \dgtt{libxml-2.0}}
+\comm{Checking for libavcodec, and other FFMPEG based libraries:}
+\confb{pkg\_check\_modules}{\magenta{LIBAVUTIL} \bftt{REQUIRED} IMPORTED\_TARGET \dgtt{libavutil}}
+\confb{pkg\_check\_modules}{\magenta{LIBAVCODEC} \bftt{REQUIRED} IMPORTED\_TARGET \dgtt{libavcodec}}
+\confb{pkg\_check\_modules}{\magenta{LIBAVFORMAT} \bftt{REQUIRED} IMPORTED\_TARGET \dgtt{libavformat}}
+\confb{pkg\_check\_modules}{\magenta{LIBSWSCALE} \bftt{REQUIRED} IMPORTED\_TARGET \dgtt{libswscale}}
+\comm{Checking for epoxy:}
+\confb{pkg\_check\_modules}{\magenta{EPOXY} \bftt{REQUIRED} IMPORTED\_TARGET \dgtt{epoxy}}
+
+\comm{Custom compiler flags}
+\confb{set}{\confa{CMAKE\_C\_FLAGS} \magenta{"-O3"}}
+\confb{set}{\confa{CMAKE\_Fortran\_FLAGS} \magenta{"-O3"}}
+\comm{Compiler variables}
+\confb{find\_package}{OpenMP}
+\bbtt{if (}OpenMP\_FOUND\bbtt{)}
+  \confb{set}{\confa{CMAKE\_C\_FLAGS} \varc{OpenMP\_C\_FLAGS}}
+  \confb{set}{\confa{CMAKE\_Fortran\_FLAGS} \varc{OpenMP\_Fortran\_FLAGS}}
+\bbtt{endif()}
+\comm{Operating system:}
+\bbtt{if (}LINUX\bbtt{)}
+  \confb{add\_compile\_definitions}{LINUX}
+\bbtt{elseif (}WINDOWS\bbtt{)}
+  \confb{add\_compile\_definitions}{WINDOWS}
+\bbtt{elseif (}APPLE\bbtt{)}
+  \confb{add\_compile\_definitions}{OSX}
+\bbtt{endif()}
+
+\comm{Sources}
+\confb{file}{GLOB \bftt{C\_SRC} RELATIVE \varc{CMAKE\_SOURCE\_DIR} \magenta{"src/*.c"}}
+\confb{file}{GLOB \bftt{F\_SRC} RELATIVE \varc{CMAKE\_SOURCE\_DIR} \magenta{"src/*.f90"}}
+\comm{Build rules}
+\confb{add\_executable}{\gtt{prog} \varc{C\_SRC} \varc{F\_SRC}}
+\comm{Header files include directories}
+\confb{target\_include\_directories}{\gtt{prog} \bftt{PUBLIC} src}
+\comm{Link with dependencies}
+\confb{target\_link\_libraries}{\gtt{prog} \bftt{PUBLIC} PkgConfig::\magenta{GTK3}}
+\confb{target\_link\_libraries}{\gtt{prog} \bftt{PUBLIC} PkgConfig::\magenta{LIBXML2}}
+\confb{target\_link\_libraries}{\gtt{prog} \bftt{PUBLIC} PkgConfig::\magenta{LIBAVUTIL}}
+\confb{target\_link\_libraries}{\gtt{prog} \bftt{PUBLIC} PkgConfig::\magenta{LIBAVCODEC}}
+\confb{target\_link\_libraries}{\gtt{prog} \bftt{PUBLIC} PkgConfig::\magenta{LIBAVFORMAT}}
+\confb{target\_link\_libraries}{\gtt{prog} \bftt{PUBLIC} PkgConfig::\magenta{LIBSWSCALE}}
+\confb{target\_link\_libraries}{\gtt{prog} \bftt{PUBLIC} PkgConfig::\magenta{EPOXY}}
+
+\comm{First import the GNU installation directory variables}
+\confb{include}{\bftt{GNUInstallDirs}}
+\comm{To install the main binary file:}
+\confb{install}{\bftt{PROGRAMS} prog \bftt{DESTINATION} \varc{CMAKE\_INSTALL\_BINDIR}}
+\comm{To install a directory, including all its content, recursively:}
+\confb{install}{\bftt{DIRECTORY} data \bftt{DESTINATION} \varc{CMAKE\_INSTALL\_DATADIR}/prog \bftt{PATTERN} \magenta{"data/*"}}
+\confb{install}{\bftt{DIRECTORY} pixmaps \bftt{DESTINATION} \varc{CMAKE\_INSTALL\_DATADIR}/prog \bftt{PATTERN}  \magenta{"pixmaps/*"}}
+\confb{install}{\bftt{DIRECTORY} metadata/icons \bftt{DESTINATION} \varc{CMAKE\_INSTALL\_DATADIR}/pixmaps 
+\bftt{                               PATTERN} \magenta{"metadata/icons/*.svg"}}
+\comm{To install specific files:}
+\confb{install}{\bftt{FILES} metadata/com.program.www.appdata.xml \bftt{DESTINATION} \varc{CMAKE\_INSTALL\_DATADIR}/metainfo}
+\confb{install}{\bftt{FILES} metadata/program-mime.xml \bftt{DESTINATION} \varc{CMAKE\_INSTALL\_DATADIR}/mime/packages}
+\confb{install}{\bftt{FILES} metadata/program.desktop \bftt{DESTINATION} \varc{CMAKE\_INSTALL\_DATADIR}/applications}
+
+\comm{Running the post installation script:}
+\confb{set}{\bftt{INSTALL\_DIR} "\varc{CMAKE\_INSTALL\_FULLDATADIR}"}
+\confb{install}{\bftt{CODE} \magenta{"}\confb{execute\_process}{\bftt{COMMAND} \magenta{./post-install.sh} \varc{INSTALL\_DIR}}\magenta{"}}
+\end{script}
+}}
+
 \subsection{The script: \bftt{post-install.sh}}
 \label{poscript}
 
@@ -8,107 +90,32 @@
 \bash
 
 \comm{Retrieving the installation directory as first argument:}
-\var{INSTALL_DIR}=\dvar{1}
+\var{INSTALL\_DIR}=\dvar{1}
 
 \comm{Setting up variables}
-\var{prog_metadir}=\dvar{\{INSTALL_DIR\}}/metainfo
-\var{prog_desktopdir}=\dvar{\{INSTALL_DIR\}}/applications
-\var{prog_iconsdir}=\dvar{\{INSTALL_DIR\}}/pixmaps
+\var{prog\_metadir}=\dvar{\{INSTALL\_DIR\}}/metainfo
+\var{prog\_desktopdir}=\dvar{\{INSTALL\_DIR\}}/applications
+\var{prog\_iconsdir}=\dvar{\{INSTALL\_DIR\}}/pixmaps
 
 \comm{Updating metadata information}
-\bftt{appstream-util} validate-relax --nonet \dvar{\{prog_metadir\}}/fr.ipcms.atomes.appdata.xml
+\bftt{appstream-util} validate-relax --nonet \dvar{\{prog\_metadir\}}/com.program.www.appdata.xml
 
 \comm{Installing desktop file}
 \bftt{desktop-file-install} --vendor=""  \textbackslash
-                         --dir=\dvar{\{prog_desktopdir\}} \textbackslash
-                          -m 644 \dvar{\{prog_desktopdir\}}/atomes.desktop
+                         --dir=\dvar{\{prog\_desktopdir\}} \textbackslash
+                          -m 644 \dvar{\{prog\_desktopdir\}}/program.desktop
 
 \comm{Updating icon file cache}
-\bad{touch} --no-create \dvar{\{prog_iconsdir\}}
+\bad{touch} --no-create \dvar{\{prog\_iconsdir\}}
 \bif -u 'which gtk-update-icon-cache' \then
-  \bftt{gtk-update-icon-cache} -q \dvar{\{prog_iconsdir\}}
+  \bftt{gtk-update-icon-cache} -q \dvar{\{prog\_iconsdir\}}
 \bfi
 
 \comm{Updating desktop database information}
-\bftt{update-desktop-database} \dvar{\{prog_desktopdir\}} &> /dev/null \pipe\pipe :;
+\bftt{update-desktop-database} \dvar{\{prog\_desktopdir\}} &> /dev/null \pipe\pipe :;
 
 \comm{Updating MIME database}
-\bftt{update-mime-database} \dvar{\{prog_datadir\}}/mime &> /dev/null \pipe\pipe :; 
+\bftt{update-mime-database} \dvar{\{prog\_datadir\}}/mime &> /dev/null \pipe\pipe :; 
 \end{script}
 }}
-
 \newpage
-
-\subsection{The file: \bftt{CMakeList.txt}}
-\label{cmakelist}
-\vspace{-0.75cm}
-{\scriptsize{
-\begin{script}
-\comm{CMake minimum configuration}
-\confa{cmake_minimum_required} (\bftt{VERSION} 3.10)
-
-\comm{Project version and details}
-\confb{project}{\gtt{prog} \bftt{VERSION} 1.2.12}
-\confb{project}{\gtt{prog} \bftt{DESCRIPTION} \magenta{"A tool box"}}
-\confb{project}{\gtt{prog} \bftt{HOMEPAGE_URL} \magenta{"https://www.program.com"}}
-\confb{project}{\gtt{prog} \bftt{LANGUAGES} C Fortran}
-
-\comm{Checking for pkg-config}
-\confb{find_package}{PkgConfig \bftt{REQUIRED}}
-\comm{Checking for gtk+3.0:}
-\confb{pkg_check_modules}{\magenta{GTK3} \bftt{REQUIRED} IMPORTED_TARGET \dgtt{gtk3}}
-\comm{Checking for libxml-2.0:}
-\confb{pkg_check_modules}{\magenta{LIBXML2} \bftt{REQUIRED} IMPORTED_TARGET \dgtt{libxml-2.0}}
-\comm{Checking for libavcodec, and other FFMPEG based libraries:}
-\confb{pkg_check_modules}{\magenta{LIBAVUTIL} \bftt{REQUIRED} IMPORTED_TARGET \dgtt{libavutil}}
-\confb{pkg_check_modules}{\magenta{LIBAVCODEC} \bftt{REQUIRED} IMPORTED_TARGET \dgtt{libavcodec}}
-\confb{pkg_check_modules}{\magenta{LIBAVFORMAT} \bftt{REQUIRED} IMPORTED_TARGET \dgtt{libavformat}}
-\confb{pkg_check_modules}{\magenta{LIBSWSCALE} \bftt{REQUIRED} IMPORTED_TARGET \dgtt{libswscale}}
-\comm{Checking for epoxy:}
-\confb{pkg_check_modules}{\magenta{EPOXY} \bftt{REQUIRED} IMPORTED_TARGET \dgtt{epoxy}}
-
-\comm{Custom compiler flags}
-\confb{set}{\confa{CMAKE_C_FLAGS} \magenta{"-O3 -fopenmp"}}
-\confb{set}{\confa{CMAKE_Fortran_FLAGS} \magenta{"-O3 -fopenmp"}}
-\comm{Compiler variables}
-\confb{add_compile_definitions}{OPENMP}
-\confb{add_compile_definitions}{PACKAGE_LOGO=\magenta{"pixmaps/logo.png"}}
-
-\comm{Sources}
-\confb{file}{GLOB \bftt{C_SRC} RELATIVE \varc{CMAKE_SOURCE_DIR} \magenta{"src/*.c"}}
-\confb{file}{GLOB \bftt{F_SRC} RELATIVE \varc{CMAKE_SOURCE_DIR} \magenta{"src/*.f90"}}
-\comm{Build rules}
-\confb{add_executable}{\gtt{prog} \varc{C_SRC} \varc{F_SRC}}
-
-\comm{Header files include directories}
-\confb{target_include_directories}{\gtt{prog} \bftt{PUBLIC} src}
-
-\comm{Link with dependencies}
-\confb{target_link_libraries}{\gtt{prog} \bftt{PUBLIC} PkgConfig::\magenta{GTK3}}
-\confb{target_link_libraries}{\gtt{prog} \bftt{PUBLIC} PkgConfig::\magenta{LIBXML2}}
-\confb{target_link_libraries}{\gtt{prog} \bftt{PUBLIC} PkgConfig::\magenta{LIBAVUTIL}}
-\confb{target_link_libraries}{\gtt{prog} \bftt{PUBLIC} PkgConfig::\magenta{LIBAVCODEC}}
-\confb{target_link_libraries}{\gtt{prog} \bftt{PUBLIC} PkgConfig::\magenta{LIBAVFORMAT}}
-\confb{target_link_libraries}{\gtt{prog} \bftt{PUBLIC} PkgConfig::\magenta{LIBSWSCALE}}
-\confb{target_link_libraries}{\gtt{prog} \bftt{PUBLIC} PkgConfig::\magenta{EPOXY}}
-
-\comm{First import the GNU installation directory variables}
-\confb{include}{\bftt{GNUInstallDirs}}
-\comm{To install the main binary file:}
-\confb{install}{\bftt{PROGRAMS} prog \bftt{DESTINATION} \varc{CMAKE_INSTALL_BINDIR}}
-\comm{To install a directory, including all its content, recursively:}
-\confb{install}{\bftt{DIRECTORY} data \bftt{DESTINATION} \varc{CMAKE_INSTALL_DATADIR}/prog \bftt{PATTERN} \magenta{"data/*"}}
-\confb{install}{\bftt{DIRECTORY} pixmaps \bftt{DESTINATION} \varc{CMAKE_INSTALL_DATADIR}/prog \bftt{PATTERN}  \magenta{"pixmaps/*"}}
-\confb{install}{\bftt{DIRECTORY} metadata/icons \bftt{DESTINATION} \varc{CMAKE_INSTALL_DATADIR}/pixmaps 
-\bftt{                               PATTERN} \magenta{"metadata/icons/*.svg"}}
-\comm{To install specific files:}
-\confb{install}{\bftt{FILES} metadata/com.program.www.appdata.xml \bftt{DESTINATION} \varc{CMAKE_INSTALL_DATADIR}/metainfo}
-\confb{install}{\bftt{FILES} metadata/program-mime.xml \bftt{DESTINATION} \varc{CMAKE_INSTALL_DATADIR}/mime/packages}
-\comm{Creating a variable that contains the installation directory:}
-\confb{set}{\bftt{INSTALL_DIR} "\varc{CMAKE_INSTALL_PREFIX}/\varc{CMAKE_INSTALL_DATADIR}"}
-\comm{Runnng the post installation script:}
-\confb{install}{\bftt{CODE} \magenta{"}\confb{execute_process}{\bftt{COMMAND} \magenta{./post-install.sh} \varc{INSTALL_DIR}}\magenta{"}}
-\end{script}
-}}
-
-
