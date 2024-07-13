@@ -165,8 +165,15 @@ This section regroups requirements, to build and to run the program:
 \vspace{-0.75cm}
 {\footnotesize{
 \begin{script}
-\comm{If the CMake is required to build it:}
+\comm{If CMake is required to build it:}
 \bad{BuildRequires:} cmake
+\end{script}
+}}
+\vspace{-0.75cm}
+{\footnotesize{
+\begin{script}
+\comm{If meson is required to build it:}
+\bad{BuildRequires:} meson
 \end{script}
 }}
 \vspace{-0.75cm}
@@ -248,10 +255,22 @@ This section describes the instructions requires to build the program.
 \begin{script}
 \comm{With CMake:}
 \dgtt{\%build}
-\comm{To confifgure use:}
+\comm{To configure use:}
 \bftt{\%cmake}
 \comm{Then to build use:}
 \bftt{\%cmake\_build}
+\comm{This will force to use parallel building.}
+\end{script}
+}}
+\vspace{-0.75cm}
+{\footnotesize{
+\begin{script}
+\comm{With meson:}
+\dgtt{\%build}
+\comm{To configure use:}
+\bftt{\%meson}
+\comm{Then to build use:}
+\bftt{\%meson\_build}
 \comm{This will force to use parallel building.}
 \end{script}
 }}
@@ -278,6 +297,16 @@ This section describes the instructions requires to install the program.
 \bftt{\%cmake\_install}
 \end{script}
 }}
+\vspace{-1cm}
+{\footnotesize{
+\begin{script}
+\comm{With meson:}
+\dgtt{\%install}
+\comm{Install the program using:}
+\bftt{\%meson\_install}
+\end{script}
+}}
+
 
 \subsubsection{Post-installation Linux and FreeDesktop integration section}
 \label{rpmpost}
@@ -320,7 +349,6 @@ appstream-util validate-relax --nonet \textbackslash
 \end{script}
 }}
 
-\clearpage
 \subsubsection{Package file paths section}
 \label{rpmfiles}
 
