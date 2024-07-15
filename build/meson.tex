@@ -420,7 +420,8 @@ script call by the \confa{meson}.\confb{add\_install\_script}{} instruction:
 \comm{Post installation using a script, syntax:}
 \comm{meson.add\_install\_script(script\_name, agr\_1, arg\_2 ...)}
 \comm{arguments for the script follow its name, and are separated by coma:}
-\confa{meson}.\confb{add\_install\_script}{\mstr{post\_install.sh}, \bftt{project\_prefix}}
+\bftt{data\_prefix} = project\_prefix / \confb{get\_option}{\mstr{datadir}}
+\confa{meson}.\confb{add\_install\_script}{\mstr{post\_install.sh}, \bftt{data\_prefix}}
 \end{script}
 This will execute the command \texttt{./post-install.sh} which is a script containing the post-installation instructions. 
 It is required to transmit to the script the installation directory selected by meson, this is done using the variable \bftt{project\_prefix} in argument of the script. 
