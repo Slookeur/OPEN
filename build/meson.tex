@@ -342,7 +342,11 @@ Equivalent to:
 \bftt{inc\_dir =} \confb{include\_directories}{all\_inc}
 \end{script}
 \\[-0.25cm]
-\noindent \bftt{inc\_dir} contains the list of all file paths to search for include files. 
+\noindent \bftt{inc\_dir} contains the list of all file paths to search for include files. \\
+Note once headers have been listed in the file \bftt{meson.build}, they can be included in the code between $<$ and $>$ symbols (no need of the file path):
+\begin{script}
+\violet{\#include <config.h>}
+\end{script}
 \newpage
 
 \subsubsection*{Declaring the project building process}
