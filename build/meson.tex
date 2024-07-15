@@ -174,16 +174,16 @@ build\_type = \confb{get\_option}{\mstr{buildtype}}
 \comm{Then creating variables to store adapted compiler options}
 \bbtt{if} build\_type == \mstr{release}
 \comm{Release version}
-  \confm{cc\_args}{\mstr{-O3}, \mstr{-g}}
-  \confm{fc\_args}{\mstr{-O3}, \mstr{-g}}
+  \confm{cc\_args}{\mstr{-O3}}
+  \confm{fc\_args}{\mstr{-O3}}
 \bbtt{elif} build\_type == \mstr{debug}
 \comm{Debug version}
   \confm{cc\_args}{\mstr{-O0}, \mstr{-g3}, \mstr{-fvar-tracking}, \mstr{-fbounds-check}}
   \confm{fc\_args}{\mstr{-O0}, \mstr{-g3}, \mstr{-fvar-tracking}, \mstr{-fbounds-check}}
 \bbtt{else}
 \comm{Any other type of build}
-  \bftt{cc\_args =}
-  \bftt{fc\_args =}
+  \confm{cc\_args}{\mstr{-O2}, \mstr{-g}}
+  \confm{fc\_args}{\mstr{-O2}, \mstr{-g}}
 \bbtt{endif}
 \end{script}
 \\[-0.5cm]
