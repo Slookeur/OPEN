@@ -95,6 +95,22 @@ The value following "\texttt{sha256}" is the corresponding SHA256 check sum obta
 \end{script} \\[-0.5cm]
 \noindent
 The builder will download the package from your repository, and control that it is a match. 
+\newpage
+\noindent {\bf{Note for GTK developpers (and maybe others)}}\\[0.25cm]
+To distribute Flatpak requires to follow some rules for the internal name of the application set calling the "\href{https://docs.gtk.org/gtk4/ctor.Application.new.html}{\texttt{gtk\_application\_new}}" function. \\
+The name should follow the synthax of the name of the appstream metadata file used to describe the package (see Sections~\ref{rpmpost} and \ref{appstream} for details). \\[0.25cm]
+For example with a file named "\texttt{com.program.www.appdata.xml}":
+\begin{script}
+\brown{GtkApplication} * NewApp = \magenta{NULL};
+\green{int} time\_id = (\green{int})clock ();
+gchar * app\_name = g\_strdup\_printf (\magenta{"com.program.www.appdata-}\%d\magenta{"}, time\_id);
+\cyan{#if GLIB\_MINOR\_VERSION <} \magenta{74}
+  NewApp = gtk\_application\_new (app\_name, G\_APPLICATION\_FLAGS\_NONE);
+\cyan{#else}
+  NewApp = gtk\_application\_new (app\_name, G\_APPLICATION\_DEFAULT\_FLAGS);
+\cyan{#endif}
+g\_free (app\_name);
+\end{script}
 
 \subsubsection{Init a Git repository and install the shared modules repository}
 
@@ -104,7 +120,6 @@ The builder will download the package from your repository, and control that it 
 \bftt{git} \rtt{submodule} \btt{add} https://github.com/flathub/shared-modules.git
 \end{script}
 }}
-\newpage
 
 \subsubsection{Building the Flatpak}
 
