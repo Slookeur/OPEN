@@ -1,6 +1,6 @@
 # From source code to packaging: open source software distribution review and tips
 
-This repository contains the files to build the PDF of my manual
+![License][license]
 
 ## Build instructions
 
@@ -24,4 +24,7 @@ sudo apt install texlive texlive-latex-recommended texlive-plain-generic texlive
 
 ```
 ./build-open
+o
 ```
+
+[license]:https://img.shields.io/badge/License-CC-BY-4.0-blue
