@@ -171,19 +171,22 @@ program (1.2.12-1) unstable; urgency=medium
 
 \subsubsection{The "\texttt{control}" file}
 
+In the following I use the "{\em{section(s)}}" terminology to refer to parts of the file that might be refered to as "{\em{field(s)}}" in other Debian packaging manuals. 
+Similarly I use the terminology "{\em{\texttt{Package:} instruction}}" for parts of the file that might usually be refered to as "{\em{stanzas}}". \\[0.25cm]
 The "\texttt{control}" file contains build and runtime dependencies for your program. \\
-To prepare this file requires to find the appropriate package name for each dependencies of your program: 
+Preparing this file requires to find the appropriate Debian package name for each dependencies: 
 \begin{itemize}
 \item For building the program: in the section "\texttt{Build-Depends}"
 \item For running the program: in the section(s) "\texttt{Depends}" 
 \end{itemize}
-Dependencies are presented using coma separated lists, parenthesis can be used for specific requirement. \\
+Use coma separated lists and note that parenthesis can be used for specific requirement(s). \\
 Note that the following example illustrates a "\texttt{control}" file with 2 "\texttt{Package:}" instructions, therefore 2 packages will be created:
 \begin{itemize}
 \item A package, architecture dependent, for the binary: "\texttt{Package: program}"
 \item A package for all non-architecture dependent data: "\texttt{Package: program-data}" 
 \end{itemize}
-This is a standard way of doing things in the Debian world. \\
+This is the standard way of doing things in the Debian world. 
+\vspace{-2cm}
 {\footnotesize{
 \begin{script}
 \uprompt{~/program-1.2.12} vi debian/control
@@ -233,17 +236,18 @@ This is a standard way of doing things in the Debian world. \\
 \bad{Enhances:} program
 \bad{Suggests:} program
 \bad{Description:} program is doing something (data)
- Program is a tool box to analyze many things
- .
+ Program is a tool box to analyze many things.
  This package contains data files for program.
 \end{script}
-}}\\[-0.5cm]
+}} \\[-0.75cm]
+%\vspace{-0.25cm}
 \noindent In the \bad{Build-Depends} section if you are CMake, or meson, replace \texttt{automake} and \texttt{autoconf} by \texttt{cmake} or \texttt{meson} respectively. 
 \newpage
 \noindent Few tips to help you prepare this file:
 \begin{itemize}
-\item The "\texttt{Section:}" keyword allows to select where the program will appear in the applications menu
-\item The value for "\texttt{Standards-Version:}" changes with the Debian version:
+\item The "\texttt{Section:}" keyword defines where the program will appear in the applications menu
+\item The value for "\texttt{Standards-Version:}" refers to the last Debian Policy the package was checked against, 
+it is used as a bookmark, to know where to start once you need to update the packaging against new standard changes, and depends on the Debian version:
 \begin{itemize} 
 \item For Debian 11: \texttt{4.5.1}
 \item For Debian 12: \texttt{4.6.2}
@@ -275,7 +279,7 @@ In each case license information must includes:
 \end{itemize}
 \end{itemize}
 The first instructions in the "\texttt{copyright}" file are providing contact information, afterwards the "\texttt{copyright}" file is organized as follow, 
-with a section listing the files and the associated license:
+with a section listing files and associated license(s):
 \begin{script}
 \bad{Files:}     file(s) name(s) 
 \bad{Copyright:} year(s) copyright owner
@@ -288,6 +292,7 @@ Follow later on by the associated license text information:
 \end{script}
 \noindent \texttt{License-keyword} information, should use the SPDX identifier: \href{https://spdx.org/licenses/}{https://spdx.org/licenses/} \\[0.5cm]
 \noindent Example: 
+\vspace{-0.25cm}
 {\footnotesize{
 \begin{script}
 \uprompt{~/program-1.2.12} vi debian/copyright
