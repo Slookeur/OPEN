@@ -7,7 +7,7 @@ Other related tools are frequently used alongside it:
 \begin{itemize}
 \item \href{https://www.gnu.org/software/make/}{GNU's make} program
 \item \href{https://www.gnu.org/software/gettext/}{GNU gettext}
-\item \href{https://en.wikipedia.org/wiki/Pkg-config}{pkg-config}
+\item \href{https://en.wikipedia.org/wiki/Pkg-config}{pkgconf} \footnote{Note that '{\em{pkgconf}}' was previously named '{\em{pkg-config}}'} 
 \item \href{https://www.gnu.org/software/gcc/}{GNU Compiler Collection}, also called GCC. 
 \end{itemize}
 Before going further into this guide, and if you want to try to build your own GNU tarball, you will have to install some of these tools: 
@@ -18,12 +18,12 @@ Before going further into this guide, and if you want to try to build your own G
 \item Red Hat based Linux (using the \bftt{dnf} command):
 \begin{scriptii}
 \fprompt{~} sudo \bftt{dnf} install autoconf automake libtool
-\fprompt{~} sudo \bftt{dnf} install pkg-config gcc gcc-gfortran
+\fprompt{~} sudo \bftt{dnf} install pkgconf gcc gcc-gfortran
 \end{scriptii}
 \item Debian based Linux (using the \bftt{apt} command):
 \begin{scriptii}
 \uprompt{~} sudo \bftt{apt} install autoconf automake libtool
-\uprompt{~} sudo \bftt{apt} install pkg-config gcc gfortran
+\uprompt{~} sudo \bftt{apt} install pkgconf gcc gfortran
 \end{scriptii}
 \end{itemize}
 \end{itemize}
@@ -176,15 +176,15 @@ m4\_define(\bftt{project\_url}, \red{https://www.program.com})
 
 At some point you will need to check for the required tools and libraries. 
 The easiest way to do this is by using the \bftt{AC\_CHECK\_*} macros provided by GNU autotools. \\[0.25cm]
-The most convenient way to check for library/libraries is to use the command \bftt{pkg-config}, however you need
+The most convenient way to check for library/libraries is to use the command \bftt{pkgconf}, however you need
 to make sure that this command is available on the target system, and therefore you need to check if the program 
-\bftt{pkg-config} has been installed: 
+\bftt{pkgconf} has been installed: 
 {\footnotesize{
 \begin{script}
 \dnl{This will check that \bftt{program} is installed.}
 \dnl{It will also set the \bftt{variable} to the path of the \bftt{program} executable.}
 \dnl{\tabul AC\_CHECK\_PROG ([variable], [program], [text-if-found], [text-if-not-found])}
-\cacf{AC\_CHECK\_PROG}{PKG\_CONFIG}{pkg-config}{yes}{no}
+\cacf{AC\_CHECK\_PROG}{PKGCONF}{pkgconf}{yes}{no}
 \dnl{Checking for utilities need for Freedesktop Linux integration, see [Sec. \ref{rpmpost}]:}
 \cacf{AC\_CHECK\_PROG}{UP\_MIME}{update-mime-database}{yes}{no}
 \cacf{AC\_CHECK\_PROG}{UP\_DESKTOP}{update-desktop-database}{yes}{no}
@@ -312,12 +312,12 @@ fi
 \subsubsection{Checking for libraries}
 \label{clibs}
 
-The easiest way to do this is to use \href{https://en.wikipedia.org/wiki/Pkg-config}{\bftt{pkg-config}}. \\
-\bftt{pkg-config} defines and supports a unified interface for querying installed libraries for the purpose of compiling software that depends on them. 
+The easiest way to do this is to use \href{https://en.wikipedia.org/wiki/Pkg-config}{\bftt{pkgconf}}. \\
+\bftt{pkgconf} defines and supports a unified interface for querying installed libraries for the purpose of compiling software that depends on them. 
 It allows programmers and installation scripts to work without explicit knowledge of detailed library path information.\\ 
-To check the libraries installed on your system, and handled by \bftt{pkg-config}, use: 
+To check the libraries installed on your system, and handled by \bftt{pkgconf}, use: 
 \begin{script}
-\fprompt{~} pkg-config --list-all
+\fprompt{~} pkgconf --list-all
 \end{script}
 \\[-0.5cm]
 \noindent With the list of libraries installed and the associated keywords, it is easy to prepare the testing:
@@ -325,7 +325,7 @@ To check the libraries installed on your system, and handled by \bftt{pkg-config
 \begin{script}
 \dnl{To check if a library is present use the command:}
 \dnl{\tabul PKG\_CHECK\_MODULES([\rtt{Name}], [\bftt{keyword} optionally version required])}
-\dnl{It calls \bftt{pkg-config} to check for the libraries mentioned using \bftt{keyword}}
+\dnl{It calls \bftt{pkgconf} to check for the libraries mentioned using \bftt{keyword}}
 \dnl{\rtt{Name} is a keyword used to construct variables related to designated library.}
 \dnl{Ex:}
 \dnl{\tabul PKG\_CHECK\_MODULES([LGTK], [gtk4 >= 4.60])}
@@ -391,7 +391,7 @@ To create new flag(s) for the \bftt{configure} script command line to test for s
 \dnl{4) optional: create a GTK3 variable if using GTK version 3, see \bftt{src/Makefile.am}}
 \cacb{AM\_CONDITIONAL}{GTK3}{test "\magenta{\$with\_gtk}" == "3"}
 
-\dnl{5) Prepare the PKG\_CONFIG test for the GTK version specified by the optional flag:}
+\dnl{5) Prepare the PKGCONF test for the GTK version specified by the optional flag:}
 case "\magenta{\$with\_gtk}" in
   \rtt{3}) gtk\_version="\magenta{gtk+-3.0}"
      gtk\_version\_number="\magenta{3.16}"

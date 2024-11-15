@@ -6,7 +6,7 @@ Most of the information bellow is adapted from the main documentation:
 \begin{center}\href{https://cmake.org/cmake/help/latest/}{https://cmake.org/cmake/help/latest/} \end{center}
 Also a GUI tool called \bftt{cmake-gui} is available, but its usage is not covered in this manual. \\
 Finally please note that in the following I will only consider basic, targeted, usage of \href{https://cmake.org}{CMake}, that is a complex tool with much more capabilities. \\[0.25cm]
-As for the GNU Autotools, \href{https://en.wikipedia.org/wiki/Pkg-config}{pkg-config} will be used extensively thereafter.  
+As for the GNU Autotools, \href{https://en.wikipedia.org/wiki/Pkg-config}{pkgconf} \footnote{Note that '{\em{pkgconf}}' was previously named '{\em{pkg-config}}'} will be used extensively thereafter.  
 Before going further into this guide, and if you want to try to build and package your program using CMake, you will have to install the following tools: 
 \begin{itemize}
 \item For Windows and OSX please refer to the corresponding websites.
@@ -15,12 +15,12 @@ Before going further into this guide, and if you want to try to build and packag
 \item Red Hat based Linux (using the \bftt{dnf} command):
 \begin{scriptii}
 \fprompt{~} sudo \bftt{dnf} install cmake
-\fprompt{~} sudo \bftt{dnf} install pkg-config gcc gcc-gfortran
+\fprompt{~} sudo \bftt{dnf} install pkgconf gcc gcc-gfortran
 \end{scriptii}
 \item Debian based Linux (using the \bftt{apt} command):
 \begin{scriptii}
 \uprompt{~} sudo \bftt{apt} install cmake
-\uprompt{~} sudo \bftt{apt} install pkg-config gcc gfortran
+\uprompt{~} sudo \bftt{apt} install pkgconf gcc gfortran
 \end{scriptii}
 \end{itemize}
 \end{itemize}
@@ -136,7 +136,7 @@ For more information see the CMake \confb{project}{} command related documentati
 \subsubsection*{Dependencies}
 \label{cmake_deps}
 
-In this manual I will only focus on the \bftt{pkg-config} way of doing things, other possibilities are available and documented in the official CMake documentation: 
+In this manual I will only focus on the \bftt{pkgconf} way of doing things, other possibilities are available and documented in the official CMake documentation: 
 \begin{center}\href{https://cmake.org/cmake/help/latest/command/find\_package.html\#find-package}{https://cmake.org/cmake/help/latest/command/find\_package.html\#find-package}\end{center}
 Check for package(s) using the \confb{find\_package}{} and \confb{pkg\_check\_modules}{} commands: 
 \begin{script}
@@ -159,7 +159,7 @@ Check for package(s) using the \confb{find\_package}{} and \confb{pkg\_check\_mo
 \end{script}
 \\[-0.25cm]
 \noindent Where keywords in pink define variable names for the CMake project, eg. \texttt{\magenta{GTK3}}, 
-and keywords in dark green, eg. \dgtt{gtk3}, are the associated to \bftt{pkg-config} libraries (see Sec.~\ref{clibs}). \\ 
+and keywords in dark green, eg. \dgtt{gtk3}, are the associated to \bftt{pkgconf} libraries (see Sec.~\ref{clibs}). \\ 
 You will also need to link the project to the required libraries, but only after the build target is declared, see page~\pageref{clink}.
 \newpage
 
@@ -268,7 +268,7 @@ When the building instructions have been specified using the \confb{add\_executa
 
 \subsubsection*{Linking to external libraries}
 \label{clink}
-Again only focusing on the \bftt{pkg-config} way of doing things, but other options are available:
+Again only focusing on the \bftt{pkgconf} way of doing things, but other options are available:
 \begin{center}\href{https://cmake.org/cmake/help/latest/command/target\_link\_libraries.html}{https://cmake.org/cmake/help/latest/command/target\_link\_libraries.html} \end{center}
 To link the project to libraries use the \confb{target\_link\_libraries}{} instructions:
 \begin{script}
