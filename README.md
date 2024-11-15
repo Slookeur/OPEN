@@ -24,7 +24,6 @@ sudo apt install texlive texlive-latex-recommended texlive-plain-generic texlive
 
 ```
 ./build-open
-o
 ```
 
 [license]:https://img.shields.io/badge/License-CC_BY_4.0-blue
