@@ -1,4 +1,3 @@
-\newpage
 \newcommand{\abuild}{\bftt{appimage-builder}}
 \newcommand{\pbuild}{\bftt{pkg2appimage}}
 
@@ -9,7 +8,7 @@ It aims to allow the installation of programs independently of specific Linux di
 As a result, an AppImage can be installed and run across \href{https://ubuntu.com}{Ubuntu}, \href{https://archlinux.org}{Arch Linux}, and \href{https://www.redhat.com}{Red Hat Enterprise Linux} without needing to use specific files. 
 The AppImage is a format that's self-contained, rootless, and independent of the underlying Linux distribution. 
 
-\subsection{Prerequesites}
+\subsection{Prerequisites}
 
 Give a look to the following tutorials:
 \begin{itemize}
@@ -41,7 +40,7 @@ For RedHat based Linux install \bftt{apt}:
 \subsection{\abuild}
 
 To build an appimage using \abuild\ requires to prepare a recipe in a JSON file. \\
-Several methods are available to let \abuild\ know how to retreive your program's data to build the appimage. 
+Several methods are available to let \abuild\ know how to retrieve your program's data to build the appimage. 
 
 \subsubsection*{Recipe using a local build of your program}
 
@@ -71,7 +70,7 @@ Several methods are available to let \abuild\ know how to retreive your program'
   \yml{app\_info}
     \yml{id} program     \comm{Name of the .desktop file}
     \yml{name} program   \comm{Name of the program}
-    \yml{icon} program   \comm{Name of the icon file, no extention required}
+    \yml{icon} program   \comm{Name of the icon file, no extension required}
     \yml{version} \magenta{1.2.12}
     \yml{exec} usr/bin/program
     \yml{exec\_args} \$@
@@ -106,7 +105,7 @@ Several methods are available to let \abuild\ know how to retreive your program'
   \yml{app\_info}
     \yml{id} program     \comm{Name of the .desktop file}
     \yml{name} program   \comm{Name of the program}
-    \yml{icon} program   \comm{Name of the icon file, no extention required}
+    \yml{icon} program   \comm{Name of the icon file, no extension required}
     \yml{version} \magenta{1.2.12}
     \yml{exec} usr/bin/program 
     \yml{exec\_args} \$@
@@ -115,8 +114,8 @@ Several methods are available to let \abuild\ know how to retreive your program'
     \yml{sources}
       \comm{One sourceline instruction for each repository to use to search for packages: }
       \comm{In this example official Debian repositories: }
-      \comm{  - bookworkm: the official Debian 12 main repository}
-      \comm{  - bookworkm-backports: the official Debian 12 backports main repository}
+      \comm{  - bookworm: the official Debian 12 main repository}
+      \comm{  - bookworm-backports: the official Debian 12 backports main repository}
       \comm{Each repository requires to GPG signed, for some reasons the script main fails,}
       \comm{and it is declare the GPG key to use using the 'signed-by=/file-path/key-file.gpg' option:}
       \bbtt{-} \yml{sourceline} \magenta{{\textquotesingle}deb [arch=amd64, signed-by=/usr/share/keyrings/debian-archive-bookworm-automatic.gpg] 
@@ -145,7 +144,7 @@ Several methods are available to let \abuild\ know how to retreive your program'
 \vspace{-0.125cm}
 The \yml{apt} section describes packages to download using the \bftt{apt} command, if you are not using a Debian based Linux. \\
 Repositories must be GPG signed, however \abuild\ has issues to download and install keys during the process. 
-It is safer to install the key(s) before hand manualy and then declare the key to use in the recipe file using the \magenta{\texttt{signed-by=/file-path/key.gpg}} instruction. 
+It is safer to install the key(s) before hand manually and then declare the key to use in the recipe file using the \magenta{\texttt{signed-by=/file-path/key.gpg}} instruction. 
 
 \subsubsection*{Build the appimage using \abuild\ and the recipe}
 

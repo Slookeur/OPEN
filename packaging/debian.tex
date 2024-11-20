@@ -171,8 +171,8 @@ program (1.2.12-1) unstable; urgency=medium
 
 \subsubsection{The "\texttt{control}" file}
 
-In the following I use the "{\em{section(s)}}" terminology to refer to parts of the file that might be refered to as "{\em{field(s)}}" in other Debian packaging manuals. 
-Similarly I use the terminology "{\em{\texttt{Package:} instruction}}" for parts of the file that might usually be refered to as "{\em{stanzas}}". \\[0.25cm]
+In the following I use the "{\em{section(s)}}" terminology to refer to parts of the file that might be referred to as "{\em{field(s)}}" in other Debian packaging manuals. 
+Similarly I use the terminology "{\em{\texttt{Package:} instruction}}" for parts of the file that might usually be referred to as "{\em{stanzas}}". \\[0.25cm]
 The "\texttt{control}" file contains build and runtime dependencies for your program. \\
 Preparing this file requires to find the appropriate Debian package name for each dependencies: 
 \begin{itemize}
@@ -505,6 +505,7 @@ Contact: \email
 }}
 
 \subsubsection{The "\texttt{watch}" file}
+\label{debwatch}
 
 \href{https://wiki.debian.org/debian/watch}{"\texttt{watch}"} file is used to check for newer versions of upstream software and to download it if necessary. 
 For a GitHub project the syntax is as follow:
@@ -830,7 +831,7 @@ way through !
 
 At this point I will assume that your DEB package has been approved by your mentor. \\
 When done she or he, will create the official repository on \salsa. \\ 
-Togheter you will have decided on the most suitable packaging team for your program. \\ 
+Together you will have decided on the most suitable packaging team for your program. \\ 
 Each teams has a group on \salsa, for example the Debichem team  
 regroups chemistry related packages: \href{https://salsa.debian.org/debichem-team}{https://salsa.debian.org/debichem-team}. \\[0.25cm]
 You can search for teams and the corresponding group on \salsa\ at: \\[0.25cm]
@@ -839,18 +840,27 @@ Then "Request Access" to the packaging team for your package. \\[0.25cm]
 Your mentor will create a repository for your package in the selected packaging team, once the membership granted you will be able 
 to upload data in your repository on \salsa\ at the address:
 \begin{center}https://salsa.debian.org/PACKAGING-team/Program\end{center}
-The official respository for your package on \salsa\ will contain 3 branches:
+The official repository for your package on \salsa\ will contain 3 branches:
 \begin{itemize}
 \item "\texttt{upstream}": the sources of your program
 \item "\texttt{pristine-tar}": the "\texttt{orig}" archive for your package, that contains both sources and the "\texttt{debian}" directory to build the DEB package. 
 \item "\texttt{master}": the sources of your program and the "\texttt{debian}" directory to build the DEB package
 \end{itemize}
-Debian offers a tool to hanlde packaging using the \bftt{git} command:
+Debian offers a tool to handle packaging using the \bftt{git} command:
 \begin{script}
-\uprompt{~} sudo apt install git-buildpackage
+\uprompt{~} sudo apt install git-buildpackage quilt
 \end{script}\\[-0.5cm]
-\noindent The Debian package "\texttt{git-buildpackage}" provides acces to the \bftt{gbp} command that you can use to maintain your package with Git:
+\noindent The Debian packages "\texttt{git-buildpackage}" and "\texttt{quilt}" provide respectively access to the \bftt{gbp} command that you can use to maintain your package with Git,
+and to \bftt{quilt} command that allows to test potential patch(es) associated to your package:
 \begin{itemize}
+\item Testing the patches:
+\begin{scripti}
+\uprompt{~/program-1.2.12} QUILT\_PATCHES="debian/patches"
+\uprompt{~/program-1.2.12} export QUILT\_PATCHES
+\uprompt{~/program-1.2.12} \bftt{quilt} \rtt{push}
+\end{scripti}
+\noindent Note that the "\texttt{quilt push}" command is to be repeated as many times as required to test all patches, 
+error messages, if any, will let you know if your patch requires adjustment(s) and what to do. 
 \item Upload the new sources on the "\texttt{master}" branch using standard Git commands: 
 \begin{scripti}
 \uprompt{~/program-1.2.12} git checkout master
@@ -871,5 +881,48 @@ Debian offers a tool to hanlde packaging using the \bftt{git} command:
 \noindent This creates a tag, as illustrated in the chapter dedicated to hosting platforms (Sec.~\ref{gtags}), simply using Git, the tag is extracted from the file "\texttt{debian/changelog}" and will have the form: \texttt{debian/version}", where "\texttt{version}" is the last version number in the file "\texttt{debian/changelog}", in this example "\texttt{1.2.12}", 
 \end{itemize}
 For more information on \bftt{gbp}: \href{https://wiki.debian.org/PackagingWithGit}{https://wiki.debian.org/PackagingWithGit} \\[0.25cm]
-At this point your package is almost ready to integrate the official Debian respositories, the remaining tasks are up to an official Debian developper. Contact your Debian mentor or the packaging team that accepted your software to let them know so that they can finish up the packaging process. 
+At this point your package is almost ready to integrate the official Debian repositories, the remaining tasks are up to an official Debian developer. Contact your Debian mentor or the packaging team that accepted your software to let them know so that they can finish up the packaging process. \\[0.25cm]
+
+\vspace{-0.75cm}
+\subsubsection*{Updating the Salsa repository using your official software repository}
+
+If you prepared the "{\texttt{debian/watch}}" (see Sec.~\ref{debwatch}) properly then it is possible to update your Salsa repository in a few steps using the data from the official repository (ex: \github): 
+\begin{itemize}
+\item Download the sources of your Debian package: 
+\vspace{-0.25cm}
+{\footnotesize{
+\begin{scripti}
+\uprompt{~} apt-get source program
+\uprompt{~} ls
+\btt{program-1.2.11}      \rtt{program\_1.2.11-1.debian.tar.xz} 
+program\_1.2.11-1.dsc\rtt{  program\_1.2.11.orig.tar.gz}
+\end{scripti}
+}}\\[-1.25cm]
+\item Use the \bftt{uscan} command to build the latest "\texttt{.orig.}" archive by downloading the latest release from the official repository:
+\vspace{-0.25cm}
+{\footnotesize{
+\begin{scripti}
+\uprompt{~} cd program-1.2.11
+\uprompt{~/program-1.2.11} \bftt{uscan}
+...
+\uprompt{~/program-1.2.11} cd .. 
+\uprompt{~} ls
+\btt{program-1.2.11 }                 \btt{   program-1.2.12}
+\rtt{program\_1.2.11-1.debian.tar.xz }  \dctt{program\_1.2.12.orig.tar.gz}
+program\_1.2.11-1.dsc                \rtt{  program-1.2.12.tar.gz}
+\rtt{program\_1.2.11.orig.tar.gz}
+\end{scripti}
+}}\\[-1.25cm]
+\item Clone the Salsa repository, and update its content with the new package:
+\vspace{-0.25cm}
+{\footnotesize{
+\begin{scripti}
+\uprompt{~} gbp clone git@salsa.debian.org:MyDebianTeam/program.git
+\uprompt{~} cd program
+\uprompt{~/program} gbp import-orig ../program-1.2.12.orig.tar.gz
+\end{scripti}
+}}\\[-1.25cm]
+\item Then simply update the repository as detailed in the previous section. 
+\end{itemize}
+
 \newpage

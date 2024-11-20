@@ -3,7 +3,7 @@
 \href{https://flatpak.org}{Flatpak} is a utility for software deployment and package management for Linux. \\
 It offers a sandbox environment in which users can run application software in isolation from the rest of the system. 
 
-\subsection{Prerequesites}
+\subsection{Prerequisites}
 
 Give a look to the following tutorials:
 \begin{itemize}
@@ -68,7 +68,7 @@ To install Flatpak and the tools required to build your program:
 
 \subsubsection{The file "\texttt{org.flatpak.prog.yml}"}
 
-This file describes the contruction protocole to build the Flatpak for your project:
+This file describes the construction protocol to build the Flatpak for your project:
 {\footnotesize{
 \begin{script}
 \yml{app-id} org.flatpak.prog
@@ -96,9 +96,9 @@ The value following "\texttt{sha256}" is the corresponding SHA256 check sum obta
 \noindent
 The builder will download the package from your repository, and control that it is a match. 
 \newpage
-\noindent {\bf{Note for GTK developpers (and maybe others)}}\\[0.25cm]
+\noindent {\bf{Note for GTK developers (and maybe others)}}\\[0.25cm]
 To distribute Flatpak requires to follow some rules for the internal name of the application set calling the "\href{https://docs.gtk.org/gtk4/ctor.Application.new.html}{\texttt{gtk\_application\_new}}" function. \\
-The name should follow the synthax of the name of the appstream metadata file used to describe the package (see Sections~\ref{rpmpost} and \ref{appstream} for details). \\[0.25cm]
+The name should follow the syntax of the name of the appstream metadata file used to describe the package (see Sections~\ref{rpmpost} and \ref{appstream} for details). \\[0.25cm]
 For example with a file named "\texttt{com.program.www.appdata.xml}":
 \begin{script}
 \brown{GtkApplication} * NewApp = \magenta{NULL};
@@ -114,15 +114,18 @@ g\_free (app\_name);
 
 \subsubsection{Init a Git repository and install the shared modules repository}
 
+\vspace{-0.25cm}
 {\footnotesize{
 \begin{script}
 \bftt{git} \rtt{init}
 \bftt{git} \rtt{submodule} \btt{add} https://github.com/flathub/shared-modules.git
 \end{script}
 }}
+\vspace{-0.25cm}
 
 \subsubsection{Building the Flatpak}
 
+\vspace{-0.25cm}
 {\footnotesize{
 \begin{script}
 \bftt{ls}
@@ -130,6 +133,7 @@ org.flatpak.prog.yml
 \bftt{flatpak-builder} \rtt{prog} \btt{org.flatpak.prog.yml} \dgtt{-{-}force-clean}
 \end{script}
 }}
+\vspace{-0.25cm}
 
 \subsection{Running the Flatpak}
 
