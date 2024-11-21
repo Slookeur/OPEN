@@ -853,27 +853,38 @@ Debian offers a tool to handle packaging using the \bftt{git} command:
 \noindent The Debian packages "\texttt{git-buildpackage}" and "\texttt{quilt}" provide respectively access to the \bftt{gbp} command that you can use to maintain your package with Git,
 and to \bftt{quilt} command that allows to test potential patch(es) associated to your package:
 \begin{itemize}
-\item Testing the patches:
+\item Test the patches (optional):
+\vspace{-0.25cm}
 \begin{scripti}
 \uprompt{~/program-1.2.12} QUILT\_PATCHES="debian/patches"
 \uprompt{~/program-1.2.12} export QUILT\_PATCHES
 \uprompt{~/program-1.2.12} \bftt{quilt} \rtt{push}
 \end{scripti}
 \noindent Note that the "\texttt{quilt push}" command is to be repeated as many times as required to test all patches, 
-error messages, if any, will let you know if your patch requires adjustment(s) and what to do. 
+error messages, if any, will let you know if a patch requires adjustment(s).
+\item Use \bftt{gbp} to create a new entry in the "\texttt{debian/changelog}" file:
+\vspace{-0.25cm}
+\begin{scripti}
+\uprompt{~/program-1.2.12} \bftt{gbp} \rtt{dch} \btt{-R}
+\end{scripti}
+\vspace{-1.25cm}
 \item Upload the new sources on the "\texttt{master}" branch using standard Git commands: 
+\vspace{-0.25cm}
 \begin{scripti}
 \uprompt{~/program-1.2.12} git checkout master
 \uprompt{~/program-1.2.12} git add .
 \uprompt{~/program-1.2.12} git commit -a
 \end{scripti}
 \\[-1.25cm]
-\item Then use the "\bftt{gbp}" for \bftt{g}it \bftt{b}uild \bftt{p}ackage to build the package:
+\item Finally use \bftt{gbp}, for \bftt{g}it \bftt{b}uild \bftt{p}ackage, to build the package:
+\vspace{-0.25cm}
 \begin{scripti}
 \uprompt{~/program-1.2.12} \bftt{gbp} \rtt{buildpackage}
 \end{scripti}
-\\[-0.75cm] This will trigger the build of the source and binary packages from your Salsa repository.
+\\[-0.75cm] This will trigger the build of the source and binary packages from your Salsa repository. \\
+You need to create a GPG key associated to your email adress to sign the packages. \footnote{See \href{https://www.gnupg.org/documentation/index.html}{GnuPG offical documentation}, \href{https://docs.github.com/fr/authentication/managing-commit-signature-verification/generating-a-new-gpg-key}{GitHub GPG keys documentation}}
 \item When you have produced a release ready package, tag it using:
+\vspace{-0.25cm}
 \begin{scripti}
 \uprompt{~/program-1.2.12} \bftt{gbp} \rtt{buildpackage} \btt{--git-tag}
 \end{scripti}
