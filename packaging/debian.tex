@@ -886,7 +886,7 @@ You need to create a GPG key associated to your email adress to sign the package
 \item When you have produced a release ready package, tag it using:
 \vspace{-0.25cm}
 \begin{scripti}
-\uprompt{~/program-1.2.12} \bftt{gbp} \rtt{buildpackage} \btt{--git-tag}
+\uprompt{~/program-1.2.12} \bftt{gbp} \rtt{tag}
 \end{scripti}
 \\[-0.75cm]
 \noindent This creates a tag, as illustrated in the chapter dedicated to hosting platforms (Sec.~\ref{gtags}), simply using Git, the tag is extracted from the file "\texttt{debian/changelog}" and will have the form: \texttt{debian/version}", where "\texttt{version}" is the last version number in the file "\texttt{debian/changelog}", in this example "\texttt{1.2.12}", 
