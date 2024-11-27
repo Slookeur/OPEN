@@ -312,5 +312,4 @@
   \begin{center}
     \small #1
   \end{center}
-  \cleardoublepage
 }
