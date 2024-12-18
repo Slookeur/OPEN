@@ -862,12 +862,6 @@ and to \bftt{quilt} command that allows to test potential patch(es) associated t
 \end{scripti}
 \noindent Note that the "\texttt{quilt push}" command is to be repeated as many times as required to test all patches, 
 error messages, if any, will let you know if a patch requires adjustment(s).
-\item Use \bftt{gbp} to create a new entry in the "\texttt{debian/changelog}" file:
-\vspace{-0.25cm}
-\begin{scripti}
-\uprompt{~/program-1.2.12} \bftt{gbp} \rtt{dch} \btt{-R}
-\end{scripti}
-\vspace{-1.25cm}
 \item Upload the new sources on the "\texttt{master}" branch using standard Git commands: 
 \vspace{-0.25cm}
 \begin{scripti}
@@ -876,20 +870,27 @@ error messages, if any, will let you know if a patch requires adjustment(s).
 \uprompt{~/program-1.2.12} git commit -a
 \end{scripti}
 \\[-1.25cm]
+\item Use \bftt{gbp} to create a new entry in the "\texttt{debian/changelog}" file, using commit history:
+\vspace{-0.25cm}
+\begin{scripti}
+\uprompt{~/program-1.2.12} \bftt{gbp} \rtt{dch} \btt{-R -N 1.2.12-1}
+\end{scripti}
+\vspace{-1.25cm}
+\item When you have prepared a release ready repository, tag it using:
+\vspace{-0.25cm}
+\begin{scripti}
+\uprompt{~/program-1.2.12} \bftt{gbp} \rtt{tag} \btt{upstream/1.2.12}
+\end{scripti}
+\\[-1.0cm]
+\noindent This creates a tag, as illustrated in the chapter dedicated to hosting platforms (Sec.~\ref{gtags}), simply using Git, the tag is extracted from the file "\texttt{debian/changelog}" and will have the form: \texttt{debian/version}", where "\texttt{version}" is the last version number in the file "\texttt{debian/changelog}", in this example "\texttt{1.2.12}", 
 \item Finally use \bftt{gbp}, for \bftt{g}it \bftt{b}uild \bftt{p}ackage, to build the package:
 \vspace{-0.25cm}
 \begin{scripti}
 \uprompt{~/program-1.2.12} \bftt{gbp} \rtt{buildpackage}
 \end{scripti}
-\\[-0.75cm] This will trigger the build of the source and binary packages from your Salsa repository. \\
+\\[-1.0cm]
+\noindent This will trigger the build of the source and binary packages from your Salsa repository. \\
 You need to create a GPG key associated to your email adress to sign the packages. \footnote{See \href{https://www.gnupg.org/documentation/index.html}{GnuPG offical documentation}, \href{https://docs.github.com/fr/authentication/managing-commit-signature-verification/generating-a-new-gpg-key}{GitHub} or \href{https://docs.gitlab.com/ee/user/project/repository/signed\_commits/gpg.html}{GitLab} GPG keys documentation for details.}
-\item When you have produced a release ready package, tag it using:
-\vspace{-0.25cm}
-\begin{scripti}
-\uprompt{~/program-1.2.12} \bftt{gbp} \rtt{tag}
-\end{scripti}
-\\[-0.75cm]
-\noindent This creates a tag, as illustrated in the chapter dedicated to hosting platforms (Sec.~\ref{gtags}), simply using Git, the tag is extracted from the file "\texttt{debian/changelog}" and will have the form: \texttt{debian/version}", where "\texttt{version}" is the last version number in the file "\texttt{debian/changelog}", in this example "\texttt{1.2.12}", 
 \end{itemize}
 For more information on \bftt{gbp}: \href{https://wiki.debian.org/PackagingWithGit}{https://wiki.debian.org/PackagingWithGit} \\[0.25cm]
 At this point your package is almost ready to integrate the official Debian repositories, the remaining tasks are up to an official Debian developer. Contact your Debian mentor or the packaging team that accepted your software to let them know so that they can finish up the packaging process. \\[0.25cm]
