@@ -26,7 +26,7 @@ If I intend to provide tips and trick to help you prepare your DEB, I strongly r
 \item \href{https://www.debian.org/doc/debian-policy/}{Debian policy}
 \item \href{https://www.debian.org/doc/manuals/packaging-tutorial/packaging-tutorial.fr.pdf}{Tutoriel: la construction de paquets Debian}
 \item \href{https://wiki.debian.org/SimplePackagingTutorial}{Simple packaging tutorial}
-\item \href{file://usr/share/doc/debmake-doc/}{debmake documentation}
+\item \href{file://usr/share/doc/debmake-doc/debmake-doc.en.pdf}{debmake documentation}
 \item \href{https://wiki.debian.org/PackagingWithGit/}{https://wiki.debian.org/PackagingWithGit/}
 \end{itemize}
 Indeed this guide is not meant to be a thorough review of DEB packaging, that is actually
@@ -862,20 +862,30 @@ and to \bftt{quilt} command that allows to test potential patch(es) associated t
 \end{scripti}
 \noindent Note that the "\texttt{quilt push}" command is to be repeated as many times as required to test all patches, 
 error messages, if any, will let you know if a patch requires adjustment(s).
-\item Upload the new sources on the "\texttt{master}" branch using standard Git commands: 
+\item Change to the "\texttt{master}" branch of the salsa repository using standard Git commands: 
 \vspace{-0.25cm}
 \begin{scripti}
 \uprompt{~/program-1.2.12} git checkout master
-\uprompt{~/program-1.2.12} git add .
-\uprompt{~/program-1.2.12} git commit -a
 \end{scripti}
 \\[-1.25cm]
 \item Use \bftt{gbp} to create a new entry in the "\texttt{debian/changelog}" file, using commit history:
 \vspace{-0.25cm}
 \begin{scripti}
+\uprompt{~/program-1.2.12} \bftt{gbp} \rtt{dch} \btt{-R}
+\end{scripti}
+\noindent If not required, it is possible to specify the version number using:
+\vspace{-0.25cm}
+\begin{scripti}
 \uprompt{~/program-1.2.12} \bftt{gbp} \rtt{dch} \btt{-R -N 1.2.12-1}
 \end{scripti}
-\vspace{-1.25cm}
+\item Upload the new sources on the "\texttt{master}" branch using standard Git commands: 
+\vspace{-0.25cm}
+\begin{scripti}
+\uprompt{~/program-1.2.12} git add .
+\uprompt{~/program-1.2.12} git commit -a
+\uprompt{~/program-1.2.12} git push
+\end{scripti}
+\\[-1.25cm]
 \item When you have prepared a release ready repository, tag it using:
 \vspace{-0.25cm}
 \begin{scripti}
@@ -898,42 +908,48 @@ At this point your package is almost ready to integrate the official Debian repo
 \vspace{-0.75cm}
 \subsubsection*{Updating the Salsa repository using your official software repository}
 
-If you prepared the "{\texttt{debian/watch}}" (see Sec.~\ref{debwatch}) properly then it is possible to update your Salsa repository in a few steps using the data from the official repository (ex: \github): 
+If you prepared the file "{\texttt{debian/watch}}" (see Sec.~\ref{debwatch}) properly then it is possible to update your Salsa repository in a few steps using the data from the official repository: 
 \begin{itemize}
-\item Download the sources of your Debian package: 
+%\item Download the sources of your Debian package: 
+%\vspace{-0.25cm}
+%{\footnotesize{
+%\begin{scripti}
+%\uprompt{~} apt-get source program
+%\uprompt{~} ls
+%\btt{program-1.2.11}      \rtt{program\_1.2.11-1.debian.tar.xz} 
+%program\_1.2.11-1.dsc\rtt{  program\_1.2.11.orig.tar.gz}
+%\end{scripti}
+%}}\\[-1.25cm]
+%\item Use the \bftt{uscan} command to build the latest "\texttt{.orig.}" archive by downloading the latest release from the official repository:
+%\vspace{-0.25cm}
+%{\footnotesize{
+%\begin{scripti}
+%\uprompt{~} cd program-1.2.11
+%\uprompt{~/program-1.2.11} \bftt{uscan}
+%...
+%\uprompt{~/program-1.2.11} cd .. 
+%\uprompt{~} ls
+%\btt{program-1.2.11 }                 \btt{   program-1.2.12}
+%\rtt{program\_1.2.11-1.debian.tar.xz }  \dctt{program\_1.2.12.orig.tar.gz}
+%program\_1.2.11-1.dsc                \rtt{  program-1.2.12.tar.gz}
+%\rtt{program\_1.2.11.orig.tar.gz}
+%\end{scripti}
+%}}\\[-1.25cm]
+\item Clone the Salsa repository:
 \vspace{-0.25cm}
 {\footnotesize{
 \begin{scripti}
-\uprompt{~} apt-get source program
-\uprompt{~} ls
-\btt{program-1.2.11}      \rtt{program\_1.2.11-1.debian.tar.xz} 
-program\_1.2.11-1.dsc\rtt{  program\_1.2.11.orig.tar.gz}
-\end{scripti}
-}}\\[-1.25cm]
-\item Use the \bftt{uscan} command to build the latest "\texttt{.orig.}" archive by downloading the latest release from the official repository:
-\vspace{-0.25cm}
-{\footnotesize{
-\begin{scripti}
-\uprompt{~} cd program-1.2.11
-\uprompt{~/program-1.2.11} \bftt{uscan}
-...
-\uprompt{~/program-1.2.11} cd .. 
-\uprompt{~} ls
-\btt{program-1.2.11 }                 \btt{   program-1.2.12}
-\rtt{program\_1.2.11-1.debian.tar.xz }  \dctt{program\_1.2.12.orig.tar.gz}
-program\_1.2.11-1.dsc                \rtt{  program-1.2.12.tar.gz}
-\rtt{program\_1.2.11.orig.tar.gz}
-\end{scripti}
-}}\\[-1.25cm]
-\item Clone the Salsa repository, and update its content with the new package:
-\vspace{-0.25cm}
-{\footnotesize{
-\begin{scripti}
-\uprompt{~} gbp clone git@salsa.debian.org:MyDebianTeam/program.git
+\uprompt{~} \bftt{gbp} \rtt{clone} git@salsa.debian.org:MyDebianTeam/program.git
 \uprompt{~} cd program
-\uprompt{~/program} gbp import-orig ../program-1.2.12.orig.tar.gz
 \end{scripti}
 }}\\[-1.25cm]
+\item Update the Salsa repository with the new sources from the official software repository:
+\vspace{-0.25cm}
+\begin{scripti}
+\uprompt{~/program} \bftt{gbp} \rtt{import-orig} \btt{--uscan}
+\end{scripti}
+\\[-1cm]
+This will download the latest sources using the information in the "\texttt{debian/watch}" file.
 \item Then simply update the repository as detailed in the previous section. 
 \end{itemize}
 
