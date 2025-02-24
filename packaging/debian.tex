@@ -856,47 +856,63 @@ and to \bftt{quilt} command that allows to test potential patch(es) associated t
 \item Test the patches (optional):
 \vspace{-0.25cm}
 \begin{scripti}
-\uprompt{~/program-1.2.12} QUILT\_PATCHES="debian/patches"
-\uprompt{~/program-1.2.12} export QUILT\_PATCHES
-\uprompt{~/program-1.2.12} \bftt{quilt} \rtt{push}
+]\$ QUILT\_PATCHES="debian/patches"
+]\$ export QUILT\_PATCHES
+]\$ \bftt{quilt} \rtt{push}
 \end{scripti}
 \noindent Note that the "\texttt{quilt push}" command is to be repeated as many times as required to test all patches, 
 error messages, if any, will let you know if a patch requires adjustment(s).
 \item Change to the "\texttt{master}" branch of the salsa repository using standard Git commands: 
 \vspace{-0.25cm}
 \begin{scripti}
-\uprompt{~/program-1.2.12} git checkout master
+]\$ git checkout \bftt{master}
 \end{scripti}
 \\[-1.25cm]
 \item Use \bftt{gbp} to create a new entry in the "\texttt{debian/changelog}" file, using commit history:
 \vspace{-0.25cm}
 \begin{scripti}
-\uprompt{~/program-1.2.12} \bftt{gbp} \rtt{dch} \btt{-R}
+]\$ \bftt{gbp} \rtt{dch} \btt{-R}
 \end{scripti}
 \noindent If not required, it is possible to specify the version number using:
 \vspace{-0.25cm}
 \begin{scripti}
-\uprompt{~/program-1.2.12} \bftt{gbp} \rtt{dch} \btt{-R -N 1.2.12-1}
+]\$ \bftt{gbp} \rtt{dch} \btt{-R -N 1.2.12-1}
 \end{scripti}
-\item Upload the new sources on the "\texttt{master}" branch using standard Git commands: 
+\item Update the sources on the "\texttt{master}" branch using standard Git commands: 
 \vspace{-0.25cm}
 \begin{scripti}
-\uprompt{~/program-1.2.12} git add .
-\uprompt{~/program-1.2.12} git commit -a
-\uprompt{~/program-1.2.12} git push
+]\$ git add .
+]\$ git commit -a
 \end{scripti}
 \\[-1.25cm]
-\item When you have prepared a release ready repository, tag it using:
+\item When you have prepared a release ready repository, change to the "\texttt{upstream}" branch and tag it using:
 \vspace{-0.25cm}
 \begin{scripti}
-\uprompt{~/program-1.2.12} \bftt{gbp} \rtt{tag} \btt{upstream/1.2.12}
+]\$ git checkout \bftt{upstream}
+]\$ \bftt{gbp} \rtt{tag} \btt{upstream/1.2.12}
+\end{scripti}
+\\[-0.75cm]
+\noindent This creates a tag, as illustrated in the chapter dedicated to hosting platforms (Sec.~\ref{gtags}), simply using Git, the tag is extracted from the file "\texttt{debian/changelog}" and will have the form: \texttt{debian/version}", where "\texttt{version}" is the last version number in the file "\texttt{debian/changelog}", in this example "\texttt{1.2.12}".
+\item Then update the "\texttt{pristine-tar}" branch: 
+\vspace{-0.25cm}
+\begin{scripti}
+]\$ git checkout \bftt{master}
+]\$ \bftt{gbp} \rtt{pristine-tar} \btt{commit} ../program\_1.2.12.orig.tar.gz
+\end{scripti}
+\\[-0.75cm]
+Note that this required that you previously created the corresponding archive, that contains the sources of the program and the debian files to build the package. 
+The "\texttt{program\_1.2.12.orig.tar.gz}" archive is literally an archived version of the "\texttt{master}" branch. 
+\item Finally update all branches on Salsa using: 
+\vspace{-0.25cm}
+\begin{scripti}
+]\$ git push --all
+]\$ git push --tags
 \end{scripti}
 \\[-1.0cm]
-\noindent This creates a tag, as illustrated in the chapter dedicated to hosting platforms (Sec.~\ref{gtags}), simply using Git, the tag is extracted from the file "\texttt{debian/changelog}" and will have the form: \texttt{debian/version}", where "\texttt{version}" is the last version number in the file "\texttt{debian/changelog}", in this example "\texttt{1.2.12}", 
-\item Finally use \bftt{gbp}, for \bftt{g}it \bftt{b}uild \bftt{p}ackage, to build the package:
+\item You can also use \bftt{gbp}, for \bftt{g}it \bftt{b}uild \bftt{p}ackage, to build the package locally:
 \vspace{-0.25cm}
 \begin{scripti}
-\uprompt{~/program-1.2.12} \bftt{gbp} \rtt{buildpackage}
+]\$ \bftt{gbp} \rtt{buildpackage}
 \end{scripti}
 \\[-1.0cm]
 \noindent This will trigger the build of the source and binary packages from your Salsa repository. \\
@@ -946,10 +962,16 @@ If you prepared the file "{\texttt{debian/watch}}" (see Sec.~\ref{debwatch}) pro
 \item Update the Salsa repository with the new sources from the official software repository:
 \vspace{-0.25cm}
 \begin{scripti}
+\uprompt{~/program} git checkout \bftt{master}
 \uprompt{~/program} \bftt{gbp} \rtt{import-orig} \btt{--uscan}
 \end{scripti}
 \\[-1cm]
-This will download the latest sources using the information in the "\texttt{debian/watch}" file.
+This will: 
+\begin{itemize}
+\item Download the latest sources using the information in the "\texttt{debian/watch}" file.
+\item Update the content of the repository using the new sources. 
+\item Create the corresponding "\texttt{programl\_VERSION.orig.tar.gz}" archive.
+\end{itemize}
 \item Then simply update the repository as detailed in the previous section. 
 \end{itemize}
 
