@@ -71,7 +71,7 @@ so let's go and Debianize away !
 \subsection{The \ddir}
 
 The Debian package will be built using information in the \ddir\ that must be located with your sources:
-{\footnotesize{
+{\scriptsize{
 \begin{script}
 \uprompt{~/program-1.2.12} ls -lh
 -rw-r--r--.  1 user group  54K 24 mars  17:28 aclocal.m4
@@ -99,14 +99,17 @@ drwxr-xr-x.  4 user group 4,0K 24 mars  11:24 \btt{pixmaps}
 drwxr-xr-x.  2 user group 4,0K 24 mars  11:24 \btt{src}
 \end{script}
 }}
-\noindent You can generate a ready to use "\rtt{debian}" directory using:
+\noindent You can generate a ready to use "\rtt{debian}" directory using: 
+\vspace{-0.25cm}
 {\footnotesize{
 \begin{script}
+\uprompt{~/program-1.2.12} ls ../program*
+program-1.2.12  \rtt{program-1.2.12.tar.gz}
 \uprompt{~/program-1.2.12} \bftt{debmake}
 \end{script}
 }}
 \\[-0.5cm]
-\noindent If no \ddir\ is present then this command will create it, including sample files to work on. 
+\noindent "\texttt{debmake}" requires to found and archive with the name "\texttt{program-1.1.12.tar.gz}" in the parent directory (even if the archive is empty). If no \ddir\ is present then this command will create it, including sample files to work on. 
 However this sample \ddir\ will contain some files likely unnecessary to build your first simple Debian package. \\[0.25cm]
 I recommend to start working with the following files and directories:
 {\footnotesize{
