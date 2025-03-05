@@ -680,8 +680,17 @@ Watching tasks (this may be safely interrupted)...
 101830239 build (rawhide, program-***.src.rpm) completed successfully
 \end{script}
 }}
+\\
+\noindent "\texttt{\blue{rawhide}}" is the development version of Fedora, usually the latest released
+version + 1. \\
+If the latest released is version 39 (f39), then rawhide will released as f40. \\
+You can list all available target distributions using:
+{\footnotesize{
+\begin{script}
+\fprompt{~} \bftt{koji} \rtt{list-targets}
+\end{script}
+}}
 
-\newpage
 \subsection{Testing the RPM}
 \label{rpmtesting}
 
