@@ -439,8 +439,7 @@ It is required to install some tools to handle the publication of static webpage
 \end{scripti}
 }}
 \\[-0.5cm]
-\noindent If you intend to let \github\-pages build your site, then know that \github\ pages are best compatible with version 3.10.x, 
-to check the latest \github\ dependency version: \\
+\noindent If you intend to let \github\ pages build your site, you need to check \github\ dependency version:
 \begin{center}\href{https://pages.github.com/versions/}{https://pages.github.com/versions/}\end{center} 
 To list available "\texttt{rbenv}" stable versions:
 {\footnotesize{
@@ -557,15 +556,21 @@ Example repository to create the documentation:
 \begin{itemize}
 \item The home page of your documentation website: "\texttt{index.md}"
 \item The list of Ruby extensions required to build your website: "\texttt{Gemfile}"
+\item The Jekkyl configuration file to build the website: "\texttt{\_config.yml}"
+\end{itemize}
+\newpage
+\noindent The file "\texttt{Gemfile}" \\[0.5cm]
 {\scriptsize{
 \begin{scriptii}
 \fprompt{~/Program-doc} \bftt{vi} Gemfile
 source "\magenta{https://rubygems.org}"
 
-\var{gem} {\textquotesingle}\magenta{jekyll-rtd-theme}{\textquotesingle}
-\var{gem} {\textquotesingle}\magenta{github-pages}{\textquotesingle}, \magenta{group}: :\magenta{jekyll\_plugins}
-\var{gem} {\textquotesingle}\magenta{jekyll-scholar}{\textquotesingle}, \magenta{group}: :\magenta{jekyll\_plugins}
+\var{gem} "\magenta{just-the-docs}"
+\comm{Uncomment the next line to build the site on GitHub}
+\comm{github-pages, group: :jekyll\_plugins}
+\var{gem} "\magenta{jekyll-scholar}", \magenta{group}: :\magenta{jekyll\_plugins}
 group :\magenta{jekyll\_plugins} \bbtt{do}
+  \var{gem} 
   \var{gem} "\magenta{jekyll}", "\magenta{~> 3.9.0}"
   \var{gem} "\magenta{jekyll-feed}", "\magenta{~> 0.12}"
   \var{gem} "\magenta{jekyll-paginate}"
@@ -582,11 +587,23 @@ platforms \magenta{:mingw}, \magenta{:x64\_mingw}, \magenta{:mswin}, \magenta{:j
   \var{gem} "\magenta{tzinfo-data}"
 \bbtt{end}
 
-\comm{ Performance-booster for watching directories on Windows}
+\comm{Performance-booster for watching directories on Windows}
 \var{gem} "\magenta{wdm}", "\magenta{~> 0.1.1}", \magenta{:platforms} => [\magenta{:mingw}, \magenta{:x64\_mingw}, \magenta{:mswin}]
+
+\comm{New for deps}
+\var{gem} "\magenta{faraday-retry"}
+\var{gem} "\magenta{jekyll-coffeescript"}
+\var{gem} "\magenta{jekyll-default-layout"}
+\var{gem} "\magenta{jekyll-gist"}
+\var{gem} "\magenta{jekyll-github-metadata"}
+\var{gem} "\magenta{jekyll-optional-front-matter"}
+\var{gem} "\magenta{jekyll-readme-index"}
+\var{gem} "\magenta{jekyll-titles-from-headings"}
+\var{gem} "\magenta{jekyll-relative-links" }
 \end{scriptii}
 }}
-\item The Jekkyl configuration file to build the website: "\texttt{\_config.yml}"\\[-0.5cm] 
+\newpage
+\noindent The file "\texttt{\_config.yml}" \\
 {\tiny{
 \begin{scriptii}
 \fprompt{~/Program-doc} \bftt{vi} \_config.yml
@@ -630,28 +647,16 @@ platforms \magenta{:mingw}, \magenta{:x64\_mingw}, \magenta{:mswin}, \magenta{:j
 \var{back\_to\_top:} \magenta{true}
 \var{back\_to\_top\_text:} \magenta{"Back to top"}
 \var{ga\_tracking\_anonymize\_ip:} \magenta{true} \comm{Use GDPR compliant Google Analytics settings (true by default)}
-\comm{Enable or disable the site search}
-\comm{Supports true (default) or false}
 \var{search\_enabled} \magenta{true}
 \var{search:}
-  \comm{Split pages into sections that can be searched individually, supports 1 - 6, default: 2}
   \var{heading\_level:} \magenta{2}
-  \comm{Maximum amount of previews per search result, default: 3}
   \var{previews:} \magenta{3}
-  \comm{Maximum amount of words to display before a matched word in the preview, default: 5}
   \var{preview\_words\_before:} \magenta{5}
-  \comm{Maximum amount of words to display after a matched word in the preview, default: 10}
   \var{preview\_words\_after:} \magenta{10}
-  \comm{Set the search token separator, default:} /[{\textbackslash}s\textbackslash-/]+/
-  \comm{Example: enable support for hyphenated search words}
   \var{tokenizer\_separator:} /[{\textbackslash}s/]+/
-  \comm{Display the relative url in search results, supports true (default) or false}
   \var{rel\_url:} \magenta{true}
-  \comm{Enable or disable the search button that appears in the bottom right corner of every page, true or false (default)}
   \var{button:} \magenta{true}
-  \comm{Focus the search input by pressing `ctrl + focus\_shortcut\_key` (or `cmd + focus\_shortcut\_key` on macOS)}
   \var{focus\_shortcut\_key:} \magenta{'k'}
-
 \var{plugins:}
   - jekyll-coffeescript
   - jekyll-default-layout
@@ -669,7 +674,6 @@ platforms \magenta{:mingw}, \magenta{:x64\_mingw}, \magenta{:mswin}, \magenta{:j
   - jekyll-sitemap
   - jekyll-archives
   - jekyll-redirect-from
-
 \var{scholar:}
   \var{locale:} en
   \var{source:} ./\_bibliography
@@ -684,13 +688,12 @@ platforms \magenta{:mingw}, \magenta{:x64\_mingw}, \magenta{:mswin}, \magenta{:j
   \var{details\_link:}   Details
 \comm{Ensure that details are not printed twice}
   \var{query:} \magenta{"@*"}
-
 \var{exclude:}
   - Gemfile
   - Gemfile.lock
 \end{scriptii}
 }}
-\end{itemize}
+
 \item Directories:
 \begin{itemize}
 \item Each chapter or section in a separate directory, in this case "\btt{intro}" and "\btt{chap-1}":
@@ -821,11 +824,7 @@ To install the packages required by the "\texttt{Gemfile}" to build your site us
 \begin{script}
 \fprompt{~/Program-doc} \bftt{bundle} \rtt{exec} \dgtt{jekyll} build
 \end{script}\\[-0.75cm]
-\noindent You will see that this command creates a new directory name "\texttt{\_site}" that contains your website. 
-\begin{script}
-\fprompt{~/Program-doc} ls \_site
-
-\end{script}\\[-0.75cm]
+\noindent This command creates a new directory name "\texttt{\_site}" that contains your website. \\ 
 \noindent You can give a try to this website on your computer using: 
 \begin{script}
 \fprompt{~/Program-doc} \bftt{bundle} \rtt{exec} \dgtt{jekyll} serve
@@ -839,13 +838,13 @@ To use \github\ to host your documentation:
 \begin{itemize}
 \item Create a dedicated repository, in the following example: "\texttt{TTPSLR/Program-doc}"
 \item After properly configuring the connection to the remote repository, upload the contents of the "\texttt{\textasciitilde/Program-doc}" but the folder "\texttt{\_site}" to the main branch, separate branches allows to keep track of both the source material and the final content of the website:
-\begin{scriptii}
+\begin{scripti}
 \fprompt{~/Program-doc} \bftt{mv} \_site ../
 \fprompt{~/Program-doc} \bftt{git} \rtt{checkout} \btt{-b} Main
 \fprompt{~/Program-doc} \bftt{git} \rtt{add} .
 \fprompt{~/Program-doc} \bftt{git} \rtt{commit} \btt{-m} "To build the doc"
 \fprompt{~/Program-doc} \bftt{git} \rtt{push} \btt{origin} Main
-\end{scriptii}
+\end{scripti}
 \item After properly configuring the connection to the remote repository, upload the contents of the "\texttt{\_site}" to the \github\ pages, the "\texttt{gh-pages}" branch:
 \begin{scripti}
 \fprompt{~/\_site} \bftt{git} \rtt{checkout} \btt{-b} gh-pages
