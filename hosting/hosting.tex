@@ -433,14 +433,16 @@ It is required to install some tools to handle the publication of static webpage
 \begin{scripti}
 \textasciitilde]\$ git clone https://github.com/rbenv/rbenv.git ~/.rbenv
 \textasciitilde]\$ git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
-\textasciitilde]\$ \bftt{rbenv} \rtt{install} \dgtt{2.7.4}
-\textasciitilde]\$ \bftt{rbenv} \rtt{global} \dgtt{2.7.4}
+\textasciitilde]\$ \bftt{rbenv} \rtt{install} \dgtt{3.10.0}
+\textasciitilde]\$ \bftt{rbenv} \rtt{global} \dgtt{3.10.0}
 \textasciitilde]\$ \bftt{ruby} -v
 \end{scripti}
 }}
 \\[-0.5cm]
-\noindent \github\ pages are best compatible with version 2.7.x so do not install more recent release. \\
-To list available stable versions:
+\noindent If you intend to let \github\-pages build your site, then know that \github\ pages are best compatible with version 3.10.x, 
+to check the latest \github\ dependency version: \\
+\begin{center}\href{https://pages.github.com/versions/}{https://pages.github.com/versions/}\end{center} 
+To list available "\texttt{rbenv}" stable versions:
 {\footnotesize{
 \begin{scripti}
 \textasciitilde]\$ \bftt{rbenv} \rtt{install} \dctt{-l}
@@ -546,14 +548,14 @@ Example repository to create the documentation:
 {\footnotesize{ 
 \begin{script}
 \fprompt{~/Program-doc} \bftt{ls}
-\btt{\_bibliography}  \btt{chap-1}  \btt{intro}  \_config.yml  Gemfile  \btt{\_includes}  README.md
+\btt{\_bibliography}  \btt{chap-1}  \btt{intro}  \_config.yml  Gemfile  \btt{\_includes}  index.md
 \end{script}
 }}
 \noindent With:
 \begin{itemize}
 \item Files:
 \begin{itemize}
-\item The home page of your documentation website: "\texttt{README.md}"
+\item The home page of your documentation website: "\texttt{index.md}"
 \item The list of Ruby extensions required to build your website: "\texttt{Gemfile}"
 {\scriptsize{
 \begin{scriptii}
@@ -585,7 +587,7 @@ platforms \magenta{:mingw}, \magenta{:x64\_mingw}, \magenta{:mswin}, \magenta{:j
 \end{scriptii}
 }}
 \item The Jekkyl configuration file to build the website: "\texttt{\_config.yml}"\\[-0.5cm] 
-{\scriptsize{
+{\tiny{
 \begin{scriptii}
 \fprompt{~/Program-doc} \bftt{vi} \_config.yml
 \var{title:} Program's documentation
@@ -607,11 +609,48 @@ platforms \magenta{:mingw}, \magenta{:x64\_mingw}, \magenta{:mswin}, \magenta{:j
     \var{permalink:} \magenta{"#"}
 \comm{Define the depth of the menu}
     \var{baselevel:} 2
-\var{banner:} \magenta{"/assets/img/banner.png"}
-\var{favicon:} \magenta{"/assets/img/favicon.ico"}
-\var{remote\_theme:} rundocs/jekyll-rtd-theme
+\var{theme:} just-the-docs
+\var{color\_scheme:} dark
+\var{permalink:} pretty
+\var{logo:} \magenta{"/assets/images/logo.svg"}
+\var{favicon:} \magenta{"/assets/images/favicon.ico"}
+\comm{External navigation links}
+\var{nav\_external\_links:}
+  - \var{title:} GitHub repository
+    \var{url:} https://github.com/TTPSLR/Program-doc
+\var{defaults:}
+  - \var{scope:}
+    \var{path:} \magenta{""} 
+    \var{type:} \magenta{"pages"}
+  \var{values:}
+    \var{layout:} \magenta{"default"}
+\var{nav\_enabled:} \magenta{true}
 \var{readme\_index:}
   \var{with\_frontmatter:} \magenta{true}
+\var{back\_to\_top:} \magenta{true}
+\var{back\_to\_top\_text:} \magenta{"Back to top"}
+\var{ga\_tracking\_anonymize\_ip:} \magenta{true} \comm{Use GDPR compliant Google Analytics settings (true by default)}
+\comm{Enable or disable the site search}
+\comm{Supports true (default) or false}
+\var{search\_enabled} \magenta{true}
+\var{search:}
+  \comm{Split pages into sections that can be searched individually, supports 1 - 6, default: 2}
+  \var{heading\_level:} \magenta{2}
+  \comm{Maximum amount of previews per search result, default: 3}
+  \var{previews:} \magenta{3}
+  \comm{Maximum amount of words to display before a matched word in the preview, default: 5}
+  \var{preview\_words\_before:} \magenta{5}
+  \comm{Maximum amount of words to display after a matched word in the preview, default: 10}
+  \var{preview\_words\_after:} \magenta{10}
+  \comm{Set the search token separator, default:} /[{\textbackslash}s\textbackslash-/]+/
+  \comm{Example: enable support for hyphenated search words}
+  \var{tokenizer\_separator:} /[{\textbackslash}s/]+/
+  \comm{Display the relative url in search results, supports true (default) or false}
+  \var{rel\_url:} \magenta{true}
+  \comm{Enable or disable the search button that appears in the bottom right corner of every page, true or false (default)}
+  \var{button:} \magenta{true}
+  \comm{Focus the search input by pressing `ctrl + focus\_shortcut\_key` (or `cmd + focus\_shortcut\_key` on macOS)}
+  \var{focus\_shortcut\_key:} \magenta{'k'}
 
 \var{plugins:}
   - jekyll-coffeescript
@@ -630,7 +669,6 @@ platforms \magenta{:mingw}, \magenta{:x64\_mingw}, \magenta{:mswin}, \magenta{:j
   - jekyll-sitemap
   - jekyll-archives
   - jekyll-redirect-from
-  - jekyll-remote-theme
 
 \var{scholar:}
   \var{locale:} en
@@ -648,7 +686,6 @@ platforms \magenta{:mingw}, \magenta{:x64\_mingw}, \magenta{:mswin}, \magenta{:j
   \var{query:} \magenta{"@*"}
 
 \var{exclude:}
-  - CNAME
   - Gemfile
   - Gemfile.lock
 \end{scriptii}
@@ -661,22 +698,22 @@ platforms \magenta{:mingw}, \magenta{:x64\_mingw}, \magenta{:mswin}, \magenta{:j
 {\footnotesize{
 \begin{scriptii}
 \fprompt{~/program-doc} \bftt{ls} intro
-README.md
+index.md
 
 \fprompt{~/program-doc} \lsr\ chap-1
 
 chap-1:
-README.md  \btt{section-1}  \btt{section-2}
+index.md  \btt{section-1}  \btt{section-2}
 
 chap-1/section-1:
-README.md
+index.md
 
 chap-1/section-2:
-README.md
+index.md
 \end{scriptii}
 }}\\[-0.5cm]
 \noindent Including sub-directories for chapter sections if required. \\
-Note that each directory contains a single "\texttt{README.md}" file, dedicated to a single page of your site. \\[0.25cm]
+Note that each directory contains a single "\texttt{index.md}" file, dedicated to a single page of your site. \\[0.25cm]
 \item Include files in the "\btt{\_includes}" directory:
 {\footnotesize{
 \begin{scriptii}
@@ -715,20 +752,22 @@ When you convert \LaTeX\ to HTML the keywords for the bibliography remain in the
 \end{itemize}
 \end{itemize}
 \end{itemize}
-The "\texttt{README.md}" files, in Markdown format, follow the structure: 
+The "\texttt{index.md}" files, in Markdown format, follow the structure: 
 {\footnotesize{
 \begin{script}
-\fprompt{~/program-doc} \bftt{vi} chap-1/README.md
+\fprompt{~/program-doc} \bftt{vi} chap-1/index.md
 \mdcom{This is a HTML comment in Markdown}
 \mdcom{It will show up in the converted HTML document}
 
 ---
 \mdcom{Position of this file in the website menu.}
-\mdcom{To be compared will all other README.md file(s) at the same level,}
-\mdcom{in this case all "~/program-doc/*/README.md" files}
-sort: 2
+\mdcom{To be compared will all other index.md file(s) at the same level,}
+\mdcom{in this case all "~/program-doc/*/index.md" files}
+title: What is on this page
+parent: Title of parent page, if any
+nav\_order: 2
 \mdcom{Creation date:}
-date: 2023-11-26
+date: 2025-04-08 15:14:31
 \mdcom{Math formula on this pages ?}
 \mdcom{This is used to enable math javascript:}
 maths: 1
@@ -753,26 +792,26 @@ maths: 1
 \end{script}
 }}
 \clearpage
-\noindent Jekyll will search for all "\texttt{README.md}" files in the directory tree, starting from the top directory. 
+\noindent Jekyll will search for all "\texttt{index.md}" files in the directory tree, starting from the top directory. 
 and build the website according to the "\texttt{sort}" instructions, in this example:
 \begin{itemize}
-\item Top level, homepage: "\texttt{README.md}"
+\item Top level, homepage: "\texttt{index.md}"
 \begin{itemize}
 \item First level: \\
 \begin{itemize}
-\item In "\texttt{intro\textbackslash README.md}"  \,\,\ \quad$\Longrightarrow$\quad "\texttt{sort: }\rtt{1}"\\
-\item In "\texttt{chap-\rtt{1}\textbackslash README.md}" \quad$\Longrightarrow$\quad "\texttt{sort: }\rtt{2}"\\
+\item In "\texttt{intro\textbackslash index.md}"  \,\,\ \quad$\Longrightarrow$\quad "\texttt{sort: }\rtt{1}"\\
+\item In "\texttt{chap-\rtt{1}\textbackslash index.md}" \quad$\Longrightarrow$\quad "\texttt{sort: }\rtt{2}"\\
 \item[$-$] Second level (chapter sections): \\
 \begin{itemize}
-\item In "\texttt{chap-1\textbackslash section-\rtt{1}\textbackslash README.md}" \quad$\Longrightarrow$\quad "\texttt{sort: }\rtt{1}"\\
-\item In "\texttt{chap-1\textbackslash section-\rtt{2}\textbackslash README.md}" \quad$\Longrightarrow$\quad "\texttt{sort: }\rtt{2}"\\
+\item In "\texttt{chap-1\textbackslash section-\rtt{1}\textbackslash index.md}" \quad$\Longrightarrow$\quad "\texttt{sort: }\rtt{1}"\\
+\item In "\texttt{chap-1\textbackslash section-\rtt{2}\textbackslash index.md}" \quad$\Longrightarrow$\quad "\texttt{sort: }\rtt{2}"\\
 \end{itemize}
 \end{itemize}
 \end{itemize}
 \end{itemize}
-Jekyll will create a HTML page for each "\texttt{README.md}" file found in the directory tree. \\
+Jekyll will create a HTML page for each "\texttt{index.md}" file found in the directory tree. \\
 For your documentation to be easy to browse and read take time to organize it properly and split the pages accordingly. \\
-The directories "\texttt{\_includes}" and "\texttt{\_bibliography}" are ignored by Jekyll when searching for "\texttt{README.md}" files, 
+The directories "\texttt{\_includes}" and "\texttt{\_bibliography}" are ignored by Jekyll when searching for "\texttt{index.md}" files, 
 however their content is used to produce the website. \\[0.25cm]
 To install the packages required by the "\texttt{Gemfile}" to build your site use:
 \begin{script}
